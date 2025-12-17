@@ -7,8 +7,9 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { label: "Inicio", href: "#" },
+    { label: "Inicio", href: "/" },
     { label: "Programas", href: "#programas" },
+    { label: "Blog", href: "/blog", isRoute: true },
     { label: "Sobre mí", href: "#sobre-mi" },
     { label: "Contacto", href: "#contacto" },
   ];
@@ -27,13 +28,23 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-foreground/80 hover:text-primary transition-colors text-sm font-medium"
-              >
-                {item.label}
-              </a>
+              item.isRoute ? (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  className="text-foreground/80 hover:text-primary transition-colors text-sm font-medium"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="text-foreground/80 hover:text-primary transition-colors text-sm font-medium"
+                >
+                  {item.label}
+                </a>
+              )
             ))}
             <Link to="/aula-virtual">
               <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -57,14 +68,25 @@ const Header = () => {
           <nav className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="text-foreground/80 hover:text-primary transition-colors py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.label}
-                </a>
+                item.isRoute ? (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    className="text-foreground/80 hover:text-primary transition-colors py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    className="text-foreground/80 hover:text-primary transition-colors py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </a>
+                )
               ))}
               <Link to="/aula-virtual" onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2">
