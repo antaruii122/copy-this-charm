@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,9 +35,11 @@ const Header = () => {
                 {item.label}
               </a>
             ))}
-            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Aula Virtual
-            </Button>
+            <Link to="/aula-virtual">
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                Aula Virtual
+              </Button>
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -63,9 +66,11 @@ const Header = () => {
                   {item.label}
                 </a>
               ))}
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2">
-                Aula Virtual
-              </Button>
+              <Link to="/aula-virtual" onClick={() => setIsMenuOpen(false)}>
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2">
+                  Aula Virtual
+                </Button>
+              </Link>
             </div>
           </nav>
         )}
