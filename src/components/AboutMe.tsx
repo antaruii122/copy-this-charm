@@ -2,9 +2,9 @@ import coachPortrait from "@/assets/coach-portrait.jpg";
 
 const AboutMe = () => {
   const stats = [
-    { value: "+0.3k", label: "Clientes transformadas" },
-    { value: "+79", label: "Programas completados" },
-    { value: "+10", label: "Años de experiencia" },
+    { value: "+500", label: "Mujeres acompañadas" },
+    { value: "+20", label: "Programas y cursos" },
+    { value: "+8", label: "Años de experiencia" },
   ];
 
   return (
@@ -24,16 +24,16 @@ const AboutMe = () => {
 
           <div>
             <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground mb-6">
-              Quien Soy
+              Mi Historia
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-              Soy una apasionada del bienestar femenino y el equilibrio hormonal. Mi misión es 
-              acompañarte en el camino de reconexión con tu cuerpo y tu ciclo natural.
+              Soy nutricionista especializada en salud hormonal femenina y fertilidad. Mi pasión es 
+              acompañar a mujeres a entender su cuerpo y su ciclo para alcanzar el bienestar que merecen.
             </p>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-              Durante más de una década, he ayudado a cientos de mujeres a transformar su relación 
-              con su cuerpo, dejando atrás los anticonceptivos hormonales y abrazando métodos 
-              naturales que respetan su esencia femenina.
+              Después de años de formación y experiencia clínica, creé NUTFEM para llegar a más mujeres 
+              con programas accesibles que combinan nutrición consciente, conocimiento del ciclo menstrual 
+              y un enfoque personalizado para cada etapa de la vida hormonal.
             </p>
 
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border">
