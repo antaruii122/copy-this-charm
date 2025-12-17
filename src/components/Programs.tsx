@@ -4,37 +4,43 @@ import { Button } from "@/components/ui/button";
 const Programs = () => {
   const programs = [
     {
-      title: "ATRÉVETE DEEPNA: Estudia a conocer el Ayurveda - Afina y pon tu Bienestar y la libertad...",
-      price: "Gratis",
+      title: "MENO: 21 Días de Transformación en Menopausia",
+      description: "Programa online para transitar la menopausia con vitalidad, equilibrio y una nutrición adaptada a esta etapa.",
+      price: "$1,200",
       rating: 5,
-      tag: "Nuevo",
+      tag: "Destacado",
     },
     {
-      title: "Programa Grupal: Hormonas Equilibradas, Soy hecha de Ayurveda y Autoconocimiento",
-      price: "$1,500",
-      originalPrice: "$2,000",
-      rating: 5,
-    },
-    {
-      title: "Consultoría de Cielo Ayurveda: Un viaje de Autoconocimiento y Nutrición",
-      price: "$200",
+      title: "Nutrición en Fertilidad",
+      description: "Programa nutricional diseñado para profesionales de la salud y mujeres que buscan optimizar su fertilidad.",
+      price: "$800",
       rating: 5,
     },
     {
-      title: "Alimentación y Nutrición Consciente: Guía a Proporciones Ayurveda",
-      price: "$350",
-      rating: 4,
-    },
-    {
-      title: "Mide tu ciclo: Aprende a Dígela que el Ayurveda Semina para tu salud Óptimo",
-      price: "$180",
-      rating: 5,
-    },
-    {
-      title: "Introducción Básica al Ayurveda: Fundamentos en Ayurveda",
-      price: "Gratis",
+      title: "Membresía Nutriendo-Me",
+      description: "Acceso mensual a contenido exclusivo, recetas, guías y acompañamiento continuo para nutrir tu ciclo.",
+      price: "$99/mes",
       rating: 5,
       tag: "Popular",
+    },
+    {
+      title: "Masterclass: Nutrir tu Ciclo",
+      description: "Descubre cómo nutrir tu ciclo y transformar tu bienestar hormonal con alimentación consciente.",
+      price: "$150",
+      rating: 5,
+    },
+    {
+      title: "Explorando la Fertilidad",
+      description: "Un espacio seguro y educativo para descubrir sobre fertilidad, nutrición y bienestar reproductivo.",
+      price: "Gratis",
+      rating: 5,
+      tag: "Gratuito",
+    },
+    {
+      title: "Academia NUTFEM: 5 Módulos de Contenido",
+      description: "Acceso en diferido para disfrutar y aprender a tu ritmo. Masterclass completas sobre nutrición femenina.",
+      price: "$450",
+      rating: 5,
     },
   ];
 
@@ -43,10 +49,10 @@ const Programs = () => {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground mb-6">
-            Descubre nuestros programas
+            Cursos & Recursos
           </h2>
           <p className="text-muted-foreground text-lg">
-            Cursos, talleres y consultorías diseñados para tu transformación
+            Programas diseñados para acompañarte en cada etapa de tu vida hormonal
           </p>
         </div>
 
@@ -80,11 +86,6 @@ const Programs = () => {
                   <span className="text-primary font-semibold text-xl">
                     {program.price}
                   </span>
-                  {program.originalPrice && (
-                    <span className="text-muted-foreground line-through text-sm">
-                      {program.originalPrice}
-                    </span>
-                  )}
                 </div>
                 <Button
                   variant="outline"

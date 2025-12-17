@@ -12,8 +12,12 @@ const VideoSection = () => {
           </div>
           
           <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl text-foreground mb-8 leading-relaxed">
-            ¡Vuelve a ser tú misma recuperando tu equilibrio hormonal, dejando los Anticonceptivos y revelando tu potencial femenino con estos dos simples claves!
+            ¿Sabías que en la fase menstrual tu cuerpo necesita un extra de cuidado?
           </h2>
+          <p className="text-muted-foreground text-lg mb-8">
+            Cada fase de tu ciclo tiene necesidades nutricionales específicas. Aprende a escuchar tu cuerpo 
+            y darle exactamente lo que necesita para sentirte llena de energía y equilibrada.
+          </p>
 
           {/* Video Placeholder */}
           <div className="relative aspect-video bg-muted rounded-2xl overflow-hidden shadow-card mb-8 group cursor-pointer">
@@ -24,7 +28,7 @@ const VideoSection = () => {
               </div>
             </div>
             <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-foreground font-serif text-lg">
-              Alcanza el equilibrio hormonal con estas 3 claves
+              Las etapas de tu ciclo vital y desde ahí...
             </p>
           </div>
 
@@ -32,7 +36,7 @@ const VideoSection = () => {
             href="#contacto"
             className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors text-lg"
           >
-            ¡AGENDA AHORA TU CONSULTORÍA GRATUITA!
+            ¡Saber más!
           </a>
         </div>
       </div>

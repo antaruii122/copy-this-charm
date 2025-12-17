@@ -14,11 +14,14 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-2xl">
+          <p className="text-primary-foreground text-sm font-medium tracking-widest mb-4 animate-fade-up">
+            NUTRICIÓN FEMENINA
+          </p>
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-primary-foreground leading-tight mb-6 animate-fade-up">
-            Te acompaño a conectar con tu cuerpo y tu ciclo, para alcanzar equilibrio y bienestar
+            NUTFEM
           </h1>
           <p className="text-primary-foreground/90 text-lg md:text-xl mb-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-            Descubre el poder de tu naturaleza femenina y transforma tu vida desde adentro hacia afuera.
+            Te acompaño a nutrir tu cuerpo y equilibrar tus hormonas a través de la alimentación consciente y el conocimiento de tu ciclo menstrual.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-up" style={{ animationDelay: "0.4s" }}>
             <a

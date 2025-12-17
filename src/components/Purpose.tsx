@@ -4,18 +4,18 @@ const Purpose = () => {
   const features = [
     {
       icon: Heart,
-      title: "Un enfoque Integral",
-      description: "Trabajo con tu cuerpo, mente y emociones para lograr una transformación profunda y duradera.",
+      title: "Nutrición Hormonal",
+      description: "Aprende a alimentarte según las fases de tu ciclo menstrual para optimizar tu energía y bienestar hormonal.",
     },
     {
       icon: Leaf,
-      title: "Trato anticonceptivo en ti",
-      description: "Te ayudo a entender tu ciclo menstrual y usar métodos naturales para tu bienestar hormonal.",
+      title: "Fertilidad Natural",
+      description: "Descubre cómo la nutrición puede potenciar tu fertilidad y preparar tu cuerpo para la maternidad de forma natural.",
     },
     {
       icon: Moon,
-      title: "Énfasis y Atención para Mujeres de la Nueva Era",
-      description: "Programas diseñados especialmente para mujeres que buscan reconectar con su esencia femenina.",
+      title: "Ciclo Menstrual Consciente",
+      description: "Entiende las etapas de tu ciclo vital y nutre tu cuerpo según lo que necesita en cada fase.",
     },
   ];
 
@@ -24,11 +24,11 @@ const Purpose = () => {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground mb-6">
-            Nuestro Propósito
+            Bienvenida a NUTFEM
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Te acompaño en tu camino hacia el bienestar integral, ayudándote a reconectar con tu cuerpo, 
-            entender tus ciclos naturales y alcanzar el equilibrio que mereces.
+            Soy nutricionista especializada en salud hormonal femenina. Te acompaño a entender 
+            tu ciclo menstrual y nutrir tu cuerpo en cada fase para alcanzar el equilibrio que mereces.
           </p>
         </div>
 
