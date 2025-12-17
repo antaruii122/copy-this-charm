@@ -1,23 +1,21 @@
 import coachPortrait from "@/assets/coach-portrait.jpg";
-
 const AboutMe = () => {
-  const stats = [
-    { value: "+500", label: "Mujeres acompañadas" },
-    { value: "+20", label: "Programas y cursos" },
-    { value: "+8", label: "Años de experiencia" },
-  ];
-
-  return (
-    <section id="sobre-mi" className="py-20 md:py-32 bg-background">
+  const stats = [{
+    value: "+500",
+    label: "Mujeres acompañadas"
+  }, {
+    value: "+20",
+    label: "Programas y cursos"
+  }, {
+    value: "+8",
+    label: "Años de experiencia"
+  }];
+  return <section id="sobre-mi" className="py-20 md:py-32 bg-background">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="relative">
             <div className="aspect-square max-w-md mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-card">
-              <img
-                src={coachPortrait}
-                alt="Coach de bienestar"
-                className="w-full h-full object-cover"
-              />
+              <img alt="Coach de bienestar" className="w-full h-full object-cover" src="/lovable-uploads/446de30f-261d-4a0d-853f-8d860dd2467e.webp" />
             </div>
             <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
           </div>
@@ -37,22 +35,18 @@ const AboutMe = () => {
             </p>
 
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border">
-              {stats.map((stat) => (
-                <div key={stat.label} className="text-center lg:text-left">
+              {stats.map(stat => <div key={stat.label} className="text-center lg:text-left">
                   <div className="font-serif text-3xl md:text-4xl text-primary font-semibold">
                     {stat.value}
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
                     {stat.label}
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default AboutMe;
