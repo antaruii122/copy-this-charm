@@ -35,7 +35,7 @@ const Header = () => {
               </a>
             ))}
             <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Agendar
+              Aula Virtual
             </Button>
           </nav>
 
@@ -64,7 +64,7 @@ const Header = () => {
                 </a>
               ))}
               <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2">
-                Agendar
+                Aula Virtual
               </Button>
             </div>
           </nav>
