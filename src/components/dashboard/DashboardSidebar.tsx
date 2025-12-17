@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   LayoutDashboard,
   User,
@@ -37,8 +36,12 @@ const bottomItems: SidebarItem[] = [
   { label: "Salir", icon: LogOut, href: "#salir" },
 ];
 
-const DashboardSidebar = () => {
-  const [activeItem, setActiveItem] = useState("Escritorio");
+interface DashboardSidebarProps {
+  activeItem: string;
+  onItemClick: (label: string) => void;
+}
+
+const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) => {
 
   return (
     <aside className="w-64 min-h-[calc(100vh-200px)] border-r border-border bg-white hidden md:block">
@@ -52,7 +55,7 @@ const DashboardSidebar = () => {
             return (
               <li key={item.label}>
                 <button
-                  onClick={() => setActiveItem(item.label)}
+                  onClick={() => onItemClick(item.label)}
                   className={cn(
                     "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
                     isActive
@@ -80,7 +83,7 @@ const DashboardSidebar = () => {
             return (
               <li key={item.label}>
                 <button
-                  onClick={() => setActiveItem(item.label)}
+                  onClick={() => onItemClick(item.label)}
                   className={cn(
                     "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
                     isActive
