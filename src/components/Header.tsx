@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
 import UserButton from "./UserButton";
 
 const Header = () => {
+  const { isSignedIn } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
@@ -47,12 +49,12 @@ const Header = () => {
                 </a>
               )
             ))}
-            <Link to="/aula-virtual">
+            <Link to={isSignedIn ? "/aula-virtual" : "/auth"}>
               <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                Aula Virtual
+                {isSignedIn ? "Aula Virtual" : "Iniciar Sesión"}
               </Button>
             </Link>
-            <UserButton />
+            {isSignedIn && <UserButton />}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -90,9 +92,9 @@ const Header = () => {
                   </a>
                 )
               ))}
-              <Link to="/aula-virtual" onClick={() => setIsMenuOpen(false)}>
+              <Link to={isSignedIn ? "/aula-virtual" : "/auth"} onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2">
-                  Aula Virtual
+                  {isSignedIn ? "Aula Virtual" : "Iniciar Sesión"}
                 </Button>
               </Link>
             </div>
