@@ -1,6 +1,7 @@
 import DashboardStats from "./DashboardStats";
 import ProfileView from "./ProfileView";
 import SettingsView from "./SettingsView";
+import BlogManager from "./BlogManager";
 
 interface DashboardContentProps {
   activeSection: string;
@@ -18,6 +19,8 @@ const DashboardContent = ({ activeSection }: DashboardContentProps) => {
         );
       case "Mi perfil":
         return <ProfileView />;
+      case "Blog":
+        return <BlogManager />;
       case "Ajustes":
         return <SettingsView />;
       default:
