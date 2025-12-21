@@ -7,7 +7,9 @@ import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Blog from "./pages/Blog";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +22,12 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/aula-virtual" element={<Dashboard />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/aula-virtual" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/blog" element={<Blog />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
