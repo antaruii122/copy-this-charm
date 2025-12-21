@@ -10,6 +10,7 @@ import {
   Calendar,
   Settings,
   LogOut,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ const mainItems: SidebarItem[] = [
   { label: "Escritorio", icon: LayoutDashboard, href: "#escritorio" },
   { label: "Mi perfil", icon: User, href: "#perfil" },
   { label: "Cursos inscritos", icon: BookOpen, href: "#cursos" },
+  { label: "Blog", icon: FileText, href: "#blog" },
   { label: "Reseñas", icon: Star, href: "#resenas" },
   { label: "Mis intentos de cuestionarios", icon: ClipboardList, href: "#cuestionarios" },
   { label: "Lista de deseos", icon: Bookmark, href: "#deseos" },
