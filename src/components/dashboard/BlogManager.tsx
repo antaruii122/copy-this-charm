@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useUser } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, ShieldX } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -30,8 +31,11 @@ interface BlogPost {
 }
 
 const BlogManager = () => {
+  const { user } = useUser();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const { toast } = useToast();
@@ -47,8 +51,37 @@ const BlogManager = () => {
   });
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    checkAdminStatus();
+  }, [user]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchPosts();
+    }
+  }, [isAdmin]);
+
+  const checkAdminStatus = async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) {
+      setCheckingAdmin(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("admin_emails")
+        .select("email")
+        .eq("email", user.primaryEmailAddress.emailAddress)
+        .maybeSingle();
+
+      if (error) throw error;
+      setIsAdmin(!!data);
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      setIsAdmin(false);
+    } finally {
+      setCheckingAdmin(false);
+    }
+  };
 
   const fetchPosts = async () => {
     try {
@@ -198,10 +231,27 @@ const BlogManager = () => {
     }
   };
 
-  if (loading) {
+  if (checkingAdmin || loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <ShieldX size={48} className="text-muted-foreground mb-4" />
+        <h2 className="text-xl font-semibold text-foreground mb-2">
+          Acceso Restringido
+        </h2>
+        <p className="text-muted-foreground max-w-md">
+          No tienes permisos para administrar el blog. Contacta al administrador si crees que deberías tener acceso.
+        </p>
+        <p className="text-sm text-muted-foreground mt-4">
+          Email actual: {user?.primaryEmailAddress?.emailAddress || "No disponible"}
+        </p>
       </div>
     );
   }
