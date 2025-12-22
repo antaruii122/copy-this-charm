@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Menu, X, LayoutDashboard, User, BookOpen, Star, ClipboardList, Bookmark, ShoppingBag, MessageCircleQuestion, Calendar, Settings, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Menu, X, LayoutDashboard, User, BookOpen, Star, ClipboardList, Bookmark, ShoppingBag, MessageCircleQuestion, Calendar, Settings, LogOut, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -7,12 +9,14 @@ interface SidebarItem {
   label: string;
   icon: React.ElementType;
   href: string;
+  adminOnly?: boolean;
 }
 
 const mainItems: SidebarItem[] = [
   { label: "Escritorio", icon: LayoutDashboard, href: "#escritorio" },
   { label: "Mi perfil", icon: User, href: "#perfil" },
   { label: "Cursos inscritos", icon: BookOpen, href: "#cursos" },
+  { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
   { label: "Reseñas", icon: Star, href: "#resenas" },
   { label: "Mis intentos de cuestionarios", icon: ClipboardList, href: "#cuestionarios" },
   { label: "Lista de deseos", icon: Bookmark, href: "#deseos" },
@@ -27,8 +31,34 @@ const bottomItems: SidebarItem[] = [
 ];
 
 const MobileSidebar = () => {
+  const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("Escritorio");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const { data } = await supabase
+          .from("admin_emails")
+          .select("email")
+          .eq("email", user.primaryEmailAddress.emailAddress)
+          .maybeSingle();
+
+        setIsAdmin(!!data);
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user]);
+
+  const filteredMainItems = mainItems.filter(
+    (item) => !item.adminOnly || isAdmin
+  );
 
   return (
     <div className="md:hidden">
@@ -65,7 +95,7 @@ const MobileSidebar = () => {
 
         <nav className="py-4 overflow-y-auto max-h-[calc(100vh-60px)]">
           <ul className="space-y-1 px-3">
-            {mainItems.map((item) => {
+            {filteredMainItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeItem === item.label;
               

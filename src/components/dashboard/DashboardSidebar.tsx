@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard,
   User,
@@ -18,13 +21,14 @@ interface SidebarItem {
   label: string;
   icon: React.ElementType;
   href: string;
+  adminOnly?: boolean;
 }
 
 const mainItems: SidebarItem[] = [
   { label: "Escritorio", icon: LayoutDashboard, href: "#escritorio" },
   { label: "Mi perfil", icon: User, href: "#perfil" },
   { label: "Cursos inscritos", icon: BookOpen, href: "#cursos" },
-  { label: "Blog", icon: FileText, href: "#blog" },
+  { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
   { label: "Reseñas", icon: Star, href: "#resenas" },
   { label: "Mis intentos de cuestionarios", icon: ClipboardList, href: "#cuestionarios" },
   { label: "Lista de deseos", icon: Bookmark, href: "#deseos" },
@@ -44,13 +48,39 @@ interface DashboardSidebarProps {
 }
 
 const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) => {
+  const { user } = useUser();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const { data } = await supabase
+          .from("admin_emails")
+          .select("email")
+          .eq("email", user.primaryEmailAddress.emailAddress)
+          .maybeSingle();
+
+        setIsAdmin(!!data);
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user]);
+
+  const filteredMainItems = mainItems.filter(
+    (item) => !item.adminOnly || isAdmin
+  );
 
   return (
     <aside className="w-64 min-h-[calc(100vh-200px)] border-r border-border bg-white hidden md:block">
       <nav className="py-4">
         {/* Main Navigation */}
         <ul className="space-y-1 px-3">
-          {mainItems.map((item) => {
+          {filteredMainItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeItem === item.label;
             
