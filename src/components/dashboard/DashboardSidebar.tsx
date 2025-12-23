@@ -27,7 +27,7 @@ interface SidebarItem {
 const mainItems: SidebarItem[] = [
   { label: "Escritorio", icon: LayoutDashboard, href: "#escritorio" },
   { label: "Mi perfil", icon: User, href: "#perfil" },
-  { label: "Cursos inscritos", icon: BookOpen, href: "#cursos" },
+  { label: "Mis Cursos", icon: BookOpen, href: "#cursos" },
   { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
   { label: "Reseñas", icon: Star, href: "#resenas" },
   { label: "Mis intentos de cuestionarios", icon: ClipboardList, href: "#cuestionarios" },

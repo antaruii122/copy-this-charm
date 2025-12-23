@@ -144,32 +144,27 @@ const CourseVideos = () => {
 
   if (loading) {
     return (
-      <section className="py-20 md:py-32 bg-card">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-pulse flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-primary/20" />
-              <p className="text-muted-foreground">Cargando videos...</p>
-            </div>
+      <div className="py-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-pulse flex flex-col items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-primary/20" />
+            <p className="text-muted-foreground">Cargando videos...</p>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section id="programas" className="py-20 md:py-32 bg-card">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground mb-6">
-            Cursos & Recursos
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            Programas diseñados para acompañarte en cada etapa de tu vida hormonal
-          </p>
-        </div>
+    <div className="py-4">
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold text-foreground mb-2">Mis Cursos</h1>
+        <p className="text-muted-foreground">
+          Tus programas y recursos de aprendizaje
+        </p>
+      </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-6">
           {/* Video Player - Main Area */}
           <div className="lg:col-span-2 space-y-4">
             <div className="relative bg-foreground/95 rounded-2xl overflow-hidden shadow-card aspect-video group">
@@ -365,18 +360,7 @@ const CourseVideos = () => {
             </div>
           </div>
         </div>
-
-        {/* CTA Section */}
-        <div className="text-center mt-16">
-          <Button
-            size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8"
-          >
-            Ver todos los programas
-          </Button>
-        </div>
-      </div>
-    </section>
+    </div>
   );
 };
 
