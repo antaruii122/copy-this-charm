@@ -2,6 +2,7 @@ import DashboardStats from "./DashboardStats";
 import ProfileView from "./ProfileView";
 import SettingsView from "./SettingsView";
 import BlogManager from "./BlogManager";
+import CourseVideos from "@/components/CourseVideos";
 
 interface DashboardContentProps {
   activeSection: string;
@@ -19,6 +20,8 @@ const DashboardContent = ({ activeSection }: DashboardContentProps) => {
         );
       case "Mi perfil":
         return <ProfileView />;
+      case "Mis Cursos":
+        return <CourseVideos />;
       case "Blog":
         return <BlogManager />;
       case "Ajustes":
