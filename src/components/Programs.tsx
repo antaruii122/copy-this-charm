@@ -1,9 +1,11 @@
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Programs = () => {
   const programs = [
     {
+      id: "meno-21-dias",
       title: "MENO: 21 Días de Transformación en Menopausia",
       description: "Programa online para transitar la menopausia con vitalidad, equilibrio y una nutrición adaptada a esta etapa.",
       price: "$1,200",
@@ -11,12 +13,14 @@ const Programs = () => {
       tag: "Destacado",
     },
     {
+      id: "nutricion-fertilidad",
       title: "Nutrición en Fertilidad",
       description: "Programa nutricional diseñado para profesionales de la salud y mujeres que buscan optimizar su fertilidad.",
       price: "$800",
       rating: 5,
     },
     {
+      id: "membresia-nutriendo-me",
       title: "Membresía Nutriendo-Me",
       description: "Acceso mensual a contenido exclusivo, recetas, guías y acompañamiento continuo para nutrir tu ciclo.",
       price: "$99/mes",
@@ -24,12 +28,14 @@ const Programs = () => {
       tag: "Popular",
     },
     {
+      id: "masterclass-nutrir-ciclo",
       title: "Masterclass: Nutrir tu Ciclo",
       description: "Descubre cómo nutrir tu ciclo y transformar tu bienestar hormonal con alimentación consciente.",
       price: "$150",
       rating: 5,
     },
     {
+      id: "explorando-fertilidad",
       title: "Explorando la Fertilidad",
       description: "Un espacio seguro y educativo para descubrir sobre fertilidad, nutrición y bienestar reproductivo.",
       price: "Gratis",
@@ -37,6 +43,7 @@ const Programs = () => {
       tag: "Gratuito",
     },
     {
+      id: "academia-nutfem",
       title: "Academia NUTFEM: 5 Módulos de Contenido",
       description: "Acceso en diferido para disfrutar y aprender a tu ritmo. Masterclass completas sobre nutrición femenina.",
       price: "$450",
@@ -87,12 +94,14 @@ const Programs = () => {
                     {program.price}
                   </span>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                >
-                  Ver más
-                </Button>
+                <Link to={`/aula-virtual/${program.id}`}>
+                  <Button
+                    variant="outline"
+                    className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  >
+                    Ver más
+                  </Button>
+                </Link>
               </div>
             </div>
           ))}

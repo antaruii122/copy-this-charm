@@ -71,6 +71,83 @@ export type Database = {
         }
         Relationships: []
       }
+      course_videos: {
+        Row: {
+          course_id: string
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          id: string
+          sort_order: number | null
+          title: string
+          video_path: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          sort_order?: number | null
+          title: string
+          video_path: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          sort_order?: number | null
+          title?: string
+          video_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_videos_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          price: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          price?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          price?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
