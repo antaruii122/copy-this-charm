@@ -4,7 +4,7 @@ import Hero from "@/components/Hero";
 import Purpose from "@/components/Purpose";
 import VideoSection from "@/components/VideoSection";
 import AboutMe from "@/components/AboutMe";
-import Programs from "@/components/Programs";
+import CourseVideos from "@/components/CourseVideos";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -101,7 +101,7 @@ const Index = () => {
           <Purpose />
           <VideoSection />
           <AboutMe />
-          <Programs />
+          <CourseVideos />
           <Contact />
         </main>
         <Footer />
