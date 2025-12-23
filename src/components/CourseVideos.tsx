@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, Volume2, VolumeX, Maximize, ChevronRight, Clock, CheckCircle2 } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize, ChevronRight, Clock, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface Video {
   id: string;
@@ -13,8 +14,20 @@ interface Video {
   url?: string;
 }
 
-const CourseVideos = () => {
+interface Course {
+  id: string;
+  title: string;
+  description: string | null;
+  slug: string;
+}
+
+interface CourseVideosProps {
+  courseId?: string;
+}
+
+const CourseVideos = ({ courseId }: CourseVideosProps) => {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [course, setCourse] = useState<Course | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -26,10 +39,79 @@ const CourseVideos = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    fetchVideos();
-  }, []);
+    if (courseId) {
+      fetchCourseAndVideos();
+    } else {
+      fetchAllVideos();
+    }
+  }, [courseId]);
 
-  const fetchVideos = async () => {
+  const fetchCourseAndVideos = async () => {
+    try {
+      // Fetch course by slug
+      const { data: courseData, error: courseError } = await supabase
+        .from("courses")
+        .select("*")
+        .eq("slug", courseId)
+        .maybeSingle();
+
+      if (courseError) throw courseError;
+
+      if (courseData) {
+        setCourse(courseData);
+
+        // Fetch videos for this course
+        const { data: courseVideos, error: videosError } = await supabase
+          .from("course_videos")
+          .select("*")
+          .eq("course_id", courseData.id)
+          .order("sort_order", { ascending: true });
+
+        if (videosError) throw videosError;
+
+        if (courseVideos && courseVideos.length > 0) {
+          // Get signed URLs for each video
+          const videosWithUrls = await Promise.all(
+            courseVideos.map(async (video) => {
+              const { data: urlData } = await supabase.storage
+                .from("videodecurso")
+                .createSignedUrl(video.video_path, 3600);
+
+              return {
+                id: video.id,
+                name: video.video_path,
+                title: video.title,
+                url: urlData?.signedUrl || "",
+              };
+            })
+          );
+
+          setVideos(videosWithUrls);
+          if (videosWithUrls.length > 0) {
+            setSelectedVideo(videosWithUrls[0]);
+          }
+        } else {
+          // Fallback: fetch from storage directly if no videos in database
+          await fetchVideosFromStorage();
+        }
+      } else {
+        // Course not found, show all videos
+        await fetchVideosFromStorage();
+      }
+    } catch (error) {
+      console.error("Error fetching course:", error);
+      await fetchVideosFromStorage();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAllVideos = async () => {
+    await fetchVideosFromStorage();
+    setLoading(false);
+  };
+
+  const fetchVideosFromStorage = async () => {
     try {
       const { data: files, error } = await supabase.storage
         .from("videodecurso")
@@ -69,8 +151,6 @@ const CourseVideos = () => {
       }
     } catch (error) {
       console.error("Error fetching videos:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -158,9 +238,20 @@ const CourseVideos = () => {
   return (
     <div className="py-4">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-foreground mb-2">Mis Cursos</h1>
+        {courseId && (
+          <Link 
+            to="/aula-virtual" 
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Volver a Mis Cursos
+          </Link>
+        )}
+        <h1 className="text-2xl font-semibold text-foreground mb-2">
+          {course?.title || "Mis Cursos"}
+        </h1>
         <p className="text-muted-foreground">
-          Tus programas y recursos de aprendizaje
+          {course?.description || "Tus programas y recursos de aprendizaje"}
         </p>
       </div>
 

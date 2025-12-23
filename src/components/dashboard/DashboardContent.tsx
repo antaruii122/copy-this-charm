@@ -6,9 +6,10 @@ import CourseVideos from "@/components/CourseVideos";
 
 interface DashboardContentProps {
   activeSection: string;
+  courseId?: string;
 }
 
-const DashboardContent = ({ activeSection }: DashboardContentProps) => {
+const DashboardContent = ({ activeSection, courseId }: DashboardContentProps) => {
   const renderContent = () => {
     switch (activeSection) {
       case "Escritorio":
@@ -21,7 +22,7 @@ const DashboardContent = ({ activeSection }: DashboardContentProps) => {
       case "Mi perfil":
         return <ProfileView />;
       case "Mis Cursos":
-        return <CourseVideos />;
+        return <CourseVideos courseId={courseId} />;
       case "Blog":
         return <BlogManager />;
       case "Ajustes":
