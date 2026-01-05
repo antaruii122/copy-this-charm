@@ -76,24 +76,25 @@ const Programs = () => {
           </p>
         </div>
 
-        {/* Programs Grid - Academia NUTFEM Style with Staggered Effect */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        {/* Programs Grid - Diamond Wave Pattern */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 max-w-7xl mx-auto">
           {programs.map((program, index) => {
-            // Staggered vertical positioning pattern
-            const staggerClasses = [
-              'md:translate-y-0',      // Card 1: Normal
-              'md:translate-y-8',      // Card 2: Down
-              'md:-translate-y-4',     // Card 3: Up
-              'md:translate-y-6',      // Card 4: Down
-              'md:-translate-y-6',     // Card 5: Up
-              'md:translate-y-4',      // Card 6: Down
-            ];
+            // Diamond pattern: middle column offset, sides normal
+            // Row 1: Normal, UP, Normal
+            // Row 2: Normal, DOWN, Normal
+            const position = index % 3; // 0=left, 1=middle, 2=right
+            const row = Math.floor(index / 3); // 0=top row, 1=bottom row
+
+            let staggerClass = '';
+            if (position === 1) { // Middle column
+              staggerClass = row === 0 ? 'md:-translate-y-8' : 'md:translate-y-8';
+            }
 
             return (
               <Link
                 key={index}
                 to={`/aula-virtual/${program.id}`}
-                className={`group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 flex flex-col ${staggerClasses[index % 6]}`}
+                className={`group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:scale-105 flex flex-col ${staggerClass}`}
               >
                 {/* Image Container - SQUARE 1:1 like Academia NUTFEM */}
                 <div className="relative aspect-square overflow-hidden bg-white">
