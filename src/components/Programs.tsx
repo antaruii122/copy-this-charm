@@ -11,13 +11,15 @@ const Programs = () => {
       price: "$1,200",
       rating: 5,
       tag: "Destacado",
+      image: "https://bu-cdn.tiendup.com/business/42060/products/g52XY2_68c0a4b6bea22_medium.png"
     },
     {
       id: "nutricion-fertilidad",
-      title: "Nutrición en Fertilidad",
+      title: "Nutrición en Fertilidad Natural y Asistida",
       description: "Programa nutricional diseñado para profesionales de la salud y mujeres que buscan optimizar su fertilidad.",
       price: "$800",
       rating: 5,
+      image: "https://bu-cdn.tiendup.com/business/42060/products/DxRXeA_685966ed21eb9_medium.png"
     },
     {
       id: "membresia-nutriendo-me",
@@ -26,6 +28,7 @@ const Programs = () => {
       price: "$99/mes",
       rating: 5,
       tag: "Popular",
+      image: "https://bu-cdn.tiendup.com/business/42060/themes/lite/assets/img/o_1j4o3ggt6cke129v15ahohsit74k.jpg"
     },
     {
       id: "masterclass-nutrir-ciclo",
@@ -33,6 +36,7 @@ const Programs = () => {
       description: "Descubre cómo nutrir tu ciclo y transformar tu bienestar hormonal con alimentación consciente.",
       price: "$150",
       rating: 5,
+      image: "https://bu-cdn.tiendup.com/business/42060/products/g52XY2_68c0a4b6bea22_medium.png"
     },
     {
       id: "explorando-fertilidad",
@@ -41,13 +45,15 @@ const Programs = () => {
       price: "Gratis",
       rating: 5,
       tag: "Gratuito",
+      image: "https://bu-cdn.tiendup.com/business/42060/products/W097PE_68c0a742073a6_medium.png"
     },
     {
-      id: "academia-nutfem",
-      title: "Academia NUTFEM: 5 Módulos de Contenido",
-      description: "Acceso en diferido para disfrutar y aprender a tu ritmo. Masterclass completas sobre nutrición femenina.",
+      id: "fertilidad-autocuidado",
+      title: "Fertilidad desde el Autocuidado",
+      description: "Curso completo sobre cómo mejorar tu fertilidad desde el autocuidado integral y la nutrición consciente.",
       price: "$450",
       rating: 5,
+      image: "https://bu-cdn.tiendup.com/business/42060/products/pP9155_692121c0867d2_medium.jpg"
     },
   ];
 
@@ -73,14 +79,25 @@ const Programs = () => {
               key={index}
               className="group bg-white rounded-3xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-2 border border-border/50"
             >
-              <div className="aspect-[4/3] bg-gradient-to-br from-primary/10 via-rose/20 to-terracotta/10 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-terracotta/20 group-hover:scale-110 transition-transform duration-500" />
+              <div className="aspect-[4/3] relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
+                {program.image ? (
+                  <img
+                    src={program.image}
+                    alt={program.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-rose/20 to-terracotta/10">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-terracotta/20 group-hover:scale-110 transition-transform duration-500" />
+                  </div>
+                )}
                 {program.tag && (
-                  <span className="absolute top-4 left-4 px-4 py-2 bg-white/95 backdrop-blur-sm text-primary text-xs font-bold rounded-full shadow-lg">
+                  <span className="absolute top-4 left-4 px-4 py-2 bg-white/95 backdrop-blur-sm text-primary text-xs font-bold rounded-full shadow-lg z-10">
                     {program.tag}
                   </span>
                 )}
-                <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center z-10">
                   <ArrowRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
