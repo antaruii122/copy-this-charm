@@ -76,76 +76,88 @@ const Programs = () => {
           </p>
         </div>
 
-        {/* Programs Grid - Academia NUTFEM Style */}
+        {/* Programs Grid - Academia NUTFEM Style with Staggered Effect */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {programs.map((program, index) => (
-            <Link
-              key={index}
-              to={`/aula-virtual/${program.id}`}
-              className="group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 flex flex-col"
-            >
-              {/* Image Container - SQUARE 1:1 like Academia NUTFEM */}
-              <div className="relative aspect-square overflow-hidden bg-white">
-                <img
-                  src={program.image}
-                  alt={program.title}
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                />
-                {/* Category Tag - Top Left */}
-                <div className="absolute top-4 left-4">
-                  <span className="inline-block px-3 py-1.5 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-md">
-                    {program.category}
-                  </span>
-                </div>
-                {/* Special Tags - Top Right */}
-                {program.tag && (
-                  <div className="absolute top-4 right-4">
-                    <span className={`inline-block px-3 py-1.5 text-white text-xs font-bold uppercase tracking-wider rounded-md ${program.tag === "Destacado" ? "bg-rose-dark" :
-                      program.tag === "Gratuito" ? "bg-green-600" :
-                        "bg-gold"
-                      }`}>
-                      {program.tag}
+          {programs.map((program, index) => {
+            // Staggered vertical positioning pattern
+            const staggerClasses = [
+              'md:translate-y-0',      // Card 1: Normal
+              'md:translate-y-8',      // Card 2: Down
+              'md:-translate-y-4',     // Card 3: Up
+              'md:translate-y-6',      // Card 4: Down
+              'md:-translate-y-6',     // Card 5: Up
+              'md:translate-y-4',      // Card 6: Down
+            ];
+
+            return (
+              <Link
+                key={index}
+                to={`/aula-virtual/${program.id}`}
+                className={`group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 flex flex-col ${staggerClasses[index % 6]}`}
+              >
+                {/* Image Container - SQUARE 1:1 like Academia NUTFEM */}
+                <div className="relative aspect-square overflow-hidden bg-white">
+                  <img
+                    src={program.image}
+                    alt={program.title}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  {/* Category Tag - Top Left */}
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-block px-3 py-1.5 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-md">
+                      {program.category}
                     </span>
                   </div>
-                )}
-              </div>
-
-              {/* Content - White Background like TiendUp */}
-              <div className="p-6 flex flex-col flex-grow">
-                {/* Title */}
-                <h3 className="font-serif text-xl md:text-2xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                  {program.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-muted-foreground text-sm md:text-base mb-4 line-clamp-3 flex-grow">
-                  {program.description}
-                </p>
-
-                {/* Rating */}
-                <div className="flex items-center gap-1 text-gold mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${i < program.rating ? "fill-current" : "text-muted"}`}
-                    />
-                  ))}
+                  {/* Special Tags - Top Right */}
+                  {program.tag && (
+                    <div className="absolute top-4 right-4">
+                      <span className={`inline-block px-3 py-1.5 text-white text-xs font-bold uppercase tracking-wider rounded-md ${program.tag === "Destacado" ? "bg-rose-dark" :
+                        program.tag === "Gratuito" ? "bg-green-600" :
+                          "bg-gold"
+                        }`}>
+                        {program.tag}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Price & CTA */}
-                <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                  <span className="text-primary font-bold text-2xl md:text-3xl">
-                    {program.price}
-                  </span>
-                  <div className="flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                    <span className="text-sm">Ver más</span>
-                    <ArrowRight className="w-4 h-4" />
+                {/* Content - White Background like TiendUp */}
+                <div className="p-6 flex flex-col flex-grow">
+                  {/* Title */}
+                  <h3 className="font-serif text-xl md:text-2xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                    {program.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-muted-foreground text-sm md:text-base mb-4 line-clamp-3 flex-grow">
+                    {program.description}
+                  </p>
+
+                  {/* Rating */}
+                  <div className="flex items-center gap-1 text-gold mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${i < program.rating ? "fill-current" : "text-muted"}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Price & CTA */}
+                  <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                    <span className="text-primary font-bold text-2xl md:text-3xl">
+                      {program.price}
+                    </span>
+                    <div className="flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
+                      <span className="text-sm">Ver más</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Bottom CTA */}
