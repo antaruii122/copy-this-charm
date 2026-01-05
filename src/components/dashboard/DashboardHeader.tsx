@@ -17,12 +17,11 @@ const DashboardHeader = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-1">
-            <span className="font-sans text-xl md:text-2xl text-muted-foreground">
-              Soma<span className="text-primary font-semibold">Integra</span>
+          <Link to="/" className="flex items-center gap-2">
+            <span className="font-serif text-xl md:text-2xl font-semibold text-primary">
+              Ricardo Rules
             </span>
-            <span className="text-primary text-lg">○</span>
-            <span className="text-xs text-muted-foreground ml-1 hidden sm:block">salud integrativa</span>
+            <span className="text-sage-light text-xs">🌿</span>
           </Link>
 
           {/* Desktop Navigation */}

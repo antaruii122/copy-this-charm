@@ -83,23 +83,23 @@ const MobileSidebar = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 h-full w-64 bg-white z-50 transform transition-transform duration-300",
+          "fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-cream via-background to-cream/50 backdrop-blur-xl z-50 transform transition-transform duration-300 shadow-2xl",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <span className="font-semibold text-foreground">Menú</span>
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+        <div className="flex items-center justify-between p-4 border-b border-border/30 bg-white/50 backdrop-blur-sm">
+          <span className="font-serif font-bold text-primary text-lg">Menú</span>
+          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="hover:bg-primary/10">
             <X size={20} />
           </Button>
         </div>
 
-        <nav className="py-4 overflow-y-auto max-h-[calc(100vh-60px)]">
-          <ul className="space-y-1 px-3">
+        <nav className="py-6 overflow-y-auto max-h-[calc(100vh-60px)]">
+          <ul className="space-y-2 px-3">
             {filteredMainItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeItem === item.label;
-              
+
               return (
                 <li key={item.label}>
                   <button
@@ -108,27 +108,33 @@ const MobileSidebar = () => {
                       setIsOpen(false);
                     }}
                     className={cn(
-                      "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                      "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 relative overflow-hidden",
                       isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                        ? "bg-gradient-to-r from-primary to-sage-dark text-primary-foreground shadow-md"
+                        : "text-foreground/70 hover:bg-white/80 hover:text-primary hover:shadow-sm hover:-translate-x-1 backdrop-blur-sm"
                     )}
                   >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
+                    {isActive && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-sage-dark/20 animate-pulse" />
+                    )}
+                    <Icon size={20} className="relative z-10" />
+                    <span className="relative z-10">{item.label}</span>
+                    {isActive && (
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-rose rounded-l-full" />
+                    )}
                   </button>
                 </li>
               );
             })}
           </ul>
 
-          <div className="my-4 border-t border-border mx-3" />
+          <div className="my-6 border-t border-border/30 mx-4" />
 
-          <ul className="space-y-1 px-3">
+          <ul className="space-y-2 px-3">
             {bottomItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeItem === item.label;
-              
+
               return (
                 <li key={item.label}>
                   <button
@@ -137,14 +143,14 @@ const MobileSidebar = () => {
                       setIsOpen(false);
                     }}
                     className={cn(
-                      "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                      "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 relative overflow-hidden",
                       isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                        ? "bg-gradient-to-r from-terracotta to-rose-dark text-primary-foreground shadow-md"
+                        : "text-foreground/70 hover:bg-white/80 hover:text-terracotta hover:shadow-sm hover:-translate-x-1 backdrop-blur-sm"
                     )}
                   >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
+                    <Icon size={20} className="relative z-10" />
+                    <span className="relative z-10">{item.label}</span>
                   </button>
                 </li>
               );

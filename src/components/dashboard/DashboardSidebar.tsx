@@ -78,27 +78,33 @@ const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) =>
   );
 
   return (
-    <aside className="w-64 min-h-[calc(100vh-200px)] border-r border-border bg-white hidden md:block">
-      <nav className="py-4">
+    <aside className="w-64 min-h-[calc(100vh-200px)] border-r border-border/50 bg-gradient-to-b from-cream via-background to-cream/50 shadow-soft hidden md:block">
+      <nav className="py-6">
         {/* Main Navigation */}
-        <ul className="space-y-1 px-3">
+        <ul className="space-y-2 px-3">
           {filteredMainItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeItem === item.label;
-            
+
             return (
               <li key={item.label}>
                 <button
                   onClick={() => onItemClick(item.label)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                    "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 relative overflow-hidden group",
                     isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                      ? "bg-gradient-to-r from-primary to-sage-dark text-primary-foreground shadow-md"
+                      : "text-foreground/70 hover:bg-white/80 hover:text-primary hover:shadow-sm hover:-translate-x-1 backdrop-blur-sm"
                   )}
                 >
-                  <Icon size={18} />
-                  <span>{item.label}</span>
+                  {isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-sage-dark/20 animate-pulse" />
+                  )}
+                  <Icon size={20} className={cn("relative z-10", isActive && "drop-shadow-lg")} />
+                  <span className="relative z-10">{item.label}</span>
+                  {isActive && (
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-rose rounded-l-full" />
+                  )}
                 </button>
               </li>
             );
@@ -106,27 +112,27 @@ const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) =>
         </ul>
 
         {/* Separator */}
-        <div className="my-4 border-t border-border mx-3" />
+        <div className="my-6 border-t border-border/30 mx-4" />
 
         {/* Bottom Navigation */}
-        <ul className="space-y-1 px-3">
+        <ul className="space-y-2 px-3">
           {bottomItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeItem === item.label;
-            
+
             return (
               <li key={item.label}>
                 <button
                   onClick={() => onItemClick(item.label)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                    "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 relative overflow-hidden group",
                     isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                      ? "bg-gradient-to-r from-terracotta to-rose-dark text-primary-foreground shadow-md"
+                      : "text-foreground/70 hover:bg-white/80 hover:text-terracotta hover:shadow-sm hover:-translate-x-1 backdrop-blur-sm"
                   )}
                 >
-                  <Icon size={18} />
-                  <span>{item.label}</span>
+                  <Icon size={20} className="relative z-10" />
+                  <span className="relative z-10">{item.label}</span>
                 </button>
               </li>
             );
