@@ -3,6 +3,7 @@ import ProfileView from "./ProfileView";
 import SettingsView from "./SettingsView";
 import BlogManager from "./BlogManager";
 import CourseVideos from "@/components/CourseVideos";
+import VideoUploadManager from "@/components/admin/VideoUploadManager";
 
 interface DashboardContentProps {
   activeSection: string;
@@ -23,6 +24,8 @@ const DashboardContent = ({ activeSection, courseId }: DashboardContentProps) =>
         return <ProfileView />;
       case "Mis Cursos":
         return <CourseVideos courseId={courseId} />;
+      case "Gestión de Videos":
+        return <VideoUploadManager />;
       case "Blog":
         return <BlogManager />;
       case "Ajustes":

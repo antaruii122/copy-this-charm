@@ -14,6 +14,7 @@ import {
   Settings,
   LogOut,
   FileText,
+  Video,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +29,7 @@ const mainItems: SidebarItem[] = [
   { label: "Escritorio", icon: LayoutDashboard, href: "#escritorio" },
   { label: "Mi perfil", icon: User, href: "#perfil" },
   { label: "Mis Cursos", icon: BookOpen, href: "#cursos" },
+  { label: "Gestión de Videos", icon: Video, href: "#videos", adminOnly: true },
   { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
   { label: "Reseñas", icon: Star, href: "#resenas" },
   { label: "Mis intentos de cuestionarios", icon: ClipboardList, href: "#cuestionarios" },

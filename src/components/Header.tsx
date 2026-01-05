@@ -23,7 +23,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           <a href="#" className="flex items-center gap-2">
             <span className="font-serif text-xl md:text-2xl font-semibold text-primary">
-              Ser Integral
+              Ricardo Rules
             </span>
             <span className="text-sage-light text-xs">🌿</span>
           </a>
