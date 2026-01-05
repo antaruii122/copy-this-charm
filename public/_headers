@@ -1,0 +1,77 @@
+# Netlify Headers Configuration for SomaIntegra
+# Optimizes caching, security, and performance
+
+# Default headers for all pages
+/*
+  # Security Headers
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  
+  # Content Security Policy (adjust as needed for your integrations)
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://*.clerk.accounts.dev https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://*.clerk.accounts.dev; frame-src 'self' https://*.youtube.com https://*.vimeo.com;
+  
+  # Performance Headers
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Static assets - long cache (1 year)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts - long cache
+*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# Images - medium cache (1 month)
+/public/lovable-uploads/*
+  Cache-Control: public, max-age=2592000
+
+*.jpg
+  Cache-Control: public, max-age=2592000
+
+*.jpeg
+  Cache-Control: public, max-age=2592000
+
+*.png
+  Cache-Control: public, max-age=2592000
+
+*.webp
+  Cache-Control: public, max-age=2592000
+
+*.svg
+  Cache-Control: public, max-age=2592000
+  Content-Type: image/svg+xml
+
+# Favicon - long cache
+/favicon.ico
+  Cache-Control: public, max-age=31536000
+
+# Sitemap and robots - short cache (1 day)
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+  Content-Type: application/xml
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+  Content-Type: text/plain
+
+# API routes - no cache
+/api/*
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Auth pages - no cache
+/auth/*
+  Cache-Control: no-cache, no-store, must-revalidate
+  X-Robots-Tag: noindex, nofollow
+
+# Protected area - no cache
+/aula-virtual/*
+  Cache-Control: no-cache, no-store, must-revalidate
+  X-Robots-Tag: noindex, nofollow

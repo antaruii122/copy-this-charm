@@ -6,28 +6,28 @@
 
 @layer base {
   :root {
-    --background: 40 40% 98%;
-    --foreground: 210 11% 15%;
+    --background: 40 25% 97%;
+    --foreground: 25 15% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 11% 15%;
+    --card-foreground: 25 15% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 11% 15%;
+    --popover-foreground: 25 15% 20%;
 
-    /* Primary: Warm Teal/Sage - Professional & Calming */
-    --primary: 156 24% 45%;
+    /* Primary: Dusty Rose/Mauve - Brand Color from @alimentatufertilidad */
+    --primary: 350 45% 55%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Soft Rose - Feminine & Warm */
-    --secondary: 351 29% 82%;
-    --secondary-foreground: 210 11% 15%;
+    /* Secondary: Warm Peach/Coral */
+    --secondary: 15 50% 70%;
+    --secondary-foreground: 25 15% 20%;
 
     --muted: 40 15% 94%;
-    --muted-foreground: 210 11% 46%;
+    --muted-foreground: 25 12% 45%;
 
-    /* Accent: Warm Terracotta - Vitality & Energy */
-    --accent: 14 44% 68%;
+    /* Accent: Deep Mauve - Richer version */
+    --accent: 350 50% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -35,30 +35,47 @@
 
     --border: 40 15% 90%;
     --input: 40 15% 90%;
-    --ring: 156 24% 45%;
+    --ring: 350 45% 55%;
 
     --radius: 0.75rem;
 
-    /* Custom Wellness Colors */
-    --sage: 156 24% 45%;
-    --sage-light: 156 24% 65%;
-    --sage-dark: 156 30% 30%;
-    --rose: 351 29% 82%;
-    --rose-dark: 351 35% 65%;
-    --terracotta: 14 44% 68%;
-    --cream: 40 40% 98%;
+    /* Brand Wellness Colors - Matching @alimentatufertilidad */
+    --rose-primary: 350 45% 55%;
+    /* Main brand color */
+    --rose-light: 350 50% 70%;
+    /* Lighter rose */
+    --rose-dark: 350 50% 40%;
+    /* Deeper rose */
+    --mauve: 340 35% 50%;
+    /* Complementary mauve */
+    --peach: 15 50% 70%;
+    /* Warm accent */
+    --cream: 40 25% 97%;
+    /* Background */
     --cream-dark: 40 20% 92%;
-    --warm-brown: 30 20% 35%;
-    --gold: 45 65% 55%;
-    --success: 88 50% 53%;
+    /* Subtle contrast */
+    --warm-brown: 25 25% 35%;
+    /* Text accents */
+    --gold: 40 70% 60%;
+    /* Highlights */
+    --sage-muted: 120 15% 65%;
+    /* Subtle green accent */
+    --lavender: 280 30% 75%;
+    /* Soft purple */
 
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(75 25% 35% / 0.85), hsl(75 20% 45% / 0.75));
-    --gradient-card: linear-gradient(180deg, hsl(40 25% 94%), hsl(40 20% 90%));
+    /* Premium Gradients - Brand Colors */
+    --gradient-primary: linear-gradient(135deg, hsl(350 45% 55%), hsl(340 50% 65%));
+    --gradient-rose: linear-gradient(135deg, hsl(350 50% 70%), hsl(15 50% 70%));
+    --gradient-sunset: linear-gradient(135deg, hsl(350 50% 70%), hsl(40 70% 65%), hsl(15 50% 65%));
+    --gradient-warm: linear-gradient(135deg, hsl(340 40% 50%), hsl(350 45% 55%));
+    --gradient-hero: linear-gradient(135deg, hsl(350 45% 50% / 0.95), hsl(340 40% 55% / 0.90));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(40 25% 98%));
 
-    /* Shadows */
-    --shadow-soft: 0 4px 20px hsl(30 10% 20% / 0.08);
-    --shadow-card: 0 8px 30px hsl(30 10% 20% / 0.1);
+    /* Enhanced Shadows - Warmer tones */
+    --shadow-soft: 0 4px 20px hsl(350 30% 40% / 0.08);
+    --shadow-card: 0 10px 40px hsl(350 30% 40% / 0.12);
+    --shadow-glow: 0 0 30px hsl(350 50% 60% / 0.35);
+    --shadow-glow-rose: 0 0 30px hsl(350 60% 70% / 0.4);
 
     /* Typography */
     --font-serif: 'Cormorant Garamond', Georgia, serif;
@@ -75,7 +92,7 @@
     --popover: 30 15% 12%;
     --popover-foreground: 40 30% 92%;
 
-    --primary: 75 30% 50%;
+    --primary: 156 50% 55%;
     --primary-foreground: 30 15% 10%;
 
     --secondary: 30 10% 20%;
@@ -84,12 +101,12 @@
     --muted: 30 10% 22%;
     --muted-foreground: 40 15% 65%;
 
-    --accent: 75 25% 55%;
+    --accent: 14 60% 65%;
     --accent-foreground: 30 15% 10%;
 
     --border: 30 10% 25%;
     --input: 30 10% 25%;
-    --ring: 75 30% 50%;
+    --ring: 156 50% 55%;
   }
 }
 
@@ -101,10 +118,23 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
+    overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
   }
 }
 
@@ -119,40 +149,109 @@
 
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    background-image: var(--gradient-primary);
   }
 
-  .bg-sage {
-    background-color: hsl(var(--sage));
+  .text-gradient-rose {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-rose);
   }
 
-  .text-sage {
-    color: hsl(var(--sage));
+  .text-gradient-sunset {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-sunset);
   }
 
-  .bg-cream {
-    background-color: hsl(var(--cream));
+  .bg-gradient-primary {
+    background-image: var(--gradient-primary);
   }
 
-  .bg-cream-dark {
-    background-color: hsl(var(--cream-dark));
+  .bg-gradient-rose {
+    background-image: var(--gradient-rose);
+  }
+
+  .bg-gradient-card {
+    background-image: var(--gradient-card);
+  }
+
+  /* Glow effects */
+  .glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glow-rose {
+    box-shadow: var(--shadow-glow-rose);
+  }
+
+  /* Decorative patterns */
+  .dot-pattern {
+    background-image: radial-gradient(circle at 2px 2px, hsl(var(--primary) / 0.15) 1px, transparent 0);
+    background-size: 32px 32px;
+  }
+
+  .wave-pattern {
+    background-image: repeating-linear-gradient(45deg,
+        transparent, transparent 10px,
+        hsl(var(--primary) / 0.05) 10px,
+        hsl(var(--primary) / 0.05) 20px);
   }
 }
 
 @layer components {
+
+  /* Enhanced Animations */
   .animate-fade-up {
-    animation: fadeUp 0.6s ease-out forwards;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
+    animation: fadeIn 0.6s ease-out forwards;
   }
 
+  .animate-slide-in-left {
+    animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulseSlow 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-2 shadow-card;
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Keyframes */
   @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -163,8 +262,99 @@
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-20px) rotate(2deg);
+    }
+  }
+
+  @keyframes pulseSlow {
+
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes gradient-shift {
+
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Animated gradient background */
+  .bg-gradient-animated {
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
   }
 }
