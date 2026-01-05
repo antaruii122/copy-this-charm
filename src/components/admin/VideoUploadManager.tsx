@@ -392,13 +392,17 @@ const VideoUploadManager = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-2">
         <div>
-          <h2 className="text-2xl font-semibold text-foreground">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full mb-3">
+            <Video className="w-4 h-4 text-primary" />
+            <span className="text-primary text-xs font-medium">ADMIN</span>
+          </div>
+          <h2 className="text-3xl font-bold text-foreground mb-2">
             Gestión de Videos
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Sube y administra los videos de tus cursos
+          <p className="text-muted-foreground">
+            Sube y administra los videos de tus cursos de manera profesional
           </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

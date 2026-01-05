@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -52,30 +52,37 @@ const Programs = () => {
   ];
 
   return (
-    <section id="programas" className="py-20 md:py-32 bg-card">
+    <section id="programas" className="py-20 md:py-32 bg-gradient-to-b from-background to-cream">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground mb-6">
-            Cursos & Recursos
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full mb-4">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-primary text-sm font-medium">PROGRAMAS TRANSFORMADORES</span>
+          </div>
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
+            Elige tu Camino de Bienestar
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-xl">
             Programas diseñados para acompañarte en cada etapa de tu vida hormonal
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {programs.map((program, index) => (
             <div
               key={index}
-              className="bg-background rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1"
+              className="group bg-white rounded-3xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-2 border border-border/50"
             >
-              <div className="aspect-[4/3] bg-muted relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/10" />
+              <div className="aspect-[4/3] bg-gradient-to-br from-primary/10 via-rose/20 to-terracotta/10 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-terracotta/20 group-hover:scale-110 transition-transform duration-500" />
                 {program.tag && (
-                  <span className="absolute top-4 left-4 px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
+                  <span className="absolute top-4 left-4 px-4 py-2 bg-white/95 backdrop-blur-sm text-primary text-xs font-bold rounded-full shadow-lg">
                     {program.tag}
                   </span>
                 )}
+                <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <ArrowRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-1 text-gold mb-3">
@@ -86,20 +93,22 @@ const Programs = () => {
                     />
                   ))}
                 </div>
-                <h3 className="font-serif text-lg text-foreground mb-4 line-clamp-2 min-h-[3.5rem]">
+                <h3 className="font-serif text-xl text-foreground mb-3 line-clamp-2 min-h-[3.5rem] group-hover:text-primary transition-colors">
                   {program.title}
                 </h3>
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-primary font-semibold text-xl">
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                  {program.description}
+                </p>
+                <div className="flex items-center justify-between mb-4 pt-4 border-t border-border/50">
+                  <span className="text-primary font-bold text-2xl">
                     {program.price}
                   </span>
                 </div>
                 <Link to={`/aula-virtual/${program.id}`}>
                   <Button
-                    variant="outline"
-                    className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 rounded-xl group-hover:scale-105 transition-transform"
                   >
-                    Ver más
+                    Comenzar Ahora
                   </Button>
                 </Link>
               </div>
@@ -107,12 +116,13 @@ const Programs = () => {
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-16">
           <Button
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8"
+            className="bg-gradient-to-r from-primary to-sage-dark hover:from-sage-dark hover:to-primary text-primary-foreground px-12 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
           >
-            Ver todos los programas
+            Ver Todos los Programas
+            <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </div>
