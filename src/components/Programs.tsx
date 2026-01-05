@@ -85,11 +85,11 @@ const Programs = () => {
               className="group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 flex flex-col"
             >
               {/* Image Container - SQUARE 1:1 like Academia NUTFEM */}
-              <div className="relative aspect-square overflow-hidden bg-cream">
+              <div className="relative aspect-square overflow-hidden bg-white">
                 <img
                   src={program.image}
                   alt={program.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
                 {/* Category Tag - Top Left */}
@@ -102,8 +102,8 @@ const Programs = () => {
                 {program.tag && (
                   <div className="absolute top-4 right-4">
                     <span className={`inline-block px-3 py-1.5 text-white text-xs font-bold uppercase tracking-wider rounded-md ${program.tag === "Destacado" ? "bg-rose-dark" :
-                        program.tag === "Gratuito" ? "bg-green-600" :
-                          "bg-gold"
+                      program.tag === "Gratuito" ? "bg-green-600" :
+                        "bg-gold"
                       }`}>
                       {program.tag}
                     </span>
