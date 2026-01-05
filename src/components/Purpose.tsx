@@ -38,12 +38,12 @@ const Purpose = () => {
             <span className="text-white text-sm font-bold tracking-wider">✨ BIENVENIDA ✨</span>
           </div>
 
-          <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl mb-8">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl mb-6">
             <span className="block text-gradient">Bienvenida a</span>
-            <span className="block text-foreground font-bold mt-2">NUTFEM</span>
+            <span className="block text-foreground font-bold mt-2">Alimenta tu Fertilidad</span>
           </h2>
 
-          <p className="text-muted-foreground text-xl md:text-2xl leading-relaxed">
+          <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
             Soy nutricionista especializada en salud hormonal femenina. Te acompaño a entender
             tu ciclo menstrual y nutrir tu cuerpo en cada fase para alcanzar el <span className="text-gradient font-semibold">equilibrio que mereces</span>.
           </p>

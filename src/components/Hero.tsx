@@ -30,18 +30,18 @@ const Hero = () => {
             </span>
           </div>
 
-          {/* Main Heading with Gradient Text */}
-          <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl leading-tight mb-8 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+          {/* Main Heading - REASONABLE SIZE */}
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
             <span className="block text-white font-bold">
-              Transforma tu Salud
+              Transforma tu Salud Hormonal
             </span>
-            <span className="block text-gradient-sunset text-7xl md:text-8xl lg:text-9xl font-bold mt-4">
-              Hormonal Naturalmente
+            <span className="block text-gradient-sunset text-5xl md:text-6xl lg:text-7xl font-bold mt-3">
+              Naturalmente
             </span>
           </h1>
 
-          {/* Subheading with Glow */}
-          <p className="text-white/95 text-xl md:text-2xl lg:text-3xl mb-12 leading-relaxed animate-fade-up max-w-3xl mx-auto font-light" style={{ animationDelay: "0.2s" }}>
+          {/* Subheading */}
+          <p className="text-white/95 text-lg md:text-xl lg:text-2xl mb-12 leading-relaxed animate-fade-up max-w-3xl mx-auto font-light" style={{ animationDelay: "0.2s" }}>
             Descubre cómo <span className="font-semibold text-gradient-sunset">nutrir tu cuerpo</span> y <span className="font-semibold">equilibrar tus hormonas</span> a través de la alimentación consciente
           </p>
 

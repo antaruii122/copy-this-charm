@@ -1,27 +1,27 @@
 /**
- * SEO Utilities for SomaIntegra
+ * SEO Utilities for Alimenta tu Fertilidad
  * Centralized SEO configuration and helpers
  */
 
 export const SITE_CONFIG = {
-    name: "SomaIntegra",
-    title: "SomaIntegra | Salud Integrativa y Bienestar Holístico",
-    description: "Transforma tu vida con nuestros programas de salud integrativa. Coaching de vida, meditación, nutrición consciente y bienestar holístico.",
-    url: "https://somaintegra.com",
+    name: "Alimenta tu Fertilidad",
+    title: "Alimenta tu Fertilidad | Nutrición Hormonal Femenina",
+    description: "Transforma tu salud hormonal con nutrición consciente. Programas especializados en fertilidad, ciclo menstrual y bienestar femenino.",
+    url: "https://alimentatufertilidad.com",
     locale: "es_MX",
     language: "es",
-    author: "SomaIntegra",
-    themeColor: "#6B8E23",
+    author: "Alimenta tu Fertilidad",
+    themeColor: "#B85871",
 
     contact: {
-        email: "contacto@somaintegra.com",
+        email: "contacto@alimentatufertilidad.com",
         phone: "+52-555-123-4567",
     },
 
     social: {
-        facebook: "https://facebook.com/somaintegra",
-        instagram: "https://instagram.com/somaintegra",
-        twitter: "@SomaIntegra",
+        facebook: "https://facebook.com/alimentatufertilidad",
+        instagram: "https://instagram.com/alimentatufertilidad",
+        twitter: "@alimentatufertilidad",
     },
 
     address: {
