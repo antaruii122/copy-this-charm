@@ -72,8 +72,8 @@ const CourseLandingPage = () => {
         if (slug) fetchCourseData();
     }, [slug]);
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-black"></div></div>;
-    if (!course) return <div className="min-h-screen flex items-center justify-center bg-white text-black font-serif text-2xl uppercase tracking-widest">Curso no encontrado</div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div></div>;
+    if (!course) return <div className="min-h-screen flex items-center justify-center bg-white text-primary font-serif text-2xl uppercase tracking-widest">Curso no encontrado</div>;
 
     return (
         <div className="min-h-screen bg-white text-black selection:bg-gold/30">
@@ -130,7 +130,7 @@ const CourseLandingPage = () => {
 
                         {/* description */}
                         <div className="space-y-6">
-                            <h2 className="font-serif text-3xl font-bold border-b border-black/10 pb-4 uppercase tracking-widest">
+                            <h2 className="font-serif text-3xl font-bold border-b border-border pb-4 uppercase tracking-widest">
                                 Acerca de este curso
                             </h2>
                             <div className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed text-lg">
@@ -157,7 +157,7 @@ const CourseLandingPage = () => {
 
                         {/* curriculum */}
                         <div className="space-y-10">
-                            <div className="flex items-end justify-between border-b border-black/10 pb-4">
+                            <div className="flex items-end justify-between border-b border-border pb-4">
                                 <h2 className="font-serif text-3xl font-bold uppercase tracking-widest">
                                     Contenido del programa
                                 </h2>
@@ -168,10 +168,10 @@ const CourseLandingPage = () => {
 
                             <Accordion type="single" collapsible className="w-full space-y-4">
                                 {modules.map((module, mIdx) => (
-                                    <AccordionItem key={module.id} value={`module-${mIdx}`} className="border rounded-2xl px-6 bg-white overflow-hidden data-[state=open]:border-black transition-colors">
+                                    <AccordionItem key={module.id} value={`module-${mIdx}`} className="border rounded-2xl px-6 bg-white overflow-hidden data-[state=open]:border-primary/30 transition-colors">
                                         <AccordionTrigger className="hover:no-underline py-6">
                                             <div className="flex items-center gap-4 text-left">
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-black text-white text-[10px] font-bold">
+                                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-[10px] font-bold">
                                                     {mIdx + 1}
                                                 </span>
                                                 <span className="font-serif text-xl font-bold uppercase">{module.title}</span>
