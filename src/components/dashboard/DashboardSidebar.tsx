@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useUser, useAuth } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard,
@@ -37,22 +37,13 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) => {
   const { user } = useUser();
-  const { getToken } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const syncAndCheck = async () => {
+    const checkAdminStatus = async () => {
       if (!user?.primaryEmailAddress?.emailAddress) return;
 
       try {
-        const token = await getToken({ template: "supabase" });
-        if (token) {
-          await supabase.auth.setSession({
-            access_token: token,
-            refresh_token: "",
-          });
-        }
-
         const emailToCheck = user.primaryEmailAddress.emailAddress.toLowerCase().trim();
         console.log("Checking admin for email:", emailToCheck);
 
@@ -69,8 +60,8 @@ const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) =>
       }
     };
 
-    syncAndCheck();
-  }, [user, getToken]);
+    checkAdminStatus();
+  }, [user]);
 
   const filteredMainItems = mainItems.filter(
     (item) => !item.adminOnly || isAdmin
