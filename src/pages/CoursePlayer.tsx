@@ -126,10 +126,10 @@ const CoursePlayer = () => {
         }
     };
 
-    if (loading) return <div className="h-screen bg-[#F8F9FA] flex items-center justify-center animate-pulse">Cargando experiencia...</div>;
+    if (loading) return <div className="h-screen bg-background flex items-center justify-center animate-pulse text-muted-foreground">Cargando experiencia...</div>;
 
     return (
-        <div className="h-screen flex flex-col bg-white overflow-hidden text-neutral-800">
+        <div className="h-screen flex flex-col bg-background overflow-hidden text-foreground">
 
             {/* Top Header - Sage Brand Color */}
             <header className="h-16 bg-sage text-white flex items-center justify-between px-4 shrink-0 shadow-sm border-b border-white/10">
@@ -151,9 +151,9 @@ const CoursePlayer = () => {
             <div className="flex flex-1 overflow-hidden">
 
                 {/* Sidebar - Left side as in photo */}
-                <aside className="w-[300px] border-r border-neutral-200 flex flex-col shrink-0 bg-neutral-50/50">
+                <aside className="w-[300px] border-r border-border flex flex-col shrink-0 bg-background/50">
                     <div className="p-4 border-b bg-white">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-400">Contenido del curso</h2>
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Contenido del curso</h2>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                         <Accordion type="multiple" defaultValue={modules.map(m => m.id)} className="w-full">
@@ -163,10 +163,10 @@ const CoursePlayer = () => {
 
                                 return (
                                     <AccordionItem key={module.id} value={module.id} className="border-b-0">
-                                        <AccordionTrigger className="px-4 py-3 hover:no-underline bg-white/50 hover:bg-white border-b transition-colors">
+                                        <AccordionTrigger className="px-4 py-3 hover:no-underline bg-background/50 hover:bg-background border-b border-border transition-colors">
                                             <div className="text-left">
-                                                <p className="text-sm font-bold text-neutral-700">{module.title}</p>
-                                                <p className="text-[10px] text-neutral-400 font-bold uppercase">{completedCount}/{moduleVideos.length} LECCIONES</p>
+                                                <p className="text-sm font-bold text-foreground">{module.title}</p>
+                                                <p className="text-[10px] text-muted-foreground font-bold uppercase">{completedCount}/{moduleVideos.length} LECCIONES</p>
                                             </div>
                                         </AccordionTrigger>
                                         <AccordionContent className="p-0 border-b bg-white">
@@ -175,8 +175,8 @@ const CoursePlayer = () => {
                                                     key={video.id}
                                                     onClick={() => handleLessonSelect(video)}
                                                     className={cn(
-                                                        "w-full flex items-center gap-3 px-6 py-3 text-left transition-all hover:bg-neutral-50",
-                                                        selectedVideo?.id === video.id ? "bg-black/5" : ""
+                                                        "w-full flex items-center gap-3 px-6 py-3 text-left transition-all hover:bg-muted",
+                                                        selectedVideo?.id === video.id ? "bg-primary/5 border-r-2 border-primary" : ""
                                                     )}
                                                 >
                                                     {progress[video.id] ? (
@@ -185,7 +185,7 @@ const CoursePlayer = () => {
                                                         <Circle className="w-4 h-4 text-neutral-300 shrink-0" />
                                                     )}
                                                     <div className="flex-1 min-w-0">
-                                                        <p className={cn("text-xs font-medium", selectedVideo?.id === video.id ? "text-black" : "text-neutral-500")}>
+                                                        <p className={cn("text-xs font-medium", selectedVideo?.id === video.id ? "text-primary" : "text-muted-foreground")}>
                                                             {video.title}
                                                         </p>
                                                         <div className="flex items-center gap-2 mt-1">
@@ -204,7 +204,7 @@ const CoursePlayer = () => {
                 </aside>
 
                 {/* Main Content Area */}
-                <main className="flex-1 flex flex-col overflow-y-auto bg-white">
+                <main className="flex-1 flex flex-col overflow-y-auto bg-background">
 
                     {/* Video Player Area */}
                     <div className="w-full aspect-video bg-black relative flex items-center justify-center">
@@ -262,12 +262,12 @@ const CoursePlayer = () => {
                         </div>
 
                         {/* Footer Navigation Buttons */}
-                        <div className="flex items-center justify-center gap-4 border-t pt-12 pb-20">
-                            <Button variant="ghost" className="bg-neutral-100 text-neutral-500 rounded-md px-6 text-[10px] font-bold uppercase tracking-wider gap-2">
+                        <div className="flex items-center justify-center gap-4 border-t border-border pt-12 pb-20">
+                            <Button variant="ghost" className="bg-muted text-muted-foreground rounded-md px-6 text-[10px] font-bold uppercase tracking-wider gap-2 hover:bg-primary/10 hover:text-primary">
                                 <ChevronLeft className="w-3 h-3" />
                                 Anterior
                             </Button>
-                            <Button variant="ghost" className="bg-neutral-100 text-neutral-500 rounded-md px-6 text-[10px] font-bold uppercase tracking-wider gap-2">
+                            <Button variant="ghost" className="bg-muted text-muted-foreground rounded-md px-6 text-[10px] font-bold uppercase tracking-wider gap-2 hover:bg-primary/10 hover:text-primary">
                                 Siguiente
                                 <ChevronRight className="w-3 h-3" />
                             </Button>
