@@ -76,7 +76,7 @@ const CourseLandingPage = () => {
     if (!course) return <div className="min-h-screen flex items-center justify-center bg-white text-primary font-serif text-2xl uppercase tracking-widest">Curso no encontrado</div>;
 
     return (
-        <div className="min-h-screen bg-white text-black selection:bg-gold/30">
+        <div className="min-h-screen bg-background text-foreground selection:bg-gold/30">
             <DashboardHeader />
 
             {/* Hero Section */}
@@ -91,17 +91,17 @@ const CourseLandingPage = () => {
                         <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] uppercase">
                             {course.title}
                         </h1>
-                        <p className="text-neutral-400 text-lg md:text-xl max-w-xl leading-relaxed">
+                        <p className="text-white/80 text-lg md:text-xl max-w-xl leading-relaxed">
                             {course.description}
                         </p>
                         <div className="flex flex-wrap gap-6 pt-4">
                             <div className="flex items-center gap-2">
                                 <Users className="w-5 h-5 text-white/80" />
-                                <span className="text-sm font-medium text-neutral-100">Acceso de por vida</span>
+                                <span className="text-sm font-medium text-white">Acceso de por vida</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Medal className="w-5 h-5 text-white/80" />
-                                <span className="text-sm font-medium text-neutral-100">Certificado incluido</span>
+                                <span className="text-sm font-medium text-white">Certificado incluido</span>
                             </div>
                         </div>
                     </div>
@@ -133,22 +133,22 @@ const CourseLandingPage = () => {
                             <h2 className="font-serif text-3xl font-bold border-b border-border pb-4 uppercase tracking-widest">
                                 Acerca de este curso
                             </h2>
-                            <div className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed text-lg">
+                            <div className="prose prose-neutral max-w-none text-foreground leading-relaxed text-lg">
                                 {course.long_description || course.description}
                             </div>
                         </div>
 
                         {/* outcomes */}
                         {course.learning_outcomes && Array.isArray(course.learning_outcomes) && course.learning_outcomes.length > 0 && (
-                            <div className="bg-neutral-50 rounded-3xl p-10 space-y-8 border border-neutral-100">
+                            <div className="bg-muted rounded-3xl p-10 space-y-8 border border-border">
                                 <h2 className="font-serif text-3xl font-bold uppercase tracking-widest">
                                     ¿Qué aprenderás?
                                 </h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {course.learning_outcomes.map((outcome: string, idx: number) => (
                                         <div key={idx} className="flex gap-4">
-                                            <CheckCircle2 className="w-6 h-6 text-black shrink-0 mt-0.5" />
-                                            <p className="text-neutral-700 font-medium leading-relaxed">{outcome}</p>
+                                            <CheckCircle2 className="w-6 h-6 text-primary shrink-0 mt-0.5" />
+                                            <p className="text-foreground font-medium leading-relaxed">{outcome}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -161,7 +161,7 @@ const CourseLandingPage = () => {
                                 <h2 className="font-serif text-3xl font-bold uppercase tracking-widest">
                                     Contenido del programa
                                 </h2>
-                                <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest">
+                                <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
                                     {modules.length} Módulos • {modules.reduce((acc, m) => acc + m.videos.length, 0)} Lecciones
                                 </p>
                             </div>
@@ -180,13 +180,13 @@ const CourseLandingPage = () => {
                                         <AccordionContent className="pb-6">
                                             <div className="space-y-2 pt-2">
                                                 {module.videos.map((video, vIdx) => (
-                                                    <div key={vIdx} className="flex items-center justify-between p-3 rounded-xl hover:bg-neutral-50 group transition-colors">
+                                                    <div key={vIdx} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted group transition-colors">
                                                         <div className="flex items-center gap-3">
-                                                            <Play className="w-4 h-4 text-neutral-300 group-hover:text-black transition-colors" />
-                                                            <span className="text-neutral-600 font-medium">{video.title}</span>
+                                                            <Play className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                                            <span className="text-foreground font-medium">{video.title}</span>
                                                         </div>
                                                         {video.duration_seconds && (
-                                                            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                                                 {Math.floor(video.duration_seconds / 60)}:{(video.duration_seconds % 60).toString().padStart(2, '0')}
                                                             </span>
                                                         )}
@@ -205,11 +205,11 @@ const CourseLandingPage = () => {
                                 <h2 className="font-serif text-3xl font-bold uppercase tracking-widest border-b border-primary/10 pb-4 text-foreground">
                                     ¿Para quién es este curso?
                                 </h2>
-                                <div className="bg-neutral-50 text-foreground rounded-3xl p-10 flex gap-8 items-start shadow-sm border border-neutral-100">
+                                <div className="bg-muted text-foreground rounded-3xl p-10 flex gap-8 items-start shadow-sm border border-border">
                                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                                         <Medal className="w-6 h-6 text-primary" />
                                     </div>
-                                    <p className="text-neutral-600 text-lg leading-relaxed italic">
+                                    <p className="text-foreground text-lg leading-relaxed italic">
                                         {course.target_audience}
                                     </p>
                                 </div>
@@ -221,10 +221,10 @@ const CourseLandingPage = () => {
                     <div className="lg:col-span-4 space-y-8">
                         <Card className="sticky top-32 p-10 rounded-[2.5rem] border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] bg-white space-y-8">
                             <div className="space-y-2">
-                                <span className="text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">Inversión en tu salud</span>
+                                <span className="text-muted-foreground font-bold text-[10px] uppercase tracking-[0.2em]">Inversión en tu salud</span>
                                 <div className="flex items-baseline gap-2">
                                     <span className="font-serif text-5xl font-bold">{course.price || "GRATIS"}</span>
-                                    {course.price && <span className="text-neutral-400 font-medium uppercase text-sm">USD</span>}
+                                    {course.price && <span className="text-muted-foreground font-medium uppercase text-sm">USD</span>}
                                 </div>
                             </div>
 
@@ -237,27 +237,27 @@ const CourseLandingPage = () => {
                             </Button>
 
                             <div className="space-y-4 pt-4">
-                                <div className="flex items-center gap-3 text-sm text-neutral-600">
-                                    <ShieldCheck className="w-5 h-5 text-black" />
+                                <div className="flex items-center gap-3 text-sm text-foreground">
+                                    <ShieldCheck className="w-5 h-5 text-primary" />
                                     <span>Pago seguro y encriptado</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm text-neutral-600">
-                                    <Clock className="w-5 h-5 text-black" />
+                                    <Clock className="w-5 h-5 text-primary" />
                                     <span>Acceso inmediato tras compra</span>
                                 </div>
                             </div>
 
                             <div className="border-t pt-8 space-y-6">
-                                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Impartido por</p>
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Impartido por</p>
                                 <div className="flex items-center gap-4">
                                     <img
                                         src={course.author_image_url || "/placeholder.svg"}
                                         alt={course.author_name || "Autor"}
-                                        className="w-16 h-16 rounded-2xl object-cover bg-neutral-100"
+                                        className="w-16 h-16 rounded-2xl object-cover bg-muted"
                                     />
                                     <div>
                                         <h4 className="font-serif text-lg font-bold uppercase">{course.author_name || "Gabriela Suazo"}</h4>
-                                        <p className="text-xs text-neutral-500 uppercase tracking-wider">{course.author_role || "Instructora Ayurveda"}</p>
+                                        <p className="text-xs text-muted-foreground uppercase tracking-wider">{course.author_role || "Instructora Ayurveda"}</p>
                                     </div>
                                 </div>
                             </div>

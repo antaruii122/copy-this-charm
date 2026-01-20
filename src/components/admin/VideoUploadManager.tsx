@@ -814,8 +814,8 @@ const VideoUploadManager = () => {
                                     className={cn(
                                         "group relative p-6 rounded-3xl border bg-white cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1",
                                         selectedCourse === course.id
-                                            ? "border-black border-2 shadow-[0_0_20px_rgba(0,0,0,0.1)] bg-neutral-50 scale-[1.02]"
-                                            : "border-neutral-100 hover:border-black/20"
+                                            ? "border-primary border-2 shadow-[0_0_20px_rgba(191,89,103,0.1)] bg-muted scale-[1.02]"
+                                            : "border-border hover:border-primary/20"
                                     )}
                                 >
                                     <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
@@ -878,7 +878,7 @@ const VideoUploadManager = () => {
                             <Card className="rounded-3xl overflow-hidden border-none shadow-sm bg-card/30 backdrop-blur-sm">
                                 <CardHeader className="pb-4">
                                     <CardTitle className="flex items-center gap-2 text-xl font-serif">
-                                        <Upload className="w-5 h-5 text-black" />
+                                        <Upload className="w-5 h-5 text-primary" />
                                         Paso 2: Subir y Organizar Lecciones
                                     </CardTitle>
                                 </CardHeader>
@@ -1215,7 +1215,7 @@ const VideoUploadManager = () => {
 
                                     <div className="pt-4 border-t">
                                         <Button
-                                            className="w-full bg-black text-white rounded-full hover:bg-neutral-800"
+                                            className="w-full bg-primary text-white rounded-full hover:bg-primary/90"
                                             onClick={() => handleSaveMarketing()}
                                         >
                                             <Save className="w-4 h-4 mr-2" />
@@ -1320,7 +1320,7 @@ const VideoTable = ({
                         )}
                     </TableCell>
                     <TableCell>
-                        <div className="w-32 h-20 bg-neutral-900 rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-black/10 group/preview relative">
+                        <div className="w-32 h-20 bg-sage rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-border group/preview relative">
                             <video
                                 src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${video.video_path}`}
                                 className="w-full h-full object-cover opacity-60 group-hover/preview:opacity-100 transition-opacity"

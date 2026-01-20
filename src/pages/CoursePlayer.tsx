@@ -182,15 +182,15 @@ const CoursePlayer = () => {
                                                     {progress[video.id] ? (
                                                         <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
                                                     ) : (
-                                                        <Circle className="w-4 h-4 text-neutral-300 shrink-0" />
+                                                        <Circle className="w-4 h-4 text-muted-foreground shrink-0" />
                                                     )}
                                                     <div className="flex-1 min-w-0">
                                                         <p className={cn("text-xs font-medium", selectedVideo?.id === video.id ? "text-primary" : "text-muted-foreground")}>
                                                             {video.title}
                                                         </p>
                                                         <div className="flex items-center gap-2 mt-1">
-                                                            <Play className="w-3 h-3 text-neutral-300" />
-                                                            <span className="text-[9px] font-bold text-neutral-300 uppercase italic">00:44</span>
+                                                            <Play className="w-3 h-3 text-muted-foreground" />
+                                                            <span className="text-[9px] font-bold text-muted-foreground uppercase italic">00:44</span>
                                                         </div>
                                                     </div>
                                                 </button>
@@ -248,14 +248,14 @@ const CoursePlayer = () => {
                             </div>
 
                             <div className="flex gap-4">
-                                <div className="w-10 h-10 rounded-full bg-neutral-100 shrink-0 border border-neutral-200"></div>
+                                <div className="w-10 h-10 rounded-full bg-muted shrink-0 border border-border"></div>
                                 <div className="flex-1 space-y-4">
                                     <textarea
-                                        className="w-full p-4 border rounded-xl bg-neutral-50 focus:ring-1 focus:ring-black outline-none min-h-[100px] text-sm"
+                                        className="w-full p-4 border rounded-xl bg-muted focus:ring-1 focus:ring-primary outline-none min-h-[100px] text-sm"
                                         placeholder="Escribe tu comentario aquí..."
                                     />
                                     <div className="flex justify-end">
-                                        <Button className="rounded-lg px-8 border border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-50 font-medium">Enviar</Button>
+                                        <Button className="rounded-lg px-8 border border-border bg-background text-muted-foreground hover:bg-muted font-medium">Enviar</Button>
                                     </div>
                                 </div>
                             </div>
