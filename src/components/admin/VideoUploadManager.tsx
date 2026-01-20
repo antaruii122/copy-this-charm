@@ -73,6 +73,13 @@ interface Course {
   description: string | null;
   price: string | null;
   is_featured: boolean;
+  long_description: string | null;
+  learning_outcomes: any;
+  target_audience: string | null;
+  curriculum_summary: string | null;
+  author_name: string | null;
+  author_image_url: string | null;
+  author_role: string | null;
 }
 
 interface CourseVideo {
@@ -128,6 +135,12 @@ const VideoUploadManager = () => {
     description: "",
     price: "",
     is_featured: false,
+    long_description: "",
+    learning_outcomes: [] as string[],
+    target_audience: "",
+    curriculum_summary: "",
+    author_name: "",
+    author_role: "",
   });
 
   const [videoMetadata, setVideoMetadata] = useState({
@@ -142,6 +155,35 @@ const VideoUploadManager = () => {
     title: "",
     description: "",
   });
+
+  const selectedCourseData = courses.find(c => c.id === selectedCourse);
+
+  const updateCourseMarketing = (updates: Partial<Course>) => {
+    setCourses(prev => prev.map(c =>
+      c.id === selectedCourse ? { ...c, ...updates } : c
+    ));
+  };
+
+  const handleSaveMarketing = async () => {
+    if (!selectedCourseData) return;
+    try {
+      const { error } = await supabase
+        .from("courses")
+        .update({
+          long_description: selectedCourseData.long_description,
+          target_audience: selectedCourseData.target_audience,
+          author_name: selectedCourseData.author_name,
+          author_role: selectedCourseData.author_role,
+          author_image_url: selectedCourseData.author_image_url,
+        })
+        .eq("id", selectedCourse);
+
+      if (error) throw error;
+      toast({ title: "Cambios guardados", description: "La información de marketing ha sido actualizada." });
+    } catch (error: any) {
+      toast({ title: "Error al guardar", description: error.message, variant: "destructive" });
+    }
+  };
 
   useEffect(() => {
     const syncAuth = async () => {
@@ -224,7 +266,7 @@ const VideoUploadManager = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setCourses(data || []);
+      setCourses((data as any) || []);
     } catch (error) {
       console.error("Error fetching courses:", error);
       toast({
@@ -370,7 +412,19 @@ const VideoUploadManager = () => {
       if (error) throw error;
 
       toast({ title: "Curso creado exitosamente" });
-      setNewCourseForm({ title: "", slug: "", description: "", price: "", is_featured: false });
+      setNewCourseForm({
+        title: "",
+        slug: "",
+        description: "",
+        price: "",
+        is_featured: false,
+        long_description: "",
+        learning_outcomes: [],
+        target_audience: "",
+        curriculum_summary: "",
+        author_name: "",
+        author_role: "",
+      });
       setIsDialogOpen(false);
       fetchCourses();
       setSelectedCourse(data.id);
@@ -666,6 +720,10 @@ const VideoUploadManager = () => {
           <TabsTrigger value="admins" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white">
             <Users className="w-4 h-4" />
             Accesos
+          </TabsTrigger>
+          <TabsTrigger value="marketing" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white" disabled={!selectedCourse}>
+            <Layout className="w-4 h-4" />
+            Marketing
           </TabsTrigger>
           <TabsTrigger value="ajustes" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white">
             <Settings className="w-4 h-4" />
@@ -1107,6 +1165,86 @@ const VideoUploadManager = () => {
             <p className="text-muted-foreground">Próximamente: Podrás configurar colores de marca, integraciones de pago y personalización avanzada de la plataforma.</p>
             <Button variant="outline" className="rounded-2xl" disabled>Configurar Marca</Button>
           </div>
+        </TabsContent>
+        <TabsContent value="marketing" className="space-y-8">
+          {selectedCourseData && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
+                <div className="space-y-2">
+                  <h3 className="font-serif text-2xl font-bold">Página de Ventas</h3>
+                  <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Descripción Larga (Markdown)</Label>
+                    <Textarea
+                      placeholder="Describe el curso en detalle..."
+                      className="min-h-[200px]"
+                      value={selectedCourseData.long_description || ""}
+                      onChange={(e) => updateCourseMarketing({ long_description: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>¿A quién va dirigido?</Label>
+                    <Textarea
+                      placeholder="Ej: Mujeres que buscan equilibrio hormonal..."
+                      value={selectedCourseData.target_audience || ""}
+                      onChange={(e) => updateCourseMarketing({ target_audience: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
+                <div className="space-y-2">
+                  <h3 className="font-serif text-2xl font-bold">Autor & Diseño</h3>
+                  <p className="text-sm text-muted-foreground">Define quién imparte el programa.</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Nombre del Autor</Label>
+                      <Input
+                        placeholder="Nombre..."
+                        value={selectedCourseData.author_name || ""}
+                        onChange={(e) => updateCourseMarketing({ author_name: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Rol/Título</Label>
+                      <Input
+                        placeholder="Ej: Nutricionista Humana..."
+                        value={selectedCourseData.author_role || ""}
+                        onChange={(e) => updateCourseMarketing({ author_role: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>URL Imagen Autor</Label>
+                    <Input
+                      placeholder="https://..."
+                      value={selectedCourseData.author_image_url || ""}
+                      onChange={(e) => updateCourseMarketing({ author_image_url: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <Button
+                      className="w-full bg-black text-white rounded-full hover:bg-neutral-800"
+                      onClick={() => handleSaveMarketing()}
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Guardar Cambios de Marketing
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 

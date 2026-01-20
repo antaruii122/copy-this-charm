@@ -203,6 +203,14 @@ export type Database = {
           slug: string
           title: string
           updated_at: string
+          long_description: string | null
+          learning_outcomes: Json | null
+          target_audience: string | null
+          curriculum_summary: string | null
+          rating: number | null
+          author_name: string | null
+          author_image_url: string | null
+          author_role: string | null
         }
         Insert: {
           created_at?: string
@@ -214,6 +222,14 @@ export type Database = {
           slug: string
           title: string
           updated_at?: string
+          long_description?: string | null
+          learning_outcomes?: Json | null
+          target_audience?: string | null
+          curriculum_summary?: string | null
+          rating?: number | null
+          author_name?: string | null
+          author_image_url?: string | null
+          author_role?: string | null
         }
         Update: {
           created_at?: string
@@ -225,6 +241,14 @@ export type Database = {
           slug?: string
           title?: string
           updated_at?: string
+          long_description?: string | null
+          learning_outcomes?: Json | null
+          target_audience?: string | null
+          curriculum_summary?: string | null
+          rating?: number | null
+          author_name?: string | null
+          author_image_url?: string | null
+          author_role?: string | null
         }
         Relationships: []
       }

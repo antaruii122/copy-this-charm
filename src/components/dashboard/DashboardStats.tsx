@@ -259,7 +259,7 @@ const DashboardStats = () => {
               return (
                 <Link
                   key={course.id}
-                  to={`/aula-virtual/${course.slug}`}
+                  to={`/aprender/${course.slug}`}
                   className="group relative bg-white/80 backdrop-blur-sm border border-border/50 rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1"
                 >
                   {/* Course Thumbnail */}

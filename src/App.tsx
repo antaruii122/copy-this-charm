@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Blog from "./pages/Blog";
 import Auth from "./pages/Auth";
+import CourseLandingPage from "./pages/CourseLandingPage";
+import CoursePlayer from "./pages/CoursePlayer";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -34,6 +36,12 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/cursos/:slug" element={<CourseLandingPage />} />
+            <Route path="/aprender/:slug" element={
+              <ProtectedRoute>
+                <CoursePlayer />
+              </ProtectedRoute>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

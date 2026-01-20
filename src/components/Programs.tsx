@@ -1,67 +1,40 @@
-import { Star, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Star, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const Programs = () => {
-  const programs = [
-    {
-      id: "meno-21-dias",
-      title: "MENO: 21 Días de Transformación en Menopausia",
-      description: "Programa online para transitar la menopausia con vitalidad, equilibrio y una nutrición adaptada a esta etapa.",
-      price: "$1,200",
-      category: "MENOPAUSIA",
-      rating: 5,
-      tag: "Destacado",
-      image: "https://bu-cdn.tiendup.com/business/42060/products/g52XY2_68c0a4b6bea22_medium.png"
-    },
-    {
-      id: "nutricion-fertilidad",
-      title: "Nutrición en Fertilidad Natural y Asistida",
-      description: "Programa nutricional diseñado para profesionales de la salud y mujeres que buscan optimizar su fertilidad.",
-      price: "$800",
-      category: "FERTILIDAD",
-      rating: 5,
-      image: "https://bu-cdn.tiendup.com/business/42060/products/DxRXeA_685966ed21eb9_medium.png"
-    },
-    {
-      id: "membresia-nutriendo-me",
-      title: "Membresía Nutriendo-Me",
-      description: "Acceso mensual a contenido exclusivo, recetas, guías y acompañamiento continuo para nutrir tu ciclo.",
-      price: "$99/mes",
-      category: "MEMBRESÍA",
-      rating: 5,
-      tag: "Popular",
-      image: "https://bu-cdn.tiendup.com/business/42060/themes/lite/assets/img/o_1j4o3ggt6cke129v15ahohsit74k.jpg"
-    },
-    {
-      id: "masterclass-nutrir-ciclo",
-      title: "Masterclass: Nutrir tu Ciclo",
-      description: "Descubre cómo nutrir tu ciclo y transformar tu bienestar hormonal con alimentación consciente.",
-      price: "$150",
-      category: "CICLO MENSTRUAL",
-      rating: 5,
-      image: "https://bu-cdn.tiendup.com/business/42060/products/g52XY2_68c0a4b6bea22_medium.png"
-    },
-    {
-      id: "explorando-fertilidad",
-      title: "Explorando la Fertilidad",
-      description: "Un espacio seguro y educativo para descubrir sobre fertilidad, nutrición y bienestar reproductivo.",
-      price: "Gratis",
-      category: "FERTILIDAD",
-      rating: 5,
-      tag: "Gratuito",
-      image: "https://bu-cdn.tiendup.com/business/42060/products/W097PE_68c0a742073a6_medium.png"
-    },
-    {
-      id: "fertilidad-autocuidado",
-      title: "Fertilidad desde el Autocuidado",
-      description: "Curso completo sobre cómo mejorar tu fertilidad desde el autocuidado integral y la nutrición consciente.",
-      price: "$450",
-      category: "FERTILIDAD",
-      rating: 5,
-      image: "https://bu-cdn.tiendup.com/business/42060/products/pP9155_692121c0867d2_medium.jpg"
-    },
-  ];
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("courses")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setPrograms(data || []);
+      } catch (error) {
+        console.error("Error fetching programs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="py-20 flex justify-center items-center">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <section id="programas" className="py-20 md:py-32 bg-gradient-to-b from-background to-cream">
@@ -93,13 +66,13 @@ const Programs = () => {
             return (
               <Link
                 key={index}
-                to={`/aula-virtual/${program.id}`}
+                to={`/cursos/${program.slug}`}
                 className={`group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:scale-105 flex flex-col ${staggerClass}`}
               >
                 {/* Image Container - SQUARE 1:1 like Academia NUTFEM */}
                 <div className="relative aspect-square overflow-hidden bg-white">
                   <img
-                    src={program.image}
+                    src={program.image_url || "/placeholder.svg"}
                     alt={program.title}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
@@ -107,7 +80,7 @@ const Programs = () => {
                   {/* Category Tag - Top Left */}
                   <div className="absolute top-4 left-4">
                     <span className="inline-block px-3 py-1.5 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-md">
-                      {program.category}
+                      {program.category || "CURSO"}
                     </span>
                   </div>
                   {/* Special Tags - Top Right */}
