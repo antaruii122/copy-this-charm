@@ -1,8 +1,12 @@
 import { ClerkProvider } from "@clerk/clerk-react";
 import { ReactNode } from "react";
 
-// Clerk Publishable Key
-const CLERK_PUBLISHABLE_KEY = "pk_test_cXVhbGl0eS13b21iYXQtOS5jbGVyay5hY2NvdW50cy5kZXYk";
+// Clerk Publishable Key from environment variable
+const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!CLERK_PUBLISHABLE_KEY) {
+  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY environment variable");
+}
 
 interface ClerkProviderWrapperProps {
   children: ReactNode;
