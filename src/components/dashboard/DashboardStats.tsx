@@ -27,11 +27,11 @@ interface Course {
 
 // Category colors for nutrition-themed badges
 const categoryColors: Record<string, string> = {
-  "MENOPAUSIA": "bg-terracotta text-white",
-  "FERTILIDAD": "bg-sage-dark text-white",
-  "CICLO MENSTRUAL": "bg-rose-dark text-white",
-  "MEMBRESIA": "bg-gold text-white",
-  "DEFAULT": "bg-primary text-white"
+  "MENOPAUSIA": "bg-black text-white",
+  "FERTILIDAD": "bg-black text-white",
+  "CICLO MENSTRUAL": "bg-black text-white",
+  "MEMBRESIA": "bg-[#D4AF37] text-black",
+  "DEFAULT": "bg-black text-white"
 };
 
 // Fruit icons for progress milestones
@@ -186,9 +186,9 @@ const DashboardStats = () => {
     return { threshold: 0, icon: "🌱", label: "Comenzando" };
   };
   const gradients = [
-    "from-primary/10 via-sage-light/10 to-rose/10",
-    "from-rose/10 via-terracotta/10 to-gold/10",
-    "from-terracotta/10 via-primary/10 to-sage-light/10",
+    "from-black/5 to-black/10",
+    "from-black/5 to-black/10",
+    "from-black/5 to-black/10",
   ];
 
   return (
@@ -207,8 +207,8 @@ const DashboardStats = () => {
               <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index]} opacity-0 group-hover:opacity-20 transition-opacity`} />
 
               {/* Icon */}
-              <div className={`relative z-10 w-14 h-14 rounded-xl bg-gradient-to-br ${gradients[index]} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform flex-shrink-0`}>
-                <Icon size={24} className="text-primary" />
+              <div className={`relative z-10 w-14 h-14 rounded-xl bg-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
+                <Icon size={24} className="text-white" />
               </div>
 
               {/* Content */}
@@ -225,10 +225,10 @@ const DashboardStats = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-sage-dark flex items-center justify-center">
-              <PlayCircle className="w-5 h-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center">
+              <PlayCircle className="w-5 h-5 text-white" />
             </div>
-            <h2 className="text-2xl font-serif font-bold text-foreground">Continúa Aprendiendo</h2>
+            <h2 className="text-2xl font-serif font-bold text-foreground uppercase tracking-tight">Mis Programas</h2>
           </div>
           <Link to="/aula-virtual" className="text-primary hover:text-primary/80 text-sm font-semibold flex items-center gap-1 transition-colors">
             Ver todos
@@ -300,7 +300,7 @@ const DashboardStats = () => {
                             >
                               {/* Current progress icon */}
                               <span className="absolute -right-2 -top-1 text-lg drop-shadow-md">
-                                {progressMilestone.icon}
+                                ✨
                               </span>
                             </div>
                             {/* Milestone markers */}
@@ -311,7 +311,7 @@ const DashboardStats = () => {
                                   className={`text-xs ${course.progress >= milestone.threshold ? 'opacity-100' : 'opacity-30'}`}
                                   style={{ position: 'absolute', left: `${milestone.threshold - 2}%` }}
                                 >
-                                  {course.progress >= milestone.threshold ? milestone.icon : '○'}
+                                  {course.progress >= milestone.threshold ? "✦" : "○"}
                                 </span>
                               ))}
                             </div>
@@ -361,7 +361,7 @@ const DashboardStats = () => {
                         </span>
                         <Button
                           size="sm"
-                          className="bg-gradient-to-r from-primary to-sage-dark text-white hover:scale-105 transition-transform"
+                          className="bg-black text-white hover:bg-neutral-800 transition-all px-6 rounded-full font-bold uppercase text-[10px] tracking-widest"
                         >
                           Continuar
                         </Button>

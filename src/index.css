@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    --background: 40 25% 97%;
-    --foreground: 25 15% 20%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
 
     --card: 0 0% 100%;
     --card-foreground: 25 15% 20%;
@@ -15,13 +15,13 @@
     --popover: 0 0% 100%;
     --popover-foreground: 25 15% 20%;
 
-    /* Primary: Deep Sage / Moss Green - Icon Aligned Premium */
-    --primary: 158 15% 45%;
+    /* Primary: Solid Black */
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Warm Peach/Coral */
-    --secondary: 15 50% 70%;
-    --secondary-foreground: 25 15% 20%;
+    /* Secondary: Premium Gold */
+    --secondary: 40 50% 15%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 40 15% 94%;
     --muted-foreground: 25 12% 45%;
@@ -50,17 +50,14 @@
     /* Complementary mauve */
     --peach: 15 50% 70%;
     /* Warm accent */
-    /* Premium Neutrals */
-    --taupe: 30 15% 55%;
-    --sage: 158 15% 45%;
-    --cream: 40 25% 98%;
-    --cream-dark: 40 20% 94%;
-    --gold: 40 60% 70%;
-    /* Highlights */
-    --sage-muted: 120 15% 65%;
-    /* Subtle green accent */
-    --lavender: 280 30% 75%;
-    /* Soft purple */
+    /* Premium Neutrals and Gold */
+    --taupe: 0 0% 40%;
+    --sage: 0 0% 20%;
+    --cream: 0 0% 100%;
+    --cream-dark: 0 0% 98%;
+    --gold: 45 40% 50%;
+    --sage-muted: 0 0% 80%;
+    --lavender: 0 0% 90%;
 
     /* Premium Gradients - Brand Colors */
     --gradient-primary: linear-gradient(135deg, hsl(350 45% 55%), hsl(340 50% 65%));
