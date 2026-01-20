@@ -183,7 +183,7 @@ const VideoUploadManager = () => {
 
     try {
       setCheckingAdmin(true);
-      const email = user.primaryEmailAddress.emailAddress;
+      const email = user.primaryEmailAddress.emailAddress.toLowerCase().trim();
 
       const { data, error } = await supabase
         .from("admin_emails")

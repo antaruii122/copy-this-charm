@@ -45,7 +45,7 @@ const MobileSidebar = () => {
         const { data } = await supabase
           .from("admin_emails")
           .select("email")
-          .eq("email", user.primaryEmailAddress.emailAddress)
+          .eq("email", user.primaryEmailAddress.emailAddress.toLowerCase().trim())
           .maybeSingle();
 
         setIsAdmin(!!data);

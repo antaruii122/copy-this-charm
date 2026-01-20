@@ -1,13 +1,27 @@
+import { useUser } from "@clerk/clerk-react";
 import { Mail, Phone, User, Calendar, Briefcase, FileText } from "lucide-react";
 
 const ProfileView = () => {
+  const { user } = useUser();
+
+  const formatDate = (date: Date | null | undefined) => {
+    if (!date) return "-";
+    return new Intl.DateTimeFormat("es-ES", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
+
   const profileData = [
-    { label: "Fecha de registro", value: "diciembre 17, 2025 12:16 am", icon: Calendar },
-    { label: "Nombre", value: "Ricardo", icon: User },
-    { label: "Apellidos", value: "tapia", icon: User },
-    { label: "Nombre de usuario", value: "papa", icon: User },
-    { label: "Correo electrónico", value: "rcgiroz@gmail.com", icon: Mail },
-    { label: "Número de teléfono", value: "-", icon: Phone },
+    { label: "Fecha de registro", value: formatDate(user?.createdAt), icon: Calendar },
+    { label: "Nombre", value: user?.firstName || "-", icon: User },
+    { label: "Apellidos", value: user?.lastName || "-", icon: User },
+    { label: "Nombre de usuario", value: user?.username || "-", icon: User },
+    { label: "Correo electrónico", value: user?.primaryEmailAddress?.emailAddress || "-", icon: Mail },
+    { label: "Número de teléfono", value: user?.primaryPhoneNumber?.phoneNumber || "-", icon: Phone },
     { label: "Habilidad/Ocupación", value: "-", icon: Briefcase },
     { label: "Biografía", value: "-", icon: FileText },
   ];
