@@ -369,81 +369,115 @@
     padding: 0 !important;
   }
 
+  /* Social buttons container */
+  .cl-socialButtons {
+    gap: 14px !important;
+  }
+
   /* Social buttons - Google, Facebook, etc. */
   .cl-socialButtonsBlockButton {
-    border: 1.5px solid hsl(var(--border)) !important;
-    border-radius: 12px !important;
-    padding: 12px 16px !important;
+    border: 2px solid hsl(var(--border)) !important;
+    border-radius: 14px !important;
+    padding: 16px 24px !important;
     background: hsl(var(--card)) !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 2px 8px hsl(var(--primary) / 0.05) !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.06) !important;
+    min-height: 56px !important;
+    gap: 14px !important;
   }
 
   .cl-socialButtonsBlockButton:hover {
     border-color: hsl(var(--primary)) !important;
-    background: hsl(var(--primary) / 0.05) !important;
-    box-shadow: 0 4px 12px hsl(var(--primary) / 0.1) !important;
-    transform: translateY(-1px) !important;
+    background: hsl(var(--primary) / 0.04) !important;
+    box-shadow: 0 6px 20px hsl(var(--primary) / 0.12) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  /* Social button icons - Make them larger */
+  .cl-socialButtonsBlockButton .cl-socialButtonsProviderIcon,
+  .cl-socialButtonsBlockButton svg,
+  .cl-socialButtonsBlockButton img {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
   }
 
   .cl-socialButtonsBlockButtonText {
-    font-weight: 500 !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
     color: hsl(var(--foreground)) !important;
+    letter-spacing: 0.01em !important;
   }
 
   /* Divider */
+  .cl-dividerRow {
+    margin: 20px 0 !important;
+  }
+
   .cl-dividerLine {
     background: hsl(var(--border)) !important;
+    height: 1px !important;
   }
 
   .cl-dividerText {
     color: hsl(var(--muted-foreground)) !important;
     font-size: 0.875rem !important;
+    padding: 0 16px !important;
   }
 
   /* Form fields */
+  .cl-formFieldRow {
+    margin-bottom: 8px !important;
+  }
+
   .cl-formFieldLabel {
     font-weight: 600 !important;
     color: hsl(var(--foreground)) !important;
-    font-size: 0.875rem !important;
-    margin-bottom: 6px !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 8px !important;
+    letter-spacing: 0.01em !important;
   }
 
   .cl-formFieldInput {
-    border: 1.5px solid hsl(var(--border)) !important;
-    border-radius: 10px !important;
-    padding: 12px 14px !important;
+    border: 2px solid hsl(var(--border)) !important;
+    border-radius: 12px !important;
+    padding: 14px 18px !important;
     background: hsl(var(--card)) !important;
     transition: all 0.2s ease !important;
-    font-size: 0.95rem !important;
+    font-size: 1rem !important;
+    min-height: 52px !important;
   }
 
   .cl-formFieldInput:focus {
     border-color: hsl(var(--primary)) !important;
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15) !important;
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.12) !important;
     outline: none !important;
   }
 
   .cl-formFieldInput::placeholder {
-    color: hsl(var(--muted-foreground)) !important;
+    color: hsl(var(--muted-foreground) / 0.7) !important;
   }
 
   /* Primary button (Continue) */
   .cl-formButtonPrimary {
     background: hsl(var(--primary)) !important;
-    border-radius: 10px !important;
-    padding: 12px 20px !important;
-    font-weight: 600 !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3) !important;
+    border-radius: 12px !important;
+    padding: 16px 24px !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 16px hsl(var(--primary) / 0.35) !important;
     border: none !important;
+    min-height: 54px !important;
+    letter-spacing: 0.02em !important;
+    margin-top: 8px !important;
   }
 
   .cl-formButtonPrimary:hover {
     background: hsl(var(--primary) / 0.9) !important;
-    box-shadow: 0 6px 20px hsl(var(--primary) / 0.4) !important;
-    transform: translateY(-1px) !important;
+    box-shadow: 0 8px 28px hsl(var(--primary) / 0.45) !important;
+    transform: translateY(-2px) !important;
   }
 
   /* Footer actions */
@@ -452,22 +486,25 @@
   }
 
   .cl-footer {
-    margin-top: 16px !important;
+    margin-top: 20px !important;
+    padding-top: 12px !important;
   }
 
   .cl-footerActionText {
     color: hsl(var(--muted-foreground)) !important;
-    font-size: 0.75rem !important;
+    font-size: 0.8rem !important;
   }
 
   .cl-footerActionLink {
     color: hsl(var(--primary)) !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
   }
 
-  /* Hide Clerk branding in development */
-  .cl-internal-b3fm6y {
-    display: none !important;
+  /* Hide Clerk branding */
+  .cl-internal-b3fm6y,
+  .cl-internal-wkkub3,
+  [class*="cl-internal"] {
+    opacity: 0.5 !important;
   }
 
   /* Header styling */
@@ -478,45 +515,57 @@
 
   /* Form styling */
   .cl-form {
-    gap: 16px !important;
-  }
-
-  .cl-formFieldRow {
-    margin-bottom: 4px !important;
-  }
-
-  /* Social buttons container */
-  .cl-socialButtons {
-    gap: 10px !important;
+    gap: 18px !important;
   }
 
   /* Identity preview (Last used badge) */
   .cl-identityPreview {
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     background: hsl(var(--muted)) !important;
-    padding: 4px 10px !important;
+    padding: 6px 12px !important;
     font-size: 0.75rem !important;
   }
 
   .cl-identityPreviewText {
     color: hsl(var(--muted-foreground)) !important;
+    font-weight: 500 !important;
   }
 
   /* Alert messages */
   .cl-alert {
-    border-radius: 10px !important;
-    border: 1px solid hsl(var(--border)) !important;
+    border-radius: 12px !important;
+    border: 2px solid hsl(var(--border)) !important;
     background: hsl(var(--card)) !important;
+    padding: 14px 18px !important;
   }
 
   /* OTP input */
   .cl-otpCodeFieldInput {
-    border: 1.5px solid hsl(var(--border)) !important;
-    border-radius: 8px !important;
+    border: 2px solid hsl(var(--border)) !important;
+    border-radius: 10px !important;
+    font-size: 1.25rem !important;
+    min-height: 52px !important;
   }
 
   .cl-otpCodeFieldInput:focus {
     border-color: hsl(var(--primary)) !important;
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15) !important;
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.12) !important;
+  }
+
+  /* Alternative methods link */
+  .cl-alternativeMethods {
+    margin-top: 12px !important;
+  }
+
+  .cl-alternativeMethodsBlockButton {
+    border: 2px solid hsl(var(--border)) !important;
+    border-radius: 12px !important;
+    padding: 14px 20px !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .cl-alternativeMethodsBlockButton:hover {
+    border-color: hsl(var(--primary)) !important;
+    background: hsl(var(--primary) / 0.04) !important;
   }
 }
