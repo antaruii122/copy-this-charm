@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,7 +39,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
   Table,
   TableBody,
@@ -86,6 +89,7 @@ interface UploadProgress {
 
 const VideoUploadManager = () => {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [videos, setVideos] = useState<CourseVideo[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<string>("");
@@ -124,7 +128,20 @@ const VideoUploadManager = () => {
   });
 
   useEffect(() => {
-    checkAdminStatus();
+    const syncAuth = async () => {
+      const token = await getToken({ template: "supabase" });
+      if (token) {
+        await supabase.auth.setSession({
+          access_token: token,
+          refresh_token: "", // Not needed for Clerk session
+        });
+        checkAdminStatus();
+      }
+    };
+
+    if (user) {
+      syncAuth();
+    }
   }, [user]);
 
   useEffect(() => {
@@ -506,145 +523,94 @@ const VideoUploadManager = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-2">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full mb-3">
-            <Video className="w-4 h-4 text-primary" />
-            <span className="text-primary text-xs font-medium">ADMIN</span>
+    <div className="space-y-10 pb-20">
+      <header className="relative py-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full mb-4">
+              <Layers className="w-3.5 h-3.5 text-primary" />
+              <span className="text-primary text-[10px] font-bold tracking-widest uppercase">Admin Panel</span>
+            </div>
+            <h1 className="font-serif text-4xl md:text-5xl font-semibold text-foreground tracking-tight">
+              Constructor de <span className="text-primary italic">Aprendizaje</span>
+            </h1>
+            <p className="text-muted-foreground mt-4 text-lg max-w-2xl leading-relaxed">
+              Diseña experiencias educativas de impacto. Administra módulos, organiza lecciones y gestiona tu contenido premium.
+            </p>
           </div>
-          <h2 className="text-3xl font-bold text-foreground mb-2">
-            Gestión de Videos
-          </h2>
-          <p className="text-muted-foreground">
-            Sube y administra los videos de tus cursos de manera profesional
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Plus size={16} />
-                Nuevo Curso
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Crear Nuevo Curso</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleCreateCourse} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Título del Curso</Label>
-                  <Input
-                    id="title"
-                    value={newCourseForm.title}
-                    onChange={(e) =>
-                      setNewCourseForm({
-                        ...newCourseForm,
-                        title: e.target.value,
-                        slug: generateSlug(e.target.value),
-                      })
-                    }
-                    placeholder="Ej: MENO: 21 Días de Transformación"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="slug">Slug (URL)</Label>
-                  <Input
-                    id="slug"
-                    value={newCourseForm.slug}
-                    onChange={(e) =>
-                      setNewCourseForm({ ...newCourseForm, slug: e.target.value })
-                    }
-                    placeholder="meno-21-dias"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Descripción</Label>
-                  <Textarea
-                    id="description"
-                    value={newCourseForm.description}
-                    onChange={(e) =>
-                      setNewCourseForm({ ...newCourseForm, description: e.target.value })
-                    }
-                    placeholder="Descripción del curso..."
-                    rows={3}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="price">Precio</Label>
-                  <Input
-                    id="price"
-                    value={newCourseForm.price}
-                    onChange={(e) =>
-                      setNewCourseForm({ ...newCourseForm, price: e.target.value })
-                    }
-                    placeholder="$1,200"
-                  />
-                </div>
-                <div className="flex gap-3 pt-4">
-                  <Button type="submit" className="flex-1">
-                    Crear Curso
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsDialogOpen(false)}
-                  >
-                    Cancelar
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          {selectedCourse && (
-            <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
+          <div className="flex gap-3">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
-                  <Layers size={16} />
-                  Nuevo Módulo
+                <Button size="lg" className="rounded-full px-8 shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Crear Curso
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-[500px] border-none shadow-2xl">
                 <DialogHeader>
-                  <DialogTitle>Añadir Módulo al Curso</DialogTitle>
+                  <DialogTitle className="font-serif text-2xl">Nuevo Programa Educativo</DialogTitle>
+                  <DialogDescription>Define la base de tu nuevo curso.</DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleCreateModule} className="space-y-4">
+                <form onSubmit={handleCreateCourse} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="module-title">Título del Módulo</Label>
+                    <Label htmlFor="title">Título del Curso</Label>
                     <Input
-                      id="module-title"
-                      value={newModuleForm.title}
+                      id="title"
+                      value={newCourseForm.title}
                       onChange={(e) =>
-                        setNewModuleForm({ ...newModuleForm, title: e.target.value })
+                        setNewCourseForm({
+                          ...newCourseForm,
+                          title: e.target.value,
+                          slug: generateSlug(e.target.value),
+                        })
                       }
-                      placeholder="Módulo 1: Introducción"
+                      placeholder="Ej: MENO: 21 Días de Transformación"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="module-description">Descripción (opcional)</Label>
-                    <Textarea
-                      id="module-description"
-                      value={newModuleForm.description}
+                    <Label htmlFor="slug">Slug (URL)</Label>
+                    <Input
+                      id="slug"
+                      value={newCourseForm.slug}
                       onChange={(e) =>
-                        setNewModuleForm({ ...newModuleForm, description: e.target.value })
+                        setNewCourseForm({ ...newCourseForm, slug: e.target.value })
                       }
-                      placeholder="Descripción breve..."
-                      rows={2}
+                      placeholder="meno-21-dias"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Descripción</Label>
+                    <Textarea
+                      id="description"
+                      value={newCourseForm.description}
+                      onChange={(e) =>
+                        setNewCourseForm({ ...newCourseForm, description: e.target.value })
+                      }
+                      placeholder="Descripción del curso..."
+                      rows={3}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Precio</Label>
+                    <Input
+                      id="price"
+                      value={newCourseForm.price}
+                      onChange={(e) =>
+                        setNewCourseForm({ ...newCourseForm, price: e.target.value })
+                      }
+                      placeholder="$1,200"
                     />
                   </div>
                   <div className="flex gap-3 pt-4">
                     <Button type="submit" className="flex-1">
-                      Crear Módulo
+                      Crear Curso
                     </Button>
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => setIsModuleDialogOpen(false)}
+                      onClick={() => setIsDialogOpen(false)}
                     >
                       Cancelar
                     </Button>
@@ -652,36 +618,133 @@ const VideoUploadManager = () => {
                 </form>
               </DialogContent>
             </Dialog>
+
+            {selectedCourse && (
+              <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Layers size={16} />
+                    Nuevo Módulo
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Añadir Módulo al Curso</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleCreateModule} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="module-title">Título del Módulo</Label>
+                      <Input
+                        id="module-title"
+                        value={newModuleForm.title}
+                        onChange={(e) =>
+                          setNewModuleForm({ ...newModuleForm, title: e.target.value })
+                        }
+                        placeholder="Módulo 1: Introducción"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="module-description">Descripción (opcional)</Label>
+                      <Textarea
+                        id="module-description"
+                        value={newModuleForm.description}
+                        onChange={(e) =>
+                          setNewModuleForm({ ...newModuleForm, description: e.target.value })
+                        }
+                        placeholder="Descripción breve..."
+                        rows={2}
+                      />
+                    </div>
+                    <div className="flex gap-3 pt-4">
+                      <Button type="submit" className="flex-1">
+                        Crear Módulo
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsModuleDialogOpen(false)}
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Premium Course Selection Gallery */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="font-serif text-2xl text-foreground/80">Programas Activos</h2>
+          {selectedCourse && (
+            <Button
+              variant="ghost"
+              onClick={() => setSelectedCourse("")}
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              Ver todos los cursos
+            </Button>
           )}
         </div>
-      </div>
 
-      {/* Course Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FolderOpen className="w-5 h-5" />
-            Seleccionar Curso
-          </CardTitle>
-          <CardDescription>
-            Elige el curso al que deseas agregar videos
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecciona un curso" />
-            </SelectTrigger>
-            <SelectContent>
-              {courses.map((course) => (
-                <SelectItem key={course.id} value={course.id}>
-                  {course.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
+        {!selectedCourse ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {courses.length === 0 ? (
+              <Card className="col-span-full border-dashed p-12 flex flex-col items-center justify-center text-center bg-muted/5">
+                <FolderOpen className="w-12 h-12 text-muted-foreground/30 mb-4" />
+                <p className="text-muted-foreground font-medium">No hay cursos creados aún.</p>
+                <Button variant="link" onClick={() => setIsDialogOpen(true)}>Crea tu primer curso ahora</Button>
+              </Card>
+            ) : (
+              courses.map((course) => (
+                <div
+                  key={course.id}
+                  onClick={() => setSelectedCourse(course.id)}
+                  className={cn(
+                    "group relative p-6 rounded-3xl border bg-card/40 backdrop-blur-sm cursor-pointer transition-all hover:shadow-2xl hover:-translate-y-1 hover:border-primary/30",
+                    selectedCourse === course.id ? "border-primary ring-1 ring-primary/50" : "border-border/50"
+                  )}
+                >
+                  <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ChevronDown className="w-5 h-5 -rotate-90" />
+                  </div>
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-6">
+                    <Video className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="font-serif text-xl font-semibold mb-2 line-clamp-1">{course.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-6">
+                    {course.description || "Sin descripción proporcionada."}
+                  </p>
+                  <div className="flex items-center gap-4 pt-4 border-t border-border/30">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+                      {course.price || "Gratis"}
+                    </span>
+                    {course.is_featured && (
+                      <span className="flex items-center gap-1.5 text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full uppercase">
+                        Destacado
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-4 bg-primary/5 p-6 rounded-2xl border border-primary/10">
+            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg">
+              <Video className="w-6 h-6" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-serif text-xl font-bold">{courses.find(c => c.id === selectedCourse)?.title}</h3>
+              <p className="text-sm text-muted-foreground uppercase tracking-tighter">Editando Programa</p>
+            </div>
+          </div>
+        )}
+      </section>
 
       {selectedCourse && (
         <>
@@ -916,19 +979,19 @@ const VideoTable = ({
   setEditingVideo,
   handleUpdateVideo,
   handleDeleteVideo,
-  modules
+  modules,
 }: {
-  videos: CourseVideo[],
-  editingVideo: CourseVideo | null,
-  setEditingVideo: (v: CourseVideo | null) => void,
-  handleUpdateVideo: (v: CourseVideo) => void,
-  handleDeleteVideo: (id: string, path: string) => void,
-  modules: Module[]
+  videos: CourseVideo[];
+  editingVideo: CourseVideo | null;
+  setEditingVideo: (v: CourseVideo | null) => void;
+  handleUpdateVideo: (v: CourseVideo) => void;
+  handleDeleteVideo: (id: string, path: string) => void;
+  modules: Module[];
 }) => (
   <Table>
     <TableHeader>
-      <TableRow>
-        <TableHead className="w-16">Orden</TableHead>
+      <TableRow className="bg-muted/30">
+        <TableHead className="w-20">Orden</TableHead>
         <TableHead>Título</TableHead>
         <TableHead>Módulo</TableHead>
         <TableHead className="text-right">Acciones</TableHead>

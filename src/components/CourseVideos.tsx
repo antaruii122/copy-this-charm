@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import {
   Accordion,
   AccordionContent,
@@ -70,13 +70,27 @@ const CourseVideos = ({ courseId }: CourseVideosProps) => {
   const [loading, setLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const { getToken } = useAuth();
   useEffect(() => {
-    if (courseId) {
-      fetchCourseAndVideos();
-    } else {
-      fetchAllVideos();
+    const syncAuth = async () => {
+      const token = await getToken({ template: "supabase" });
+      if (token) {
+        await supabase.auth.setSession({
+          access_token: token,
+          refresh_token: "",
+        });
+        if (courseId) {
+          fetchCourseAndVideos();
+        } else {
+          fetchAllVideos();
+        }
+      }
+    };
+
+    if (user) {
+      syncAuth();
     }
-  }, [courseId]);
+  }, [user, courseId]);
 
   const fetchCourseAndVideos = async () => {
     try {
