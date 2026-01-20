@@ -357,4 +357,166 @@
     background-size: 200% 200%;
     animation: gradient-shift 8s ease infinite;
   }
+
+  /* Clerk Component Styling Overrides */
+  .cl-rootBox {
+    width: 100% !important;
+  }
+
+  .cl-card {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  /* Social buttons - Google, Facebook, etc. */
+  .cl-socialButtonsBlockButton {
+    border: 1.5px solid hsl(var(--border)) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    background: hsl(var(--card)) !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.05) !important;
+  }
+
+  .cl-socialButtonsBlockButton:hover {
+    border-color: hsl(var(--primary)) !important;
+    background: hsl(var(--primary) / 0.05) !important;
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.1) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .cl-socialButtonsBlockButtonText {
+    font-weight: 500 !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* Divider */
+  .cl-dividerLine {
+    background: hsl(var(--border)) !important;
+  }
+
+  .cl-dividerText {
+    color: hsl(var(--muted-foreground)) !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Form fields */
+  .cl-formFieldLabel {
+    font-weight: 600 !important;
+    color: hsl(var(--foreground)) !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  .cl-formFieldInput {
+    border: 1.5px solid hsl(var(--border)) !important;
+    border-radius: 10px !important;
+    padding: 12px 14px !important;
+    background: hsl(var(--card)) !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.95rem !important;
+  }
+
+  .cl-formFieldInput:focus {
+    border-color: hsl(var(--primary)) !important;
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15) !important;
+    outline: none !important;
+  }
+
+  .cl-formFieldInput::placeholder {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  /* Primary button (Continue) */
+  .cl-formButtonPrimary {
+    background: hsl(var(--primary)) !important;
+    border-radius: 10px !important;
+    padding: 12px 20px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3) !important;
+    border: none !important;
+  }
+
+  .cl-formButtonPrimary:hover {
+    background: hsl(var(--primary) / 0.9) !important;
+    box-shadow: 0 6px 20px hsl(var(--primary) / 0.4) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* Footer actions */
+  .cl-footerAction {
+    display: none !important;
+  }
+
+  .cl-footer {
+    margin-top: 16px !important;
+  }
+
+  .cl-footerActionText {
+    color: hsl(var(--muted-foreground)) !important;
+    font-size: 0.75rem !important;
+  }
+
+  .cl-footerActionLink {
+    color: hsl(var(--primary)) !important;
+    font-weight: 500 !important;
+  }
+
+  /* Hide Clerk branding in development */
+  .cl-internal-b3fm6y {
+    display: none !important;
+  }
+
+  /* Header styling */
+  .cl-headerTitle,
+  .cl-headerSubtitle {
+    display: none !important;
+  }
+
+  /* Form styling */
+  .cl-form {
+    gap: 16px !important;
+  }
+
+  .cl-formFieldRow {
+    margin-bottom: 4px !important;
+  }
+
+  /* Social buttons container */
+  .cl-socialButtons {
+    gap: 10px !important;
+  }
+
+  /* Identity preview (Last used badge) */
+  .cl-identityPreview {
+    border-radius: 8px !important;
+    background: hsl(var(--muted)) !important;
+    padding: 4px 10px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .cl-identityPreviewText {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  /* Alert messages */
+  .cl-alert {
+    border-radius: 10px !important;
+    border: 1px solid hsl(var(--border)) !important;
+    background: hsl(var(--card)) !important;
+  }
+
+  /* OTP input */
+  .cl-otpCodeFieldInput {
+    border: 1.5px solid hsl(var(--border)) !important;
+    border-radius: 8px !important;
+  }
+
+  .cl-otpCodeFieldInput:focus {
+    border-color: hsl(var(--primary)) !important;
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15) !important;
+  }
 }
