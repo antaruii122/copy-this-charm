@@ -19,7 +19,11 @@ import {
   Plus,
   Edit,
   Save,
-  X
+  X,
+  Layers,
+  GripVertical,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -57,11 +61,20 @@ interface Course {
 interface CourseVideo {
   id: string;
   course_id: string;
+  module_id: string | null;
   title: string;
   description: string | null;
   video_path: string;
   sort_order: number;
   duration_seconds: number | null;
+}
+
+interface Module {
+  id: string;
+  course_id: string;
+  title: string;
+  description: string | null;
+  sort_order: number;
 }
 
 interface UploadProgress {
@@ -80,9 +93,13 @@ const VideoUploadManager = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([]);
+  const [modules, setModules] = useState<Module[]>([]);
+  const [selectedModule, setSelectedModule] = useState<string>("none");
+  const [isModuleDialogOpen, setIsModuleDialogOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState<CourseVideo | null>(null);
+  const [editingModule, setEditingModule] = useState<Module | null>(null);
   const { toast } = useToast();
 
   const [newCourseForm, setNewCourseForm] = useState({
@@ -97,7 +114,13 @@ const VideoUploadManager = () => {
     title: "",
     description: "",
     course_id: "",
+    module_id: "",
     sort_order: 0,
+  });
+
+  const [newModuleForm, setNewModuleForm] = useState({
+    title: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -112,7 +135,9 @@ const VideoUploadManager = () => {
 
   useEffect(() => {
     if (selectedCourse) {
+      fetchCourseModules(selectedCourse);
       fetchCourseVideos(selectedCourse);
+      setVideoMetadata(prev => ({ ...prev, course_id: selectedCourse }));
     }
   }, [selectedCourse]);
 
@@ -157,6 +182,21 @@ const VideoUploadManager = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCourseModules = async (courseId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("modules")
+        .select("*")
+        .eq("course_id", courseId)
+        .order("sort_order", { ascending: true });
+
+      if (error) throw error;
+      setModules(data || []);
+    } catch (error) {
+      console.error("Error fetching modules:", error);
     }
   };
 
@@ -222,6 +262,79 @@ const VideoUploadManager = () => {
     }
   };
 
+  const handleCreateModule = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase
+        .from("modules")
+        .insert({
+          course_id: selectedCourse,
+          title: newModuleForm.title,
+          description: newModuleForm.description || null,
+          sort_order: modules.length,
+        });
+
+      if (error) throw error;
+
+      toast({ title: "Módulo creado exitosamente" });
+      setNewModuleForm({ title: "", description: "" });
+      setIsModuleDialogOpen(false);
+      fetchCourseModules(selectedCourse);
+    } catch (error: any) {
+      console.error("Error creating module:", error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo crear el módulo",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateModule = async (module: Module) => {
+    try {
+      const { error } = await supabase
+        .from("modules")
+        .update({
+          title: module.title,
+          description: module.description,
+          sort_order: module.sort_order,
+        })
+        .eq("id", module.id);
+
+      if (error) throw error;
+
+      toast({ title: "Módulo actualizado exitosamente" });
+      setEditingModule(null);
+      fetchCourseModules(selectedCourse);
+    } catch (error: any) {
+      console.error("Error updating module:", error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo actualizar el módulo",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteModule = async (moduleId: string) => {
+    if (!confirm("¿Estás seguro? Los videos de este módulo dejarán de estar asociados a él (pero no se borrarán).")) return;
+    try {
+      const { error } = await supabase
+        .from("modules")
+        .delete()
+        .eq("id", moduleId);
+
+      if (error) throw error;
+
+      toast({ title: "Módulo eliminado" });
+      fetchCourseModules(selectedCourse);
+      fetchCourseVideos(selectedCourse);
+    } catch (error: any) {
+      console.error("Error deleting module:", error);
+    }
+  };
+
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -285,6 +398,7 @@ const VideoUploadManager = () => {
         .from("course_videos")
         .insert({
           course_id: videoMetadata.course_id,
+          module_id: videoMetadata.module_id === "none" ? null : videoMetadata.module_id || null,
           title: videoTitle,
           description: videoMetadata.description || null,
           video_path: fileName,
@@ -349,6 +463,7 @@ const VideoUploadManager = () => {
         .update({
           title: video.title,
           description: video.description,
+          module_id: video.module_id === "none" ? null : video.module_id,
           sort_order: video.sort_order,
         })
         .eq("id", video.id);
@@ -405,84 +520,140 @@ const VideoUploadManager = () => {
             Sube y administra los videos de tus cursos de manera profesional
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus size={16} />
-              Nuevo Curso
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Crear Nuevo Curso</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleCreateCourse} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Título del Curso</Label>
-                <Input
-                  id="title"
-                  value={newCourseForm.title}
-                  onChange={(e) =>
-                    setNewCourseForm({
-                      ...newCourseForm,
-                      title: e.target.value,
-                      slug: generateSlug(e.target.value),
-                    })
-                  }
-                  placeholder="Ej: MENO: 21 Días de Transformación"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="slug">Slug (URL)</Label>
-                <Input
-                  id="slug"
-                  value={newCourseForm.slug}
-                  onChange={(e) =>
-                    setNewCourseForm({ ...newCourseForm, slug: e.target.value })
-                  }
-                  placeholder="meno-21-dias"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Descripción</Label>
-                <Textarea
-                  id="description"
-                  value={newCourseForm.description}
-                  onChange={(e) =>
-                    setNewCourseForm({ ...newCourseForm, description: e.target.value })
-                  }
-                  placeholder="Descripción del curso..."
-                  rows={3}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="price">Precio</Label>
-                <Input
-                  id="price"
-                  value={newCourseForm.price}
-                  onChange={(e) =>
-                    setNewCourseForm({ ...newCourseForm, price: e.target.value })
-                  }
-                  placeholder="$1,200"
-                />
-              </div>
-              <div className="flex gap-3 pt-4">
-                <Button type="submit" className="flex-1">
-                  Crear Curso
+        <div className="flex gap-2">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Plus size={16} />
+                Nuevo Curso
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Crear Nuevo Curso</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleCreateCourse} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Título del Curso</Label>
+                  <Input
+                    id="title"
+                    value={newCourseForm.title}
+                    onChange={(e) =>
+                      setNewCourseForm({
+                        ...newCourseForm,
+                        title: e.target.value,
+                        slug: generateSlug(e.target.value),
+                      })
+                    }
+                    placeholder="Ej: MENO: 21 Días de Transformación"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="slug">Slug (URL)</Label>
+                  <Input
+                    id="slug"
+                    value={newCourseForm.slug}
+                    onChange={(e) =>
+                      setNewCourseForm({ ...newCourseForm, slug: e.target.value })
+                    }
+                    placeholder="meno-21-dias"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Descripción</Label>
+                  <Textarea
+                    id="description"
+                    value={newCourseForm.description}
+                    onChange={(e) =>
+                      setNewCourseForm({ ...newCourseForm, description: e.target.value })
+                    }
+                    placeholder="Descripción del curso..."
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="price">Precio</Label>
+                  <Input
+                    id="price"
+                    value={newCourseForm.price}
+                    onChange={(e) =>
+                      setNewCourseForm({ ...newCourseForm, price: e.target.value })
+                    }
+                    placeholder="$1,200"
+                  />
+                </div>
+                <div className="flex gap-3 pt-4">
+                  <Button type="submit" className="flex-1">
+                    Crear Curso
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          {selectedCourse && (
+            <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Layers size={16} />
+                  Nuevo Módulo
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
-                  Cancelar
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Añadir Módulo al Curso</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleCreateModule} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="module-title">Título del Módulo</Label>
+                    <Input
+                      id="module-title"
+                      value={newModuleForm.title}
+                      onChange={(e) =>
+                        setNewModuleForm({ ...newModuleForm, title: e.target.value })
+                      }
+                      placeholder="Módulo 1: Introducción"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="module-description">Descripción (opcional)</Label>
+                    <Textarea
+                      id="module-description"
+                      value={newModuleForm.description}
+                      onChange={(e) =>
+                        setNewModuleForm({ ...newModuleForm, description: e.target.value })
+                      }
+                      placeholder="Descripción breve..."
+                      rows={2}
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-4">
+                    <Button type="submit" className="flex-1">
+                      Crear Módulo
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsModuleDialogOpen(false)}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </div>
 
       {/* Course Selection */}
@@ -526,6 +697,25 @@ const VideoUploadManager = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="module-select">Módulo</Label>
+                <Select
+                  value={videoMetadata.module_id || "none"}
+                  onValueChange={(val) => setVideoMetadata({ ...videoMetadata, module_id: val })}
+                >
+                  <SelectTrigger id="module-select">
+                    <SelectValue placeholder="Selecciona un módulo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sin Módulo</SelectItem>
+                    {modules.map((mod) => (
+                      <SelectItem key={mod.id} value={mod.id}>
+                        {mod.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="video-title">Título del Video (opcional)</Label>
                 <Input
@@ -622,119 +812,232 @@ const VideoUploadManager = () => {
             </CardContent>
           </Card>
 
-          {/* Video List */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Video className="w-5 h-5" />
-                Videos del Curso ({videos.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {videos.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
-                  No hay videos en este curso todavía
-                </p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Orden</TableHead>
-                      <TableHead>Título</TableHead>
-                      <TableHead>Archivo</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {videos.map((video) => (
-                      <TableRow key={video.id}>
-                        <TableCell>
-                          {editingVideo?.id === video.id ? (
-                            <Input
-                              type="number"
-                              value={editingVideo.sort_order}
-                              onChange={(e) =>
-                                setEditingVideo({
-                                  ...editingVideo,
-                                  sort_order: parseInt(e.target.value) || 0,
-                                })
-                              }
-                              className="w-20"
-                            />
-                          ) : (
-                            video.sort_order
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {editingVideo?.id === video.id ? (
-                            <Input
-                              value={editingVideo.title}
-                              onChange={(e) =>
-                                setEditingVideo({
-                                  ...editingVideo,
-                                  title: e.target.value,
-                                })
-                              }
-                            />
-                          ) : (
-                            video.title
-                          )}
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {video.video_path}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex gap-2 justify-end">
-                            {editingVideo?.id === video.id ? (
-                              <>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() => handleUpdateVideo(editingVideo)}
-                                >
+          {/* Course Builder View */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Layers className="w-5 h-5" />
+              Estructura del Curso
+            </h3>
+
+            {modules.length === 0 && videos.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground">Empezar a construir el curso creando un módulo o subiendo videos.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {modules.map((module) => {
+                  const moduleVideos = videos.filter(v => v.module_id === module.id);
+                  return (
+                    <Card key={module.id} className="border-l-4 border-l-primary">
+                      <CardHeader className="py-4 bg-muted/30">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            {editingModule?.id === module.id ? (
+                              <div className="flex gap-2">
+                                <Input
+                                  value={editingModule.title}
+                                  onChange={(e) => setEditingModule({ ...editingModule, title: e.target.value })}
+                                  className="font-semibold"
+                                />
+                                <Button size="icon" onClick={() => handleUpdateModule(editingModule)}>
                                   <Save className="w-4 h-4" />
                                 </Button>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() => setEditingVideo(null)}
-                                >
+                                <Button size="icon" variant="outline" onClick={() => setEditingModule(null)}>
                                   <X className="w-4 h-4" />
                                 </Button>
-                              </>
+                              </div>
                             ) : (
-                              <>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() => setEditingVideo(video)}
-                                >
-                                  <Edit className="w-4 h-4" />
+                              <div className="flex items-center gap-2">
+                                <GripVertical className="text-muted-foreground w-4 h-4 cursor-grab" />
+                                <CardTitle className="text-lg">{module.title}</CardTitle>
+                                <Button variant="ghost" size="icon" onClick={() => setEditingModule(module)}>
+                                  <Edit className="w-3 h-3 text-muted-foreground" />
                                 </Button>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() =>
-                                    handleDeleteVideo(video.id, video.video_path)
-                                  }
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </>
+                              </div>
+                            )}
+                            {module.description && !editingModule && (
+                              <CardDescription>{module.description}</CardDescription>
                             )}
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="icon" onClick={() => handleDeleteModule(module.id)}>
+                              <Trash2 className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-0">
+                        <VideoTable
+                          videos={moduleVideos}
+                          editingVideo={editingVideo}
+                          setEditingVideo={setEditingVideo}
+                          handleUpdateVideo={handleUpdateVideo}
+                          handleDeleteVideo={handleDeleteVideo}
+                          modules={modules}
+                        />
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+
+                {/* Unassigned Videos */}
+                {videos.filter(v => !v.module_id).length > 0 && (
+                  <Card className="border-l-4 border-l-muted">
+                    <CardHeader className="py-4">
+                      <CardTitle className="text-lg">Videos sin asignar</CardTitle>
+                      <CardDescription>Videos que aún no pertenecen a ningún módulo</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <VideoTable
+                        videos={videos.filter(v => !v.module_id)}
+                        editingVideo={editingVideo}
+                        setEditingVideo={setEditingVideo}
+                        handleUpdateVideo={handleUpdateVideo}
+                        handleDeleteVideo={handleDeleteVideo}
+                        modules={modules}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+              </>
+            )}
+          </div>
         </>
       )}
     </div>
   );
 };
+
+const VideoTable = ({
+  videos,
+  editingVideo,
+  setEditingVideo,
+  handleUpdateVideo,
+  handleDeleteVideo,
+  modules
+}: {
+  videos: CourseVideo[],
+  editingVideo: CourseVideo | null,
+  setEditingVideo: (v: CourseVideo | null) => void,
+  handleUpdateVideo: (v: CourseVideo) => void,
+  handleDeleteVideo: (id: string, path: string) => void,
+  modules: Module[]
+}) => (
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-16">Orden</TableHead>
+        <TableHead>Título</TableHead>
+        <TableHead>Módulo</TableHead>
+        <TableHead className="text-right">Acciones</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {videos.map((video) => (
+        <TableRow key={video.id}>
+          <TableCell>
+            {editingVideo?.id === video.id ? (
+              <Input
+                type="number"
+                value={editingVideo.sort_order}
+                onChange={(e) =>
+                  setEditingVideo({
+                    ...editingVideo,
+                    sort_order: parseInt(e.target.value) || 0,
+                  })
+                }
+                className="w-16"
+              />
+            ) : (
+              video.sort_order
+            )}
+          </TableCell>
+          <TableCell>
+            {editingVideo?.id === video.id ? (
+              <Input
+                value={editingVideo.title}
+                onChange={(e) =>
+                  setEditingVideo({
+                    ...editingVideo,
+                    title: e.target.value,
+                  })
+                }
+              />
+            ) : (
+              video.title
+            )}
+          </TableCell>
+          <TableCell>
+            {editingVideo?.id === video.id ? (
+              <Select
+                value={editingVideo.module_id || "none"}
+                onValueChange={(val) => setEditingVideo({ ...editingVideo, module_id: val })}
+              >
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Módulo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sin Módulo</SelectItem>
+                  {modules.map((mod) => (
+                    <SelectItem key={mod.id} value={mod.id}>
+                      {mod.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                {modules.find(m => m.id === video.module_id)?.title || "-"}
+              </span>
+            )}
+          </TableCell>
+          <TableCell className="text-right">
+            <div className="flex gap-2 justify-end">
+              {editingVideo?.id === video.id ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleUpdateVideo(editingVideo)}
+                  >
+                    <Save className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setEditingVideo(null)}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setEditingVideo(video)}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() =>
+                      handleDeleteVideo(video.id, video.video_path)
+                    }
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </>
+              )}
+            </div>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+);
 
 export default VideoUploadManager;
