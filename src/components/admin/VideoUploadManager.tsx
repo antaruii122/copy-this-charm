@@ -21,9 +21,17 @@ import {
   Save,
   X,
   Layers,
+  Layout,
   GripVertical,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Settings,
+  Users,
+  ClipboardList,
+  PieChart,
+  UserPlus,
+  ShieldCheck,
+  ChevronRight
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -33,6 +41,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -104,6 +118,8 @@ const VideoUploadManager = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState<CourseVideo | null>(null);
   const [editingModule, setEditingModule] = useState<Module | null>(null);
+  const [adminEmails, setAdminEmails] = useState<{ id: string; email: string }[]>([]);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
   const { toast } = useToast();
 
   const [newCourseForm, setNewCourseForm] = useState({
@@ -147,6 +163,7 @@ const VideoUploadManager = () => {
   useEffect(() => {
     if (isAdmin) {
       fetchCourses();
+      fetchAdminEmails();
     }
   }, [isAdmin]);
 
@@ -199,6 +216,76 @@ const VideoUploadManager = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAdminEmails = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("admin_emails")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) throw error;
+      setAdminEmails(data || []);
+    } catch (error) {
+      console.error("Error fetching admin emails:", error);
+    }
+  };
+
+  const handleAddAdminEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAdminEmail) return;
+
+    try {
+      const { error } = await supabase
+        .from("admin_emails")
+        .insert({ email: newAdminEmail.toLowerCase().trim() });
+
+      if (error) throw error;
+
+      toast({ title: "Administrador añadido exitosamente" });
+      setNewAdminEmail("");
+      fetchAdminEmails();
+    } catch (error: any) {
+      console.error("Error adding admin email:", error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo añadir el administrador",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteAdminEmail = async (id: string, email: string) => {
+    if (email === user?.primaryEmailAddress?.emailAddress) {
+      toast({
+        title: "Acción no permitida",
+        description: "No puedes eliminarte a ti mismo como administrador",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!confirm(`¿Estás seguro de eliminar a ${email} como administrador?`)) return;
+
+    try {
+      const { error } = await supabase
+        .from("admin_emails")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast({ title: "Administrador eliminado" });
+      fetchAdminEmails();
+    } catch (error: any) {
+      console.error("Error deleting admin email:", error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo eliminar el administrador",
+        variant: "destructive",
+      });
     }
   };
 
@@ -528,22 +615,50 @@ const VideoUploadManager = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full mb-4">
-              <Layers className="w-3.5 h-3.5 text-primary" />
-              <span className="text-primary text-[10px] font-bold tracking-widest uppercase">Admin Panel</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              <span className="text-primary text-[10px] font-bold tracking-widest uppercase">Sistema de Gestión Premium</span>
             </div>
             <h1 className="font-serif text-4xl md:text-5xl font-semibold text-foreground tracking-tight">
-              Constructor de <span className="text-primary italic">Aprendizaje</span>
+              Panel de <span className="text-primary italic">Control</span>
             </h1>
             <p className="text-muted-foreground mt-4 text-lg max-w-2xl leading-relaxed">
-              Diseña experiencias educativas de impacto. Administra módulos, organiza lecciones y gestiona tu contenido premium.
+              Gestiona el contenido de tus cursos, organiza módulos y administra los permisos de acceso de tu equipo.
             </p>
           </div>
-          <div className="flex gap-3">
+        </div>
+      </header>
+
+      <Tabs defaultValue="cursos" className="space-y-8">
+        <TabsList className="bg-muted/50 p-1 rounded-2xl border border-border/50 backdrop-blur-sm">
+          <TabsTrigger value="cursos" className="rounded-xl gap-2 px-6">
+            <Layout className="w-4 h-4" />
+            Cursos
+          </TabsTrigger>
+          <TabsTrigger value="contenido" className="rounded-xl gap-2 px-6" disabled={!selectedCourse}>
+            <ClipboardList className="w-4 h-4" />
+            Contenido
+          </TabsTrigger>
+          <TabsTrigger value="admins" className="rounded-xl gap-2 px-6">
+            <Users className="w-4 h-4" />
+            Administradores
+          </TabsTrigger>
+          <TabsTrigger value="ajustes" className="rounded-xl gap-2 px-6">
+            <Settings className="w-4 h-4" />
+            Ajustes
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="cursos" className="space-y-8">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2 className="font-serif text-2xl text-foreground/80">Programas Activos</h2>
+              <p className="text-sm text-muted-foreground">Selecciona un curso para gestionar su contenido</p>
+            </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button size="lg" className="rounded-full px-8 shadow-lg shadow-primary/20 transition-all hover:scale-105">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Crear Curso
+                <Button className="rounded-full px-6 shadow-md transition-all hover:scale-105 gap-2">
+                  <Plus className="w-4 h-4" />
+                  Nuevo Curso
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px] border-none shadow-2xl">
@@ -551,7 +666,7 @@ const VideoUploadManager = () => {
                   <DialogTitle className="font-serif text-2xl">Nuevo Programa Educativo</DialogTitle>
                   <DialogDescription>Define la base de tu nuevo curso.</DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleCreateCourse} className="space-y-4">
+                <form onSubmit={handleCreateCourse} className="space-y-4 pt-4">
                   <div className="space-y-2">
                     <Label htmlFor="title">Título del Curso</Label>
                     <Input
@@ -603,7 +718,7 @@ const VideoUploadManager = () => {
                       placeholder="$1,200"
                     />
                   </div>
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex gap-3 pt-6">
                     <Button type="submit" className="flex-1">
                       Crear Curso
                     </Button>
@@ -618,83 +733,11 @@ const VideoUploadManager = () => {
                 </form>
               </DialogContent>
             </Dialog>
-
-            {selectedCourse && (
-              <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
-                    <Layers size={16} />
-                    Nuevo Módulo
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Añadir Módulo al Curso</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleCreateModule} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="module-title">Título del Módulo</Label>
-                      <Input
-                        id="module-title"
-                        value={newModuleForm.title}
-                        onChange={(e) =>
-                          setNewModuleForm({ ...newModuleForm, title: e.target.value })
-                        }
-                        placeholder="Módulo 1: Introducción"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="module-description">Descripción (opcional)</Label>
-                      <Textarea
-                        id="module-description"
-                        value={newModuleForm.description}
-                        onChange={(e) =>
-                          setNewModuleForm({ ...newModuleForm, description: e.target.value })
-                        }
-                        placeholder="Descripción breve..."
-                        rows={2}
-                      />
-                    </div>
-                    <div className="flex gap-3 pt-4">
-                      <Button type="submit" className="flex-1">
-                        Crear Módulo
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsModuleDialogOpen(false)}
-                      >
-                        Cancelar
-                      </Button>
-                    </div>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            )}
           </div>
-        </div>
-      </header>
 
-      {/* Premium Course Selection Gallery */}
-      <section className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-2xl text-foreground/80">Programas Activos</h2>
-          {selectedCourse && (
-            <Button
-              variant="ghost"
-              onClick={() => setSelectedCourse("")}
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              Ver todos los cursos
-            </Button>
-          )}
-        </div>
-
-        {!selectedCourse ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.length === 0 ? (
-              <Card className="col-span-full border-dashed p-12 flex flex-col items-center justify-center text-center bg-muted/5">
+              <Card className="col-span-full border-dashed p-12 flex flex-col items-center justify-center text-center bg-muted/5 rounded-3xl">
                 <FolderOpen className="w-12 h-12 text-muted-foreground/30 mb-4" />
                 <p className="text-muted-foreground font-medium">No hay cursos creados aún.</p>
                 <Button variant="link" onClick={() => setIsDialogOpen(true)}>Crea tu primer curso ahora</Button>
@@ -710,7 +753,7 @@ const VideoUploadManager = () => {
                   )}
                 >
                   <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ChevronDown className="w-5 h-5 -rotate-90" />
+                    <ChevronRight className="w-5 h-5" />
                   </div>
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-6">
                     <Video className="w-7 h-7 text-primary" />
@@ -720,7 +763,7 @@ const VideoUploadManager = () => {
                     {course.description || "Sin descripción proporcionada."}
                   </p>
                   <div className="flex items-center gap-4 pt-4 border-t border-border/30">
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest text-primary/70">
                       {course.price || "Gratis"}
                     </span>
                     {course.is_featured && (
@@ -733,242 +776,354 @@ const VideoUploadManager = () => {
               ))
             )}
           </div>
-        ) : (
-          <div className="flex items-center gap-4 bg-primary/5 p-6 rounded-2xl border border-primary/10">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg">
-              <Video className="w-6 h-6" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-serif text-xl font-bold">{courses.find(c => c.id === selectedCourse)?.title}</h3>
-              <p className="text-sm text-muted-foreground uppercase tracking-tighter">Editando Programa</p>
-            </div>
-          </div>
-        )}
-      </section>
+        </TabsContent>
 
-      {selectedCourse && (
-        <>
-          {/* Upload Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Upload className="w-5 h-5" />
-                Subir Videos
-              </CardTitle>
-              <CardDescription>
-                Puedes seleccionar múltiples videos para subir a la vez
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="module-select">Módulo</Label>
-                <Select
-                  value={videoMetadata.module_id || "none"}
-                  onValueChange={(val) => setVideoMetadata({ ...videoMetadata, module_id: val })}
-                >
-                  <SelectTrigger id="module-select">
-                    <SelectValue placeholder="Selecciona un módulo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Sin Módulo</SelectItem>
-                    {modules.map((mod) => (
-                      <SelectItem key={mod.id} value={mod.id}>
-                        {mod.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="video-title">Título del Video (opcional)</Label>
-                <Input
-                  id="video-title"
-                  value={videoMetadata.title}
-                  onChange={(e) =>
-                    setVideoMetadata({ ...videoMetadata, title: e.target.value })
-                  }
-                  placeholder="Se usará el nombre del archivo si se deja vacío"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="video-description">Descripción (opcional)</Label>
-                <Textarea
-                  id="video-description"
-                  value={videoMetadata.description}
-                  onChange={(e) =>
-                    setVideoMetadata({ ...videoMetadata, description: e.target.value })
-                  }
-                  placeholder="Descripción del video..."
-                  rows={2}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="sort-order">Orden inicial</Label>
-                <Input
-                  id="sort-order"
-                  type="number"
-                  value={videoMetadata.sort_order}
-                  onChange={(e) =>
-                    setVideoMetadata({
-                      ...videoMetadata,
-                      sort_order: parseInt(e.target.value) || 0,
-                      course_id: selectedCourse,
-                    })
-                  }
-                  placeholder="0"
-                />
-              </div>
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                <Input
-                  type="file"
-                  accept="video/*"
-                  multiple
-                  onChange={handleFileSelect}
-                  disabled={isUploading || !selectedCourse}
-                  className="hidden"
-                  id="video-upload"
-                />
-                <Label
-                  htmlFor="video-upload"
-                  className="cursor-pointer flex flex-col items-center gap-2"
-                >
-                  <Video className="w-12 h-12 text-muted-foreground" />
-                  <span className="text-sm font-medium">
-                    {isUploading
-                      ? "Subiendo videos..."
-                      : "Click para seleccionar videos"}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    Soporta múltiples archivos MP4, MOV, AVI
-                  </span>
-                </Label>
-              </div>
-
-              {/* Upload Progress */}
-              {uploadProgress.length > 0 && (
-                <div className="space-y-2">
-                  {uploadProgress.map((progress, index) => (
-                    <div key={index} className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="flex items-center gap-2">
-                          {progress.status === "uploading" && (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          )}
-                          {progress.status === "success" && (
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                          )}
-                          {progress.status === "error" && (
-                            <AlertCircle className="w-4 h-4 text-red-500" />
-                          )}
-                          {progress.fileName}
-                        </span>
-                        <span>{progress.progress}%</span>
-                      </div>
-                      <Progress value={progress.progress} />
-                      {progress.error && (
-                        <p className="text-xs text-red-500">{progress.error}</p>
-                      )}
-                    </div>
-                  ))}
+        <TabsContent value="contenido" className="space-y-10 animate-in fade-in duration-500">
+          {!selectedCourse ? (
+            <Card className="rounded-3xl border-dashed p-20 flex flex-col items-center justify-center text-center">
+              <Layout className="w-12 h-12 text-muted-foreground/20 mb-4" />
+              <h3 className="text-xl font-medium mb-2">Ningún curso seleccionado</h3>
+              <p className="text-muted-foreground mb-6">Selecciona un curso en la pestaña "Cursos" para gestionar su contenido.</p>
+            </Card>
+          ) : (
+            <>
+              {/* Course Header Info */}
+              <div className="flex items-center gap-6 bg-card/50 backdrop-blur-sm p-6 rounded-3xl border border-border/50">
+                <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground shadow-xl shadow-primary/20">
+                  <Video className="w-8 h-8" />
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                <div className="flex-1">
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Gestión de Contenido</span>
+                  <h3 className="font-serif text-3xl font-bold mt-1 text-foreground">
+                    {courses.find(c => c.id === selectedCourse)?.title}
+                  </h3>
+                </div>
+                <Button
+                  variant="outline"
+                  className="rounded-xl"
+                  onClick={() => setIsModuleDialogOpen(true)}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nuevo Módulo
+                </Button>
+              </div>
 
-          {/* Course Builder View */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              <Layers className="w-5 h-5" />
-              Estructura del Curso
-            </h3>
+              {/* Upload Section */}
+              <Card className="rounded-3xl overflow-hidden border-none shadow-sm bg-card/30 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-xl font-serif">
+                    <Upload className="w-5 h-5 text-primary" />
+                    Subir Nuevas Lecciones
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="module-select" className="text-sm font-medium ml-1">Módulo de destino</Label>
+                      <Select
+                        value={videoMetadata.module_id || "none"}
+                        onValueChange={(val) => setVideoMetadata({ ...videoMetadata, module_id: val })}
+                      >
+                        <SelectTrigger id="module-select" className="rounded-xl h-12 bg-background/50">
+                          <SelectValue placeholder="Selecciona un módulo" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl">
+                          <SelectItem value="none">Sin Módulo (General)</SelectItem>
+                          {modules.map((mod) => (
+                            <SelectItem key={mod.id} value={mod.id}>
+                              {mod.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="video-title" className="text-sm font-medium ml-1">Título (Opcional)</Label>
+                      <Input
+                        id="video-title"
+                        value={videoMetadata.title}
+                        onChange={(e) =>
+                          setVideoMetadata({ ...videoMetadata, title: e.target.value })
+                        }
+                        className="rounded-xl h-12 bg-background/50"
+                        placeholder="Nombre de la lección"
+                      />
+                    </div>
+                  </div>
 
-            {modules.length === 0 && videos.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <p className="text-muted-foreground">Empezar a construir el curso creando un módulo o subiendo videos.</p>
+                  <div className="group relative border-2 border-dashed border-primary/20 hover:border-primary/40 rounded-2xl p-10 text-center transition-all bg-primary/5">
+                    <Input
+                      type="file"
+                      accept="video/*"
+                      multiple
+                      onChange={handleFileSelect}
+                      disabled={isUploading || !selectedCourse}
+                      className="hidden"
+                      id="video-upload"
+                    />
+                    <Label
+                      htmlFor="video-upload"
+                      className="cursor-pointer flex flex-col items-center gap-3"
+                    >
+                      <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                        <Upload className="w-8 h-8 text-primary" />
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-base font-semibold block">
+                          {isUploading ? "Subiendo contenido..." : "Sube tus videos educativos"}
+                        </span>
+                        <span className="text-xs text-muted-foreground block">
+                          Selecciona uno o varios archivos (MP4, MOV, etc.)
+                        </span>
+                      </div>
+                    </Label>
+                  </div>
+
+                  {uploadProgress.length > 0 && (
+                    <div className="space-y-4 pt-2">
+                      {uploadProgress.map((progress, index) => (
+                        <div key={index} className="bg-background/40 p-4 rounded-xl border border-border/50">
+                          <div className="flex items-center justify-between text-sm mb-2 font-medium">
+                            <span className="flex items-center gap-2 truncate">
+                              {progress.status === "uploading" && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />}
+                              {progress.status === "success" && <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />}
+                              {progress.status === "error" && <AlertCircle className="w-3.5 h-3.5 text-red-500" />}
+                              {progress.fileName}
+                            </span>
+                            <span className="text-xs text-muted-foreground">{progress.progress}%</span>
+                          </div>
+                          <Progress value={progress.progress} className="h-1.5" />
+                          {progress.error && (
+                            <p className="text-xs text-red-500 mt-2 font-medium">{progress.error}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
-            ) : (
-              <>
-                {modules.map((module) => {
-                  const moduleVideos = videos.filter(v => v.module_id === module.id);
-                  return (
-                    <Card key={module.id} className="border-l-4 border-l-primary">
-                      <CardHeader className="py-4 bg-muted/30">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            {editingModule?.id === module.id ? (
-                              <div className="flex gap-2">
-                                <Input
-                                  value={editingModule.title}
-                                  onChange={(e) => setEditingModule({ ...editingModule, title: e.target.value })}
-                                  className="font-semibold"
-                                />
-                                <Button size="icon" onClick={() => handleUpdateModule(editingModule)}>
-                                  <Save className="w-4 h-4" />
-                                </Button>
-                                <Button size="icon" variant="outline" onClick={() => setEditingModule(null)}>
-                                  <X className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-2">
-                                <GripVertical className="text-muted-foreground w-4 h-4 cursor-grab" />
-                                <CardTitle className="text-lg">{module.title}</CardTitle>
-                                <Button variant="ghost" size="icon" onClick={() => setEditingModule(module)}>
-                                  <Edit className="w-3 h-3 text-muted-foreground" />
-                                </Button>
-                              </div>
-                            )}
-                            {module.description && !editingModule && (
-                              <CardDescription>{module.description}</CardDescription>
-                            )}
-                          </div>
-                          <div className="flex gap-2">
-                            <Button variant="ghost" size="icon" onClick={() => handleDeleteModule(module.id)}>
-                              <Trash2 className="w-4 h-4 text-destructive" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-0">
-                        <VideoTable
-                          videos={moduleVideos}
-                          editingVideo={editingVideo}
-                          setEditingVideo={setEditingVideo}
-                          handleUpdateVideo={handleUpdateVideo}
-                          handleDeleteVideo={handleDeleteVideo}
-                          modules={modules}
-                        />
-                      </CardContent>
-                    </Card>
-                  );
-                })}
 
-                {/* Unassigned Videos */}
-                {videos.filter(v => !v.module_id).length > 0 && (
-                  <Card className="border-l-4 border-l-muted">
-                    <CardHeader className="py-4">
-                      <CardTitle className="text-lg">Videos sin asignar</CardTitle>
-                      <CardDescription>Videos que aún no pertenecen a ningún módulo</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <VideoTable
-                        videos={videos.filter(v => !v.module_id)}
-                        editingVideo={editingVideo}
-                        setEditingVideo={setEditingVideo}
-                        handleUpdateVideo={handleUpdateVideo}
-                        handleDeleteVideo={handleDeleteVideo}
-                        modules={modules}
-                      />
-                    </CardContent>
+              {/* Course Builder Structure */}
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-serif font-semibold text-foreground/80 flex items-center gap-2">
+                    <ClipboardList className="w-5 h-5 text-primary" />
+                    Estructura Curricular
+                  </h3>
+                </div>
+
+                {modules.length === 0 && videos.length === 0 ? (
+                  <Card className="rounded-3xl border-dashed p-16 text-center bg-muted/5">
+                    <p className="text-muted-foreground">Empezar a construir el curso creando un módulo o subiendo videos.</p>
                   </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {modules.map((module) => {
+                      const moduleVideos = videos.filter(v => v.module_id === module.id);
+                      return (
+                        <Card key={module.id} className="rounded-3xl overflow-hidden border border-border/50 transition-all hover:border-primary/20">
+                          <CardHeader className="py-5 bg-muted/20">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                {editingModule?.id === module.id ? (
+                                  <div className="flex gap-2 max-w-md">
+                                    <Input
+                                      value={editingModule.title}
+                                      onChange={(e) => setEditingModule({ ...editingModule, title: e.target.value })}
+                                      className="rounded-xl font-medium"
+                                    />
+                                    <Button size="icon" className="shrink-0 rounded-xl" onClick={() => handleUpdateModule(editingModule)}>
+                                      <Save className="w-4 h-4" />
+                                    </Button>
+                                    <Button size="icon" variant="outline" className="shrink-0 rounded-xl" onClick={() => setEditingModule(null)}>
+                                      <X className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-background flex items-center justify-center text-muted-foreground border border-border/50">
+                                      <GripVertical size={14} />
+                                    </div>
+                                    <CardTitle className="text-lg font-serif">{module.title}</CardTitle>
+                                    <Button variant="ghost" size="icon" className="rounded-full w-8 h-8 text-muted-foreground" onClick={() => setEditingModule(module)}>
+                                      <Edit size={14} />
+                                    </Button>
+                                  </div>
+                                )}
+                                {module.description && !editingModule && (
+                                  <CardDescription className="ml-11 mt-1">{module.description}</CardDescription>
+                                )}
+                              </div>
+                              <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5" onClick={() => handleDeleteModule(module.id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="p-0 border-t border-border/50 bg-background/20">
+                            <VideoTable
+                              videos={moduleVideos}
+                              editingVideo={editingVideo}
+                              setEditingVideo={setEditingVideo}
+                              handleUpdateVideo={handleUpdateVideo}
+                              handleDeleteVideo={handleDeleteVideo}
+                              modules={modules}
+                            />
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+
+                    {videos.filter(v => !v.module_id).length > 0 && (
+                      <Card className="rounded-3xl overflow-hidden border border-dashed border-border/50 bg-background/5 mt-8">
+                        <CardHeader className="py-5">
+                          <CardTitle className="text-lg font-medium opacity-70 italic">Videos sin asignar</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 border-t border-border/50">
+                          <VideoTable
+                            videos={videos.filter(v => !v.module_id)}
+                            editingVideo={editingVideo}
+                            setEditingVideo={setEditingVideo}
+                            handleUpdateVideo={handleUpdateVideo}
+                            handleDeleteVideo={handleDeleteVideo}
+                            modules={modules}
+                          />
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
                 )}
-              </>
-            )}
+              </div>
+            </>
+          )}
+        </TabsContent>
+
+        <TabsContent value="admins" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="text-center space-y-2">
+              <h2 className="font-serif text-3xl font-semibold text-foreground">Control de Accesos</h2>
+              <p className="text-muted-foreground">Gestiona quién tiene autorización para editar contenido en la plataforma.</p>
+            </div>
+
+            <Card className="rounded-3xl border-none shadow-xl bg-card/50 backdrop-blur-md overflow-hidden">
+              <CardHeader className="bg-primary/5 pb-8 pt-10 px-10 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6">
+                  <UserPlus className="w-8 h-8" />
+                </div>
+                <CardTitle className="text-2xl font-serif">Añadir Administrador</CardTitle>
+                <CardDescription>
+                  El nuevo administrador podrá crear cursos, subir videos y gestionar otros accesos.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-10">
+                <form onSubmit={handleAddAdminEmail} className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <Input
+                      type="email"
+                      placeholder="correo@ejemplo.com"
+                      value={newAdminEmail}
+                      onChange={(e) => setNewAdminEmail(e.target.value)}
+                      className="rounded-2xl h-14 pl-6 text-lg bg-background/80"
+                      required
+                    />
+                  </div>
+                  <Button type="submit" size="lg" className="rounded-2xl h-14 px-10 font-bold transition-all hover:shadow-lg">
+                    Otorgar Acceso
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between px-2">
+                <h3 className="font-serif text-xl font-medium">Equipo Autorizado</h3>
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{adminEmails.length} Miembros</span>
+              </div>
+
+              <div className="grid gap-3">
+                {adminEmails.map((admin) => (
+                  <div
+                    key={admin.id}
+                    className="flex items-center justify-between p-5 bg-card/40 backdrop-blur-sm rounded-2xl border border-border/50 group hover:border-primary/20 transition-all hover:shadow-md"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center text-primary font-bold text-lg">
+                        {admin.email.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-medium text-foreground">{admin.email}</p>
+                        {admin.email === user?.primaryEmailAddress?.emailAddress && (
+                          <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full uppercase">Tú (Propietario)</span>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 opacity-0 group-hover:opacity-100 transition-all"
+                      onClick={() => handleDeleteAdminEmail(admin.id, admin.email)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </>
-      )}
+        </TabsContent>
+
+        <TabsContent value="ajustes" className="animate-in fade-in duration-500">
+          <div className="max-w-2xl mx-auto py-20 text-center space-y-6">
+            <div className="w-20 h-20 rounded-3xl bg-muted flex items-center justify-center mx-auto">
+              <Settings className="w-10 h-10 text-muted-foreground" />
+            </div>
+            <h2 className="text-2xl font-serif font-semibold">Configuración General</h2>
+            <p className="text-muted-foreground">Próximamente: Podrás configurar colores de marca, integraciones de pago y personalización avanzada de la plataforma.</p>
+            <Button variant="outline" className="rounded-2xl" disabled>Configurar Marca</Button>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Dialog for Module Creation (Shared across tabs if needed) */}
+      <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
+        <DialogContent className="rounded-3xl border-none shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl">Gestionar Estructura</DialogTitle>
+            <DialogDescription>Añade un nuevo módulo a tu programa curricular.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleCreateModule} className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label htmlFor="module-title-dialog">Título del Módulo</Label>
+              <Input
+                id="module-title-dialog"
+                value={newModuleForm.title}
+                onChange={(e) =>
+                  setNewModuleForm({ ...newModuleForm, title: e.target.value })
+                }
+                placeholder="Ej: Fundamentos del Mindfulness"
+                required
+                className="rounded-xl h-12"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="module-description-dialog">Descripción</Label>
+              <Textarea
+                id="module-description-dialog"
+                value={newModuleForm.description}
+                onChange={(e) =>
+                  setNewModuleForm({ ...newModuleForm, description: e.target.value })
+                }
+                placeholder="Breve resumen de lo que aprenderán en este bloque..."
+                rows={3}
+                className="rounded-xl"
+              />
+            </div>
+            <div className="flex gap-3 pt-6">
+              <Button type="submit" className="flex-1 rounded-xl">Crear Módulo</Button>
+              <Button type="button" variant="outline" className="rounded-xl" onClick={() => setIsModuleDialogOpen(false)}>Cancelar</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
