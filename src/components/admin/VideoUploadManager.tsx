@@ -670,7 +670,7 @@ const VideoUploadManager = () => {
     }
 
     return (
-        <div className="space-y-10 pb-20">
+        <div className="space-y-10 pb-20 bg-background text-foreground">
             <header className="relative py-8">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
@@ -689,7 +689,7 @@ const VideoUploadManager = () => {
             </header>
 
             <Tabs defaultValue="cursos" className="space-y-8">
-                <TabsList className="bg-muted/50 p-1 rounded-2xl border border-border/50 backdrop-blur-sm">
+                <TabsList className="bg-muted p-1 rounded-2xl border border-border backdrop-blur-sm">
                     <TabsTrigger value="cursos" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white">
                         <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-primary text-[10px] font-bold mr-1">1</span>
                         Elegir Programa
