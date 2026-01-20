@@ -30,13 +30,6 @@ const mainItems: SidebarItem[] = [
   { label: "Mi perfil", icon: User, href: "#perfil" },
   { label: "Mis Cursos", icon: BookOpen, href: "#cursos" },
   { label: "Gestión de Videos", icon: Video, href: "#videos", adminOnly: true },
-  { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
-  { label: "Reseñas", icon: Star, href: "#resenas" },
-  { label: "Mis intentos de cuestionarios", icon: ClipboardList, href: "#cuestionarios" },
-  { label: "Lista de deseos", icon: Bookmark, href: "#deseos" },
-  { label: "Historial de pedidos", icon: ShoppingBag, href: "#pedidos" },
-  { label: "Pregunta y respuesta", icon: MessageCircleQuestion, href: "#preguntas" },
-  { label: "Calendar", icon: Calendar, href: "#calendar" },
 ];
 
 const bottomItems: SidebarItem[] = [

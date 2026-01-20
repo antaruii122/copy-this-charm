@@ -19,10 +19,10 @@ const Dashboard = () => {
   }, [courseId]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-cream via-background to-cream-dark relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-rose/5 rounded-full blur-3xl" />
+    <div className="min-h-screen flex flex-col bg-[#FDFCFB] relative overflow-hidden">
+      {/* Decorative background elements - Shifted to subtle Sage/Taupe */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sage/5 rounded-full blur-[100px]" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-taupe/5 rounded-full blur-[100px]" />
 
       <DashboardHeader />
 

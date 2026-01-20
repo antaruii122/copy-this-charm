@@ -1,7 +1,6 @@
 import DashboardStats from "./DashboardStats";
 import ProfileView from "./ProfileView";
 import SettingsView from "./SettingsView";
-import BlogManager from "./BlogManager";
 import CourseVideos from "@/components/CourseVideos";
 import VideoUploadManager from "@/components/admin/VideoUploadManager";
 
@@ -26,8 +25,6 @@ const DashboardContent = ({ activeSection, courseId }: DashboardContentProps) =>
         return <CourseVideos courseId={courseId} />;
       case "Gestión de Videos":
         return <VideoUploadManager />;
-      case "Blog":
-        return <BlogManager />;
       case "Ajustes":
         return <SettingsView />;
       default:

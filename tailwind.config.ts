@@ -61,6 +61,7 @@ export default {
         "cream-dark": "hsl(var(--cream-dark))",
         "warm-brown": "hsl(var(--warm-brown))",
         gold: "hsl(var(--gold))",
+        taupe: "hsl(var(--taupe))",
         success: "hsl(var(--success))",
       },
       borderRadius: {

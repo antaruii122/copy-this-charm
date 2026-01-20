@@ -182,14 +182,21 @@ const VideoUploadManager = () => {
     }
 
     try {
+      setCheckingAdmin(true);
+      const email = user.primaryEmailAddress.emailAddress;
+
       const { data, error } = await supabase
         .from("admin_emails")
         .select("email")
-        .eq("email", user.primaryEmailAddress.emailAddress)
+        .eq("email", email)
         .maybeSingle();
 
       if (error) throw error;
       setIsAdmin(!!data);
+
+      if (!data) {
+        console.warn(`Access denied for ${email}. Not found in admin_emails table.`);
+      }
     } catch (error) {
       console.error("Error checking admin status:", error);
       setIsAdmin(false);
