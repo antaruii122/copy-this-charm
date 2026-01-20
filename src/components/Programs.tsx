@@ -55,12 +55,22 @@ const Programs = () => {
             // Diamond pattern: middle column offset, sides normal
             // Row 1: Normal, UP, Normal
             // Row 2: Normal, DOWN, Normal
-            const position = index % 3; // 0=left, 1=middle, 2=right
-            const row = Math.floor(index / 3); // 0=top row, 1=bottom row
+            const position = index % 3;
+            const row = Math.floor(index / 3);
 
             let staggerClass = '';
-            if (position === 1) { // Middle column
-              staggerClass = row === 0 ? 'md:-translate-y-8' : 'md:translate-y-8';
+            if (row === 0) { // Top Row (Indices 0, 1, 2)
+              if (position === 1) {
+                staggerClass = 'md:-translate-y-12'; // TOP
+              } else {
+                staggerClass = 'md:translate-y-4'; // BOTTOM
+              }
+            } else if (row === 1) { // Bottom Row (Indices 3, 4, 5)
+              if (position === 1) {
+                staggerClass = 'md:translate-y-24'; // MORE BOTTOM
+              } else {
+                staggerClass = 'md:translate-y-8'; // BOTTOM
+              }
             }
 
             return (

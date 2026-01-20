@@ -40,9 +40,11 @@ const DashboardHeader = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-3">
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
-              Aula Virtual
-            </Button>
+            <Link to="/escritorio">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
+                Aula Virtual
+              </Button>
+            </Link>
             <Button variant="outline" className="rounded-full px-4 gap-2 border-border">
               <span className="text-foreground/80">$0</span>
               <div className="relative">
