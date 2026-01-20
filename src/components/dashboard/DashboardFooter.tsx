@@ -62,7 +62,7 @@ const DashboardFooter = () => {
       <div className="relative z-10 border-t border-primary-foreground/20 bg-sage-dark/30 backdrop-blur-sm py-6 px-4">
         <div className="container mx-auto text-center">
           <p className="text-primary-foreground/80 text-sm font-medium">
-            © 2025 Ricardo Rules - Página web creada por{" "}
+            © 2025 NUTFEM - Página web creada por{" "}
             <a href="#" className="text-gold hover:text-gold/80 hover:underline transition-colors">
               Agencia Fractal
             </a>
