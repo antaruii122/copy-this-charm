@@ -80,13 +80,13 @@ const CourseLandingPage = () => {
             <DashboardHeader />
 
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 px-6 lg:px-20 bg-black text-white overflow-hidden">
+            <section className="relative pt-32 pb-20 px-6 lg:px-20 bg-gradient-hero text-white overflow-hidden">
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-neutral-900 to-transparent opacity-50"></div>
                 <div className="container mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-gold/20 border border-gold/30 rounded-full">
-                            <Star className="w-3.5 h-3.5 fill-gold text-gold" />
-                            <span className="text-gold text-[10px] font-bold tracking-[0.2em] uppercase">{course.rating || 5.0} Calificación del programa</span>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 border border-white/30 rounded-full">
+                            <Star className="w-3.5 h-3.5 fill-white text-white" />
+                            <span className="text-white text-[10px] font-bold tracking-[0.2em] uppercase">{course.rating || 5.0} Calificación del programa</span>
                         </div>
                         <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] uppercase">
                             {course.title}
@@ -96,12 +96,12 @@ const CourseLandingPage = () => {
                         </p>
                         <div className="flex flex-wrap gap-6 pt-4">
                             <div className="flex items-center gap-2">
-                                <Users className="w-5 h-5 text-gold" />
-                                <span className="text-sm font-medium text-neutral-300">Acceso de por vida</span>
+                                <Users className="w-5 h-5 text-white/80" />
+                                <span className="text-sm font-medium text-neutral-100">Acceso de por vida</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Medal className="w-5 h-5 text-gold" />
-                                <span className="text-sm font-medium text-neutral-300">Certificado incluido</span>
+                                <Medal className="w-5 h-5 text-white/80" />
+                                <span className="text-sm font-medium text-neutral-100">Certificado incluido</span>
                             </div>
                         </div>
                     </div>
@@ -202,14 +202,14 @@ const CourseLandingPage = () => {
                         {/* target audience */}
                         {course.target_audience && (
                             <div className="space-y-6">
-                                <h2 className="font-serif text-3xl font-bold uppercase tracking-widest border-b border-black/10 pb-4">
+                                <h2 className="font-serif text-3xl font-bold uppercase tracking-widest border-b border-primary/10 pb-4 text-foreground">
                                     ¿Para quién es este curso?
                                 </h2>
-                                <div className="bg-neutral-900 text-white rounded-3xl p-10 flex gap-8 items-start">
-                                    <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
-                                        <Medal className="w-6 h-6 text-gold" />
+                                <div className="bg-neutral-50 text-foreground rounded-3xl p-10 flex gap-8 items-start shadow-sm border border-neutral-100">
+                                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                        <Medal className="w-6 h-6 text-primary" />
                                     </div>
-                                    <p className="text-neutral-300 text-lg leading-relaxed italic">
+                                    <p className="text-neutral-600 text-lg leading-relaxed italic">
                                         {course.target_audience}
                                     </p>
                                 </div>
@@ -229,7 +229,7 @@ const CourseLandingPage = () => {
                             </div>
 
                             <Button
-                                className="w-full py-8 text-lg font-bold uppercase tracking-widest bg-black text-white hover:bg-neutral-800 rounded-2xl shadow-xl transition-all hover:scale-[1.02]"
+                                className="w-full py-8 text-lg font-bold uppercase tracking-widest bg-gradient-primary text-white hover:opacity-90 rounded-2xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
                                 onClick={() => isSignedIn ? navigate(`/aprender/${course.slug}`) : navigate('/auth')}
                             >
                                 {isSignedIn ? "Ver Programa" : "Inscribirse Ahora"}

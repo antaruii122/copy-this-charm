@@ -27,11 +27,11 @@ interface Course {
 
 // Category colors for nutrition-themed badges
 const categoryColors: Record<string, string> = {
-  "MENOPAUSIA": "bg-black text-white",
-  "FERTILIDAD": "bg-black text-white",
-  "CICLO MENSTRUAL": "bg-black text-white",
-  "MEMBRESIA": "bg-[#D4AF37] text-black",
-  "DEFAULT": "bg-black text-white"
+  "MENOPAUSIA": "bg-primary text-white",
+  "FERTILIDAD": "bg-primary text-white",
+  "CICLO MENSTRUAL": "bg-primary text-white",
+  "MEMBRESIA": "bg-gold text-black", // Gold is acceptable for premium membership
+  "DEFAULT": "bg-primary text-white"
 };
 
 // Fruit icons for progress milestones
@@ -207,7 +207,7 @@ const DashboardStats = () => {
               <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index]} opacity-0 group-hover:opacity-20 transition-opacity`} />
 
               {/* Icon */}
-              <div className={`relative z-10 w-14 h-14 rounded-xl bg-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
+              <div className={`relative z-10 w-14 h-14 rounded-xl bg-sage flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
                 <Icon size={24} className="text-white" />
               </div>
 
@@ -225,7 +225,7 @@ const DashboardStats = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center">
               <PlayCircle className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-2xl font-serif font-bold text-foreground uppercase tracking-tight">Mis Programas</h2>
@@ -361,7 +361,7 @@ const DashboardStats = () => {
                         </span>
                         <Button
                           size="sm"
-                          className="bg-black text-white hover:bg-neutral-800 transition-all px-6 rounded-full font-bold uppercase text-[10px] tracking-widest"
+                          className="bg-primary text-white hover:bg-primary/90 transition-all px-6 rounded-full font-bold uppercase text-[10px] tracking-widest"
                         >
                           Continuar
                         </Button>

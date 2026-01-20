@@ -679,7 +679,7 @@ const VideoUploadManager = () => {
                             <span className="text-primary text-[10px] font-bold tracking-widest uppercase">Sistema de Gestión Premium</span>
                         </div>
                         <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground tracking-tight uppercase">
-                            Administración de <span className="text-black italic underline decoration-gold underline-offset-8">Cursos</span>
+                            Administración de <span className="text-primary italic underline decoration-primary/30 underline-offset-8">Cursos</span>
                         </h1>
                         <p className="text-muted-foreground mt-4 text-lg max-w-2xl leading-relaxed">
                             Gestiona el contenido de tus cursos, organiza módulos y administra los permisos de acceso de tu equipo.
@@ -690,23 +690,23 @@ const VideoUploadManager = () => {
 
             <Tabs defaultValue="cursos" className="space-y-8">
                 <TabsList className="bg-muted/50 p-1 rounded-2xl border border-border/50 backdrop-blur-sm">
-                    <TabsTrigger value="cursos" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white">
-                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold text-black text-[10px] font-bold mr-1">1</span>
+                    <TabsTrigger value="cursos" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white">
+                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-primary text-[10px] font-bold mr-1">1</span>
                         Elegir Programa
                     </TabsTrigger>
-                    <TabsTrigger value="contenido" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white" disabled={!selectedCourse}>
-                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold text-black text-[10px] font-bold mr-1">2</span>
+                    <TabsTrigger value="contenido" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white" disabled={!selectedCourse}>
+                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-primary text-[10px] font-bold mr-1">2</span>
                         Añadir Contenido
                     </TabsTrigger>
-                    <TabsTrigger value="admins" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white">
+                    <TabsTrigger value="admins" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white">
                         <Users className="w-4 h-4" />
                         Accesos
                     </TabsTrigger>
-                    <TabsTrigger value="marketing" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white" disabled={!selectedCourse}>
+                    <TabsTrigger value="marketing" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white" disabled={!selectedCourse}>
                         <Layout className="w-4 h-4" />
                         Marketing
                     </TabsTrigger>
-                    <TabsTrigger value="ajustes" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white">
+                    <TabsTrigger value="ajustes" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white">
                         <Settings className="w-4 h-4" />
                         Configuración
                     </TabsTrigger>
