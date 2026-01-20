@@ -147,6 +147,17 @@ const VideoUploadManager = () => {
     const syncAuth = async () => {
       const token = await getToken({ template: "supabase" });
       if (token) {
+        // Diagnostic: Help user see what's inside their token
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          console.log("Supabase JWT Claims:", payload);
+          if (!payload.email) {
+            console.error("CRITICAL: JWT is missing 'email' claim. Check Clerk Supabase template!");
+          }
+        } catch (e) {
+          console.error("Error decoding JWT:", e);
+        }
+
         await supabase.auth.setSession({
           access_token: token,
           refresh_token: "", // Not needed for Clerk session
@@ -625,8 +636,8 @@ const VideoUploadManager = () => {
               <ShieldCheck className="w-3.5 h-3.5 text-primary" />
               <span className="text-primary text-[10px] font-bold tracking-widest uppercase">Sistema de Gestión Premium</span>
             </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-semibold text-foreground tracking-tight">
-              Panel de <span className="text-primary italic">Control</span>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground tracking-tight uppercase">
+              Administración de <span className="text-black italic underline decoration-gold underline-offset-8">Cursos</span>
             </h1>
             <p className="text-muted-foreground mt-4 text-lg max-w-2xl leading-relaxed">
               Gestiona el contenido de tus cursos, organiza módulos y administra los permisos de acceso de tu equipo.
@@ -637,21 +648,21 @@ const VideoUploadManager = () => {
 
       <Tabs defaultValue="cursos" className="space-y-8">
         <TabsList className="bg-muted/50 p-1 rounded-2xl border border-border/50 backdrop-blur-sm">
-          <TabsTrigger value="cursos" className="rounded-xl gap-2 px-6">
-            <Layout className="w-4 h-4" />
-            Cursos
+          <TabsTrigger value="cursos" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white">
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold text-black text-[10px] font-bold mr-1">1</span>
+            Elegir Programa
           </TabsTrigger>
-          <TabsTrigger value="contenido" className="rounded-xl gap-2 px-6" disabled={!selectedCourse}>
-            <ClipboardList className="w-4 h-4" />
-            Contenido
+          <TabsTrigger value="contenido" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white" disabled={!selectedCourse}>
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold text-black text-[10px] font-bold mr-1">2</span>
+            Añadir Contenido
           </TabsTrigger>
-          <TabsTrigger value="admins" className="rounded-xl gap-2 px-6">
+          <TabsTrigger value="admins" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white">
             <Users className="w-4 h-4" />
-            Administradores
+            Accesos
           </TabsTrigger>
-          <TabsTrigger value="ajustes" className="rounded-xl gap-2 px-6">
+          <TabsTrigger value="ajustes" className="rounded-xl gap-2 px-6 data-[state=active]:bg-black data-[state=active]:text-white">
             <Settings className="w-4 h-4" />
-            Ajustes
+            Configuración
           </TabsTrigger>
         </TabsList>
 
@@ -755,8 +766,10 @@ const VideoUploadManager = () => {
                   key={course.id}
                   onClick={() => setSelectedCourse(course.id)}
                   className={cn(
-                    "group relative p-6 rounded-3xl border bg-card/40 backdrop-blur-sm cursor-pointer transition-all hover:shadow-2xl hover:-translate-y-1 hover:border-primary/30",
-                    selectedCourse === course.id ? "border-primary ring-1 ring-primary/50" : "border-border/50"
+                    "group relative p-6 rounded-3xl border bg-white cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1",
+                    selectedCourse === course.id
+                      ? "border-black border-2 shadow-[0_0_20px_rgba(0,0,0,0.1)] bg-neutral-50 scale-[1.02]"
+                      : "border-neutral-100 hover:border-black/20"
                   )}
                 >
                   <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
@@ -819,8 +832,8 @@ const VideoUploadManager = () => {
               <Card className="rounded-3xl overflow-hidden border-none shadow-sm bg-card/30 backdrop-blur-sm">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-xl font-serif">
-                    <Upload className="w-5 h-5 text-primary" />
-                    Subir Nuevas Lecciones
+                    <Upload className="w-5 h-5 text-black" />
+                    Paso 2: Subir y Organizar Lecciones
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">

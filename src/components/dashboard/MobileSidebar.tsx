@@ -19,8 +19,7 @@ const mainItems: SidebarItem[] = [
   { label: "Agenda", icon: Calendar, href: "#agenda" },
   { label: "Recursos", icon: FolderDown, href: "#recursos" },
   { label: "Certificados", icon: Award, href: "#certificados" },
-  { label: "Gestión de Videos", icon: Video, href: "#videos", adminOnly: true },
-  { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
+  { label: "Administración de Cursos", icon: Video, href: "#videos", adminOnly: true },
 ];
 
 const bottomItems: SidebarItem[] = [

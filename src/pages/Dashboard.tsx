@@ -20,9 +20,8 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FDFCFB] relative overflow-hidden">
-      {/* Decorative background elements - Shifted to subtle Sage/Taupe */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sage/5 rounded-full blur-[100px]" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-taupe/5 rounded-full blur-[100px]" />
+      {/* Premium minimal background */}
+      <div className="absolute top-0 right-0 w-full h-[500px] bg-neutral-50" />
 
       <DashboardHeader />
 

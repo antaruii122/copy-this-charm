@@ -33,7 +33,7 @@ const DashboardContent = ({ activeSection, courseId }: DashboardContentProps) =>
         return <RecursosView />;
       case "Certificados":
         return <CertificadosView />;
-      case "Gestión de Videos":
+      case "Administración de Cursos":
         return <VideoUploadManager />;
       case "Blog":
         return <BlogManager />;

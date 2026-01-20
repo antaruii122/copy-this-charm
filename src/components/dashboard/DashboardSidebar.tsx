@@ -29,8 +29,7 @@ const mainItems: SidebarItem[] = [
   { label: "Agenda", icon: Calendar, href: "#agenda" },
   { label: "Recursos", icon: FolderDown, href: "#recursos" },
   { label: "Certificados", icon: Award, href: "#certificados" },
-  { label: "Gestión de Videos", icon: Video, href: "#videos", adminOnly: true },
-  { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
+  { label: "Administración de Cursos", icon: Video, href: "#videos", adminOnly: true },
 ];
 
 const bottomItems: SidebarItem[] = [
@@ -76,7 +75,7 @@ const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) =>
   );
 
   return (
-    <aside className="w-64 min-h-[calc(100vh-200px)] border-r border-border/50 bg-gradient-to-b from-cream via-background to-cream/50 shadow-soft hidden md:block">
+    <aside className="w-64 min-h-[calc(100vh-200px)] border-r border-border/50 bg-white shadow-soft hidden md:block">
       <nav className="py-6">
         {/* Main Navigation */}
         <ul className="space-y-2 px-3">
@@ -91,8 +90,8 @@ const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) =>
                   className={cn(
                     "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 relative overflow-hidden group",
                     isActive
-                      ? "bg-gradient-to-r from-primary to-sage-dark text-primary-foreground shadow-md"
-                      : "text-foreground/70 hover:bg-white/80 hover:text-primary hover:shadow-sm hover:-translate-x-1 backdrop-blur-sm"
+                      ? "bg-[#0A0A0A] text-white shadow-lg"
+                      : "text-foreground hover:bg-neutral-100 hover:text-black transition-all"
                   )}
                 >
                   {isActive && (
