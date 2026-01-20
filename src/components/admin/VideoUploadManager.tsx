@@ -494,7 +494,14 @@ const VideoUploadManager = () => {
   };
 
   const uploadSingleFile = async (file: File, index: number) => {
-    const fileName = `${Date.now()}-${file.name}`;
+    // Sanitize file name: remove special characters, spaces, and accents
+    const sanitizedName = file.name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // Remove accents
+      .replace(/[^a-zA-Z0-9.-]/g, "_") // Replace everything else with underscore
+      .replace(/_{2,}/g, "_"); // Remove consecutive underscores
+
+    const fileName = `${Date.now()}-${sanitizedName}`;
 
     try {
       // Upload to Supabase Storage
