@@ -52,12 +52,14 @@ const BlogManager = () => {
 
   useEffect(() => {
     checkAdminStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     if (isAdmin) {
       fetchPosts();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
   const checkAdminStatus = async () => {
@@ -186,11 +188,12 @@ const BlogManager = () => {
       resetForm();
       setIsDialogOpen(false);
       fetchPosts();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error saving post:", error);
+      const errorMessage = error instanceof Error ? error.message : "No se pudo guardar el artículo";
       toast({
         title: "Error",
-        description: error.message || "No se pudo guardar el artículo",
+        description: errorMessage,
         variant: "destructive",
       });
     }

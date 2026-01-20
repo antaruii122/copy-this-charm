@@ -66,40 +66,12 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-interface Course {
-    id: string;
-    title: string;
-    slug: string;
-    description: string | null;
-    price: string | null;
-    is_featured: boolean;
-    long_description: string | null;
-    learning_outcomes: any;
-    target_audience: string | null;
-    curriculum_summary: string | null;
-    author_name: string | null;
-    author_image_url: string | null;
-    author_role: string | null;
-}
+import { Tables } from "@/integrations/supabase/types";
 
-interface CourseVideo {
-    id: string;
-    course_id: string;
-    module_id: string | null;
-    title: string;
-    description: string | null;
-    video_path: string;
-    sort_order: number;
-    duration_seconds: number | null;
-}
-
-interface Module {
-    id: string;
-    course_id: string;
-    title: string;
-    description: string | null;
-    sort_order: number;
-}
+// Temporarily extend types until we can make them stricter or db schema is fully aligned
+type Course = Tables<"courses">;
+type CourseVideo = Tables<"course_videos">;
+type Module = Tables<"modules">;
 
 interface UploadProgress {
     fileName: string;
@@ -180,8 +152,9 @@ const VideoUploadManager = () => {
 
             if (error) throw error;
             toast({ title: "Cambios guardados", description: "La información de marketing ha sido actualizada." });
-        } catch (error: any) {
-            toast({ title: "Error al guardar", description: error.message, variant: "destructive" });
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+            toast({ title: "Error al guardar", description: errorMessage, variant: "destructive" });
         }
     };
 
@@ -211,14 +184,14 @@ const VideoUploadManager = () => {
         if (user) {
             syncAuth();
         }
-    }, [user]);
+    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (isAdmin) {
             fetchCourses();
             fetchAdminEmails();
         }
-    }, [isAdmin]);
+    }, [isAdmin]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (selectedCourse) {
@@ -226,7 +199,7 @@ const VideoUploadManager = () => {
             fetchCourseVideos(selectedCourse);
             setVideoMetadata(prev => ({ ...prev, course_id: selectedCourse }));
         }
-    }, [selectedCourse]);
+    }, [selectedCourse]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const checkAdminStatus = async () => {
         if (!user?.primaryEmailAddress?.emailAddress) {
@@ -266,7 +239,7 @@ const VideoUploadManager = () => {
                 .order("created_at", { ascending: false });
 
             if (error) throw error;
-            setCourses((data as any) || []);
+            setCourses((data as Course[]) || []);
         } catch (error) {
             console.error("Error fetching courses:", error);
             toast({
@@ -307,11 +280,12 @@ const VideoUploadManager = () => {
             toast({ title: "Administrador añadido exitosamente" });
             setNewAdminEmail("");
             fetchAdminEmails();
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error adding admin email:", error);
+            const errorMessage = error instanceof Error ? error.message : "No se pudo añadir el administrador";
             toast({
                 title: "Error",
-                description: error.message || "No se pudo añadir el administrador",
+                description: errorMessage,
                 variant: "destructive",
             });
         }
@@ -339,11 +313,12 @@ const VideoUploadManager = () => {
 
             toast({ title: "Administrador eliminado" });
             fetchAdminEmails();
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error deleting admin email:", error);
+            const errorMessage = error instanceof Error ? error.message : "No se pudo eliminar el administrador";
             toast({
                 title: "Error",
-                description: error.message || "No se pudo eliminar el administrador",
+                description: errorMessage,
                 variant: "destructive",
             });
         }
@@ -428,11 +403,12 @@ const VideoUploadManager = () => {
             setIsDialogOpen(false);
             fetchCourses();
             setSelectedCourse(data.id);
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error creating course:", error);
+            const errorMessage = error instanceof Error ? error.message : "No se pudo crear el curso";
             toast({
                 title: "Error",
-                description: error.message || "No se pudo crear el curso",
+                description: errorMessage,
                 variant: "destructive",
             });
         }
@@ -456,11 +432,12 @@ const VideoUploadManager = () => {
             setNewModuleForm({ title: "", description: "" });
             setIsModuleDialogOpen(false);
             fetchCourseModules(selectedCourse);
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error creating module:", error);
+            const errorMessage = error instanceof Error ? error.message : "No se pudo crear el módulo";
             toast({
                 title: "Error",
-                description: error.message || "No se pudo crear el módulo",
+                description: errorMessage,
                 variant: "destructive",
             });
         }
@@ -482,11 +459,12 @@ const VideoUploadManager = () => {
             toast({ title: "Módulo actualizado exitosamente" });
             setEditingModule(null);
             fetchCourseModules(selectedCourse);
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error updating module:", error);
+            const errorMessage = error instanceof Error ? error.message : "No se pudo actualizar el módulo";
             toast({
                 title: "Error",
-                description: error.message || "No se pudo actualizar el módulo",
+                description: errorMessage,
                 variant: "destructive",
             });
         }
@@ -505,7 +483,7 @@ const VideoUploadManager = () => {
             toast({ title: "Módulo eliminado" });
             fetchCourseModules(selectedCourse);
             fetchCourseVideos(selectedCourse);
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error deleting module:", error);
         }
     };
@@ -596,11 +574,12 @@ const VideoUploadManager = () => {
                     i === index ? { ...p, progress: 100, status: "success" } : p
                 )
             );
-        } catch (error: any) {
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Error desconocido";
             setUploadProgress((prev) =>
                 prev.map((p, i) =>
                     i === index
-                        ? { ...p, status: "error", error: error.message }
+                        ? { ...p, status: "error", error: errorMessage }
                         : p
                 )
             );
@@ -629,11 +608,12 @@ const VideoUploadManager = () => {
 
             toast({ title: "Video eliminado exitosamente" });
             fetchCourseVideos(selectedCourse);
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error deleting video:", error);
+            const errorMessage = error instanceof Error ? error.message : "No se pudo eliminar el video";
             toast({
                 title: "Error",
-                description: error.message || "No se pudo eliminar el video",
+                description: errorMessage,
                 variant: "destructive",
             });
         }
@@ -656,11 +636,12 @@ const VideoUploadManager = () => {
             toast({ title: "Video actualizado exitosamente" });
             setEditingVideo(null);
             fetchCourseVideos(selectedCourse);
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error updating video:", error);
+            const errorMessage = error instanceof Error ? error.message : "No se pudo actualizar el video";
             toast({
                 title: "Error",
-                description: error.message || "No se pudo actualizar el video",
+                description: errorMessage,
                 variant: "destructive",
             });
         }

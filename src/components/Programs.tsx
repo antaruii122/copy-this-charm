@@ -4,8 +4,16 @@ import { Star, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
+import { Tables } from "@/integrations/supabase/types";
+
+// Temporarily extending the type until the database schema is updated
+type Program = Tables<"courses"> & {
+  category?: string;
+  tag?: string;
+};
+
 const Programs = () => {
-  const [programs, setPrograms] = useState<any[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

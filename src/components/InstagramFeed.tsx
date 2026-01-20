@@ -2,48 +2,54 @@ import { Instagram } from "lucide-react";
 import { useEffect, useState } from "react";
 
 // Instagram Feed Component
-const InstagramFeed = () => {
-    const [posts, setPosts] = useState<any[]>([]);
+interface InstagramPost {
+    id: number;
+    image: string;
+    caption: string;
+    link: string;
+}
 
-    // Placeholder posts - In production, you'd fetch from Instagram API or use a service
-    const placeholderPosts = [
-        {
-            id: 1,
-            image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=400&fit=crop",
-            caption: "Fertilidad y nutrición consciente 🌸",
-            link: "https://www.instagram.com/alimentatufertilidad/"
-        },
-        {
-            id: 2,
-            image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop",
-            caption: "Nutrición hormonal para mujeres 💚",
-            link: "https://www.instagram.com/alimentatufertilidad/"
-        },
-        {
-            id: 3,
-            image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=400&h=400&fit=crop",
-            caption: "Ciclo menstrual y alimentación 🌿",
-            link: "https://www.instagram.com/alimentatufertilidad/"
-        },
-        {
-            id: 4,
-            image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop",
-            caption: "Recetas para cada fase del ciclo 🍽️",
-            link: "https://www.instagram.com/alimentatufertilidad/"
-        },
-        {
-            id: 5,
-            image: "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400&h=400&fit=crop",
-            caption: "Bienestar hormonal natural ✨",
-            link: "https://www.instagram.com/alimentatufertilidad/"
-        },
-        {
-            id: 6,
-            image: "https://images.unsplash.com/photo-1505576391880-b3f9d713dc4f?w=400&h=400&fit=crop",
-            caption: "Alimenta tu fertilidad 💗",
-            link: "https://www.instagram.com/alimentatufertilidad/"
-        }
-    ];
+const placeholderPosts: InstagramPost[] = [
+    {
+        id: 1,
+        image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=400&fit=crop",
+        caption: "Fertilidad y nutrición consciente 🌸",
+        link: "https://www.instagram.com/alimentatufertilidad/"
+    },
+    {
+        id: 2,
+        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop",
+        caption: "Nutrición hormonal para mujeres 💚",
+        link: "https://www.instagram.com/alimentatufertilidad/"
+    },
+    {
+        id: 3,
+        image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=400&h=400&fit=crop",
+        caption: "Ciclo menstrual y alimentación 🌿",
+        link: "https://www.instagram.com/alimentatufertilidad/"
+    },
+    {
+        id: 4,
+        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop",
+        caption: "Recetas para cada fase del ciclo 🍽️",
+        link: "https://www.instagram.com/alimentatufertilidad/"
+    },
+    {
+        id: 5,
+        image: "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400&h=400&fit=crop",
+        caption: "Bienestar hormonal natural ✨",
+        link: "https://www.instagram.com/alimentatufertilidad/"
+    },
+    {
+        id: 6,
+        image: "https://images.unsplash.com/photo-1505576391880-b3f9d713dc4f?w=400&h=400&fit=crop",
+        caption: "Alimenta tu fertilidad 💗",
+        link: "https://www.instagram.com/alimentatufertilidad/"
+    }
+];
+
+const InstagramFeed = () => {
+    const [posts, setPosts] = useState<InstagramPost[]>([]);
 
     useEffect(() => {
         // In production, fetch from Instagram API here

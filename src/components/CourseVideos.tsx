@@ -90,6 +90,7 @@ const CourseVideos = ({ courseId }: CourseVideosProps) => {
     if (user) {
       syncAuth();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, courseId]);
 
   const fetchCourseAndVideos = async () => {

@@ -8,22 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { CheckCircle2, Play, Users, Star, ArrowRight, ShieldCheck, Clock, Medal } from "lucide-react";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardFooter from "@/components/dashboard/DashboardFooter";
-
-interface Course {
-    id: string;
-    title: string;
-    slug: string;
-    description: string | null;
-    long_description: string | null;
-    price: string | null;
-    image_url: string | null;
-    learning_outcomes: string[] | any;
-    target_audience: string | null;
-    author_name: string | null;
-    author_role: string | null;
-    author_image_url: string | null;
-    rating: number | null;
-}
+import { Tables } from "@/integrations/supabase/types";
 
 interface Module {
     id: string;
@@ -35,7 +20,7 @@ const CourseLandingPage = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
     const { isSignedIn } = useAuth();
-    const [course, setCourse] = useState<Course | null>(null);
+    const [course, setCourse] = useState<Tables<"courses"> | null>(null);
     const [modules, setModules] = useState<Module[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -49,7 +34,7 @@ const CourseLandingPage = () => {
                     .single();
 
                 if (courseError) throw courseError;
-                setCourse(courseData as any);
+                setCourse(courseData);
 
                 const { data: moduleData, error: moduleError } = await supabase
                     .from("modules")
@@ -68,10 +53,12 @@ const CourseLandingPage = () => {
 
                 if (moduleError) throw moduleError;
 
-                const formattedModules = moduleData.map((m: any) => ({
+                const formattedModules = moduleData.map((m) => ({
                     id: m.id,
                     title: m.title,
-                    videos: m.course_videos.sort((a: any, b: any) => a.sort_order - b.sort_order)
+                    videos: Array.isArray(m.course_videos)
+                        ? m.course_videos.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+                        : []
                 }));
 
                 setModules(formattedModules);

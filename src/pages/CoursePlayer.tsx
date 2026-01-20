@@ -24,13 +24,14 @@ import {
     AccordionTrigger
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
+import { Tables } from "@/integrations/supabase/types";
 
 interface Video {
     id: string;
     title: string;
     video_path: string;
     module_id: string | null;
-    sort_order: number;
+    sort_order: number | null;
     url?: string;
 }
 
@@ -47,7 +48,7 @@ const CoursePlayer = () => {
     const { getToken } = useAuth();
     const { toast } = useToast();
 
-    const [course, setCourse] = useState<any>(null);
+    const [course, setCourse] = useState<Tables<"courses"> | null>(null);
     const [modules, setModules] = useState<Module[]>([]);
     const [videos, setVideos] = useState<Video[]>([]);
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
@@ -61,46 +62,47 @@ const CoursePlayer = () => {
             const token = await getToken({ template: "supabase" });
             if (token) {
                 await supabase.auth.setSession({ access_token: token, refresh_token: "" });
-                fetchData();
+                await fetchData();
             }
         };
+
+        const fetchData = async () => {
+            try {
+                // Get Course
+                const { data: courseData } = await supabase.from("courses").select("*").eq("slug", slug).single();
+                if (!courseData) return;
+                setCourse(courseData);
+
+                // Get Modules
+                const { data: moduleData } = await supabase.from("modules").select("*").eq("course_id", courseData.id).order("sort_order");
+                setModules(moduleData || []);
+
+                // Get Videos
+                const { data: videoData } = await supabase.from("course_videos").select("*").eq("course_id", courseData.id).order("sort_order");
+
+                const videosWithUrls = await Promise.all((videoData || []).map(async (v) => {
+                    const { data } = await supabase.storage.from("videodecurso").createSignedUrl(v.video_path, 3600);
+                    return { ...v, url: data?.signedUrl };
+                }));
+
+                setVideos(videosWithUrls);
+                setSelectedVideo(videosWithUrls[0] || null);
+
+                // Get Progress
+                const { data: progressData } = await supabase.from("video_progress").select("video_id, is_completed").eq("user_id", user?.id);
+                const progressMap: Record<string, boolean> = {};
+                progressData?.forEach(p => { progressMap[p.video_id] = p.is_completed || false; });
+                setProgress(progressMap);
+
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (user) init();
-    }, [user, slug]);
-
-    const fetchData = async () => {
-        try {
-            // Get Course
-            const { data: courseData } = await supabase.from("courses").select("*").eq("slug", slug).single();
-            if (!courseData) return;
-            setCourse(courseData);
-
-            // Get Modules
-            const { data: moduleData } = await supabase.from("modules").select("*").eq("course_id", courseData.id).order("sort_order");
-            setModules(moduleData || []);
-
-            // Get Videos
-            const { data: videoData } = await supabase.from("course_videos").select("*").eq("course_id", courseData.id).order("sort_order");
-
-            const videosWithUrls = await Promise.all((videoData || []).map(async (v) => {
-                const { data } = await supabase.storage.from("videodecurso").createSignedUrl(v.video_path, 3600);
-                return { ...v, url: data?.signedUrl };
-            }));
-
-            setVideos(videosWithUrls);
-            setSelectedVideo(videosWithUrls[0] || null);
-
-            // Get Progress
-            const { data: progressData } = await supabase.from("video_progress").select("video_id, is_completed").eq("user_id", user?.id);
-            const progressMap: Record<string, boolean> = {};
-            progressData?.forEach(p => { progressMap[p.video_id] = p.is_completed || false; });
-            setProgress(progressMap);
-
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [user, slug, getToken]);
 
     const handleLessonSelect = (video: Video) => {
         setSelectedVideo(video);
