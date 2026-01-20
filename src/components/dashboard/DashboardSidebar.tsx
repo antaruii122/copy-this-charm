@@ -53,12 +53,16 @@ const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) =>
           });
         }
 
-        const { data } = await supabase
+        const emailToCheck = user.primaryEmailAddress.emailAddress.toLowerCase().trim();
+        console.log("Checking admin for email:", emailToCheck);
+
+        const { data, error } = await supabase
           .from("admin_emails")
           .select("email")
-          .eq("email", user.primaryEmailAddress.emailAddress.toLowerCase().trim())
+          .eq("email", emailToCheck)
           .maybeSingle();
 
+        console.log("Admin check result:", { data, error, isAdmin: !!data });
         setIsAdmin(!!data);
       } catch (error) {
         console.error("Error checking admin status:", error);
