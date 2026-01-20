@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Menu, X, LayoutDashboard, User, BookOpen, Star, ClipboardList, Bookmark, ShoppingBag, MessageCircleQuestion, Calendar, Settings, LogOut, FileText, Video } from "lucide-react";
+import { Menu, X, LayoutDashboard, User, BookOpen, Calendar, FolderDown, Award, Settings, LogOut, FileText, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -16,14 +16,11 @@ const mainItems: SidebarItem[] = [
   { label: "Escritorio", icon: LayoutDashboard, href: "#escritorio" },
   { label: "Mi perfil", icon: User, href: "#perfil" },
   { label: "Mis Cursos", icon: BookOpen, href: "#cursos" },
+  { label: "Agenda", icon: Calendar, href: "#agenda" },
+  { label: "Recursos", icon: FolderDown, href: "#recursos" },
+  { label: "Certificados", icon: Award, href: "#certificados" },
   { label: "Gestión de Videos", icon: Video, href: "#videos", adminOnly: true },
   { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
-  { label: "Reseñas", icon: Star, href: "#resenas" },
-  { label: "Mis intentos de cuestionarios", icon: ClipboardList, href: "#cuestionarios" },
-  { label: "Lista de deseos", icon: Bookmark, href: "#deseos" },
-  { label: "Historial de pedidos", icon: ShoppingBag, href: "#pedidos" },
-  { label: "Pregunta y respuesta", icon: MessageCircleQuestion, href: "#preguntas" },
-  { label: "Calendar", icon: Calendar, href: "#calendar" },
 ];
 
 const bottomItems: SidebarItem[] = [

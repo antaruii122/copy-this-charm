@@ -1,6 +1,10 @@
 import DashboardStats from "./DashboardStats";
 import ProfileView from "./ProfileView";
 import SettingsView from "./SettingsView";
+import AgendaView from "./AgendaView";
+import RecursosView from "./RecursosView";
+import CertificadosView from "./CertificadosView";
+import BlogManager from "./BlogManager";
 import CourseVideos from "@/components/CourseVideos";
 import VideoUploadManager from "@/components/admin/VideoUploadManager";
 
@@ -23,8 +27,16 @@ const DashboardContent = ({ activeSection, courseId }: DashboardContentProps) =>
         return <ProfileView />;
       case "Mis Cursos":
         return <CourseVideos courseId={courseId} />;
+      case "Agenda":
+        return <AgendaView />;
+      case "Recursos":
+        return <RecursosView />;
+      case "Certificados":
+        return <CertificadosView />;
       case "Gestión de Videos":
         return <VideoUploadManager />;
+      case "Blog":
+        return <BlogManager />;
       case "Ajustes":
         return <SettingsView />;
       default:
@@ -40,7 +52,7 @@ const DashboardContent = ({ activeSection, courseId }: DashboardContentProps) =>
                   <path d="M40 120 C40 120 60 80 80 100 C100 120 120 60 140 80 C160 100 180 70 180 70" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.3" />
                 </svg>
               </div>
-              <p className="text-sage">No hay datos disponibles en esta sección</p>
+              <p className="text-sage">No hay datos disponibles en esta seccion</p>
             </div>
           </>
         );

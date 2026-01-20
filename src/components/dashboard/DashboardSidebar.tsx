@@ -6,6 +6,10 @@ import {
   User,
   BookOpen,
   Video,
+  FileText,
+  Calendar,
+  FolderDown,
+  Award,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -22,7 +26,11 @@ const mainItems: SidebarItem[] = [
   { label: "Escritorio", icon: LayoutDashboard, href: "#escritorio" },
   { label: "Mi perfil", icon: User, href: "#perfil" },
   { label: "Mis Cursos", icon: BookOpen, href: "#cursos" },
+  { label: "Agenda", icon: Calendar, href: "#agenda" },
+  { label: "Recursos", icon: FolderDown, href: "#recursos" },
+  { label: "Certificados", icon: Award, href: "#certificados" },
   { label: "Gestión de Videos", icon: Video, href: "#videos", adminOnly: true },
+  { label: "Blog", icon: FileText, href: "#blog", adminOnly: true },
 ];
 
 const bottomItems: SidebarItem[] = [
