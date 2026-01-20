@@ -1,20 +1,13 @@
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard,
   User,
   BookOpen,
-  Star,
-  ClipboardList,
-  Bookmark,
-  ShoppingBag,
-  MessageCircleQuestion,
-  Calendar,
+  Video,
   Settings,
   LogOut,
-  FileText,
-  Video,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -44,13 +37,22 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) => {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
+    const syncAndCheck = async () => {
       if (!user?.primaryEmailAddress?.emailAddress) return;
 
       try {
+        const token = await getToken({ template: "supabase" });
+        if (token) {
+          await supabase.auth.setSession({
+            access_token: token,
+            refresh_token: "",
+          });
+        }
+
         const { data } = await supabase
           .from("admin_emails")
           .select("email")
@@ -63,8 +65,8 @@ const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) =>
       }
     };
 
-    checkAdminStatus();
-  }, [user]);
+    syncAndCheck();
+  }, [user, getToken]);
 
   const filteredMainItems = mainItems.filter(
     (item) => !item.adminOnly || isAdmin
