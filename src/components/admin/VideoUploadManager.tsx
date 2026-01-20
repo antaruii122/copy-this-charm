@@ -1174,6 +1174,7 @@ const VideoTable = ({
     <TableHeader>
       <TableRow className="bg-muted/30">
         <TableHead className="w-20">Orden</TableHead>
+        <TableHead className="w-40">Vista Previa</TableHead>
         <TableHead>Título</TableHead>
         <TableHead>Módulo</TableHead>
         <TableHead className="text-right">Acciones</TableHead>
@@ -1198,6 +1199,21 @@ const VideoTable = ({
             ) : (
               video.sort_order
             )}
+          </TableCell>
+          <TableCell>
+            <div className="w-32 h-20 bg-neutral-900 rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-black/10 group/preview relative">
+              <video
+                src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${video.video_path}`}
+                className="w-full h-full object-cover opacity-60 group-hover/preview:opacity-100 transition-opacity"
+                muted
+                playsInline
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity pointer-events-none">
+                  <Video className="w-4 h-4 text-white" />
+                </div>
+              </div>
+            </div>
           </TableCell>
           <TableCell>
             {editingVideo?.id === video.id ? (
