@@ -22,16 +22,16 @@ const Auth = () => {
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <span className="font-serif text-3xl font-bold text-primary">R</span>
+            <Leaf className="w-8 h-8 text-primary" />
           </div>
           <h1 className="font-serif text-4xl font-semibold text-primary mb-2 tracking-wide">
-            Ricardo Rules
+            NUTFEM
           </h1>
           <p className="text-muted-foreground text-lg">
-            {isSignUp ? "Crea tu cuenta de estudiante" : "Accede a tu Aula Virtual"}
+            {isSignUp ? "Crea tu cuenta" : "Bienvenida de nuevo"}
           </p>
           <p className="text-muted-foreground/70 text-sm mt-1">
-            Plataforma educativa premium
+            Nutrición femenina consciente
           </p>
         </div>
 
