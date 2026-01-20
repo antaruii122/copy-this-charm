@@ -500,11 +500,11 @@
     font-weight: 600 !important;
   }
 
-  /* Hide Clerk branding */
-  .cl-internal-b3fm6y,
-  .cl-internal-wkkub3,
-  [class*="cl-internal"] {
-    opacity: 0.5 !important;
+  /* Hide only the Clerk footer branding text */
+  .cl-footerPages,
+  .cl-footerPagesLink {
+    opacity: 0.6 !important;
+    font-size: 0.7rem !important;
   }
 
   /* Header styling */
