@@ -131,8 +131,8 @@ const CoursePlayer = () => {
     return (
         <div className="h-screen flex flex-col bg-white overflow-hidden text-neutral-800">
 
-            {/* Top Header - Dark as in photo */}
-            <header className="h-16 bg-[#2D3436] text-white flex items-center justify-between px-4 shrink-0">
+            {/* Top Header - Sage Brand Color */}
+            <header className="h-16 bg-sage text-white flex items-center justify-between px-4 shrink-0 shadow-sm border-b border-white/10">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" onClick={() => navigate(-1)}>
                         <ChevronLeft className="w-6 h-6" />
@@ -151,7 +151,7 @@ const CoursePlayer = () => {
             <div className="flex flex-1 overflow-hidden">
 
                 {/* Sidebar - Left side as in photo */}
-                <aside className="w-[300px] border-r border-neutral-200 flex flex-col shrink-0 bg-[#F4F5F7]">
+                <aside className="w-[300px] border-r border-neutral-200 flex flex-col shrink-0 bg-neutral-50/50">
                     <div className="p-4 border-b bg-white">
                         <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-400">Contenido del curso</h2>
                     </div>

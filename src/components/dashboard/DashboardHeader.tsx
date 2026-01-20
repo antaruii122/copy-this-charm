@@ -19,9 +19,9 @@ const DashboardHeader = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <span className="font-serif text-xl md:text-2xl font-semibold text-primary">
-              Ricardo Rules
+              NUTFEM
             </span>
-            <span className="text-black text-xs font-bold">LMS</span>
+            <span className="text-sage text-xs font-bold">LMS</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -30,7 +30,7 @@ const DashboardHeader = () => {
               <a
                 key={item.label}
                 href={item.href}
-                className="text-black hover:opacity-70 transition-all text-[11px] font-bold uppercase tracking-[0.1em] flex items-center gap-1"
+                className="text-foreground hover:text-primary transition-all text-[11px] font-bold uppercase tracking-[0.1em] flex items-center gap-1"
               >
                 {item.label}
                 {item.hasDropdown && <ChevronDown size={14} />}

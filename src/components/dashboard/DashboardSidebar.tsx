@@ -90,8 +90,8 @@ const DashboardSidebar = ({ activeItem, onItemClick }: DashboardSidebarProps) =>
                   className={cn(
                     "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 relative overflow-hidden group",
                     isActive
-                      ? "bg-[#0A0A0A] text-white shadow-lg"
-                      : "text-foreground hover:bg-neutral-100 hover:text-black transition-all"
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                      : "text-foreground hover:bg-neutral-100 hover:text-primary transition-all"
                   )}
                 >
                   {isActive && (
