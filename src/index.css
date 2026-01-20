@@ -59,19 +59,24 @@
     --sage-muted: 0 0% 80%;
     --lavender: 0 0% 90%;
 
-    /* Premium Gradients - Brand Colors */
-    --gradient-primary: linear-gradient(135deg, hsl(350 45% 55%), hsl(340 50% 65%));
-    --gradient-rose: linear-gradient(135deg, hsl(350 50% 70%), hsl(15 50% 70%));
-    --gradient-sunset: linear-gradient(135deg, hsl(350 50% 70%), hsl(40 70% 65%), hsl(15 50% 65%));
-    --gradient-warm: linear-gradient(135deg, hsl(340 40% 50%), hsl(350 45% 55%));
-    --gradient-hero: linear-gradient(135deg, hsl(350 45% 50% / 0.95), hsl(340 40% 55% / 0.90));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(40 25% 98%));
+    /* Premium Gradients - Ricardo Rules Style */
+    /* Black to Dark Grey */
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 25%));
+    /* Gold Gradient */
+    --gradient-rose: linear-gradient(135deg, hsl(45 40% 50%), hsl(40 50% 60%));
+    /* Sunset -> Gold/Warm */
+    --gradient-sunset: linear-gradient(135deg, hsl(45 40% 50%), hsl(30 20% 50%), hsl(0 0% 20%));
+    --gradient-warm: linear-gradient(135deg, hsl(45 40% 50%), hsl(30 30% 40%));
+    /* Hero: Deep Black */
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 5%), hsl(0 0% 15%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(0 0% 98%));
 
-    /* Enhanced Shadows - Warmer tones */
-    --shadow-soft: 0 4px 20px hsl(350 30% 40% / 0.08);
-    --shadow-card: 0 10px 40px hsl(350 30% 40% / 0.12);
-    --shadow-glow: 0 0 30px hsl(350 50% 60% / 0.35);
-    --shadow-glow-rose: 0 0 30px hsl(350 60% 70% / 0.4);
+    /* Enhanced Shadows - Neutral/Gold */
+    --shadow-soft: 0 4px 20px hsl(0 0% 0% / 0.08);
+    --shadow-card: 0 10px 40px hsl(0 0% 0% / 0.12);
+    /* Gold Glow */
+    --shadow-glow: 0 0 30px hsl(45 40% 50% / 0.25);
+    --shadow-glow-rose: 0 0 30px hsl(45 40% 50% / 0.3);
 
     /* Typography */
     --font-serif: 'Cormorant Garamond', Georgia, serif;

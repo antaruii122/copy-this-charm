@@ -12,26 +12,26 @@ const Auth = () => {
         <title>{isSignUp ? "Registro" : "Iniciar Sesión"} | NUTFEM</title>
         <meta name="description" content="Accede a tu cuenta de NUTFEM para ver tus cursos y programas de nutrición femenina." />
       </Helmet>
-      
+
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
       <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-accent/20 rounded-full blur-2xl" />
-      
+
       <div className="w-full max-w-md relative z-10">
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <Leaf className="w-8 h-8 text-primary" />
+            <span className="font-serif text-3xl font-bold text-primary">R</span>
           </div>
           <h1 className="font-serif text-4xl font-semibold text-primary mb-2 tracking-wide">
-            NUTFEM
+            Ricardo Rules
           </h1>
           <p className="text-muted-foreground text-lg">
-            {isSignUp ? "Crea tu cuenta" : "Bienvenida de nuevo"}
+            {isSignUp ? "Crea tu cuenta de estudiante" : "Accede a tu Aula Virtual"}
           </p>
           <p className="text-muted-foreground/70 text-sm mt-1">
-            Nutrición femenina consciente
+            Plataforma educativa premium
           </p>
         </div>
 
@@ -39,10 +39,10 @@ const Auth = () => {
         <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-border/50 relative overflow-hidden">
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
-          
+
           <div className="relative z-10">
             {isSignUp ? (
-              <SignUp 
+              <SignUp
                 appearance={{
                   elements: {
                     rootBox: "w-full",
@@ -60,9 +60,10 @@ const Auth = () => {
                 }}
                 routing="hash"
                 signInUrl="/auth"
+                forceRedirectUrl="/aula-virtual"
               />
             ) : (
-              <SignIn 
+              <SignIn
                 appearance={{
                   elements: {
                     rootBox: "w-full",
@@ -80,6 +81,7 @@ const Auth = () => {
                 }}
                 routing="hash"
                 signUpUrl="/auth"
+                forceRedirectUrl="/aula-virtual"
               />
             )}
 
@@ -89,8 +91,8 @@ const Auth = () => {
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
               >
-                {isSignUp 
-                  ? "¿Ya tienes cuenta? Inicia sesión" 
+                {isSignUp
+                  ? "¿Ya tienes cuenta? Inicia sesión"
                   : "¿No tienes cuenta? Regístrate"}
               </button>
             </div>
@@ -99,8 +101,8 @@ const Auth = () => {
 
         {/* Back to Home */}
         <div className="mt-8 text-center">
-          <a 
-            href="/" 
+          <a
+            href="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
           >
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
@@ -111,7 +113,7 @@ const Auth = () => {
         {/* Trust indicators */}
         <div className="mt-6 text-center">
           <p className="text-xs text-muted-foreground/60">
-            Tu información está segura con nosotros
+            Acceso seguro y encriptado
           </p>
         </div>
       </div>
