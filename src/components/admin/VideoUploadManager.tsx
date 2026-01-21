@@ -1862,12 +1862,7 @@ const VideoUploadManager = () => {
                                                                                 </span>
                                                                             </div>
 
-                                                                            <div
-                                                                                className="w-8 h-8 rounded-full flex items-center justify-center bg-black/5"
-                                                                                style={{ backgroundColor: isWhite ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.2)' }}
-                                                                            >
-                                                                                <Edit className="w-4 h-4" style={{ color: textColor }} />
-                                                                            </div>
+                                                                            <div />
                                                                         </div>
                                                                     </>
                                                                 );
