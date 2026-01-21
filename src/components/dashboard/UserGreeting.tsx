@@ -1,4 +1,4 @@
-import { Bell, Sparkles } from "lucide-react";
+import { Pencil, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface UserGreetingProps {
@@ -28,18 +28,14 @@ const UserGreeting = ({ initials = "RT", name = "Ricardo Tapia" }: UserGreetingP
         </div>
       </div>
 
-      {/* Notification Bell with badge */}
-      <div className="relative">
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="rounded-xl border-border/50 bg-white/80 backdrop-blur-sm hover:bg-white hover:scale-105 transition-all shadow-soft h-12 w-12"
-        >
-          <Bell size={20} className="text-foreground/60" />
-        </Button>
-        {/* Notification dot */}
-        <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose rounded-full border-2 border-white animate-pulse" />
-      </div>
+      {/* Edit Button */}
+      <Button
+        variant="outline"
+        className="rounded-xl border-border/50 bg-white/80 backdrop-blur-sm hover:bg-white hover:scale-105 transition-all shadow-soft h-12 px-6 gap-2"
+      >
+        <Pencil size={18} className="text-foreground/60" />
+        <span className="text-foreground/80 font-medium">Editar</span>
+      </Button>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { ShoppingCart, ChevronDown } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, UserButton } from "@clerk/clerk-react";
 import { cn } from "@/lib/utils";
 
 const DashboardHeader = () => {
@@ -59,6 +59,7 @@ const DashboardHeader = () => {
                 </span>
               </div>
             </Button>
+            {isSignedIn && <UserButton afterSignOutUrl="/" />}
           </div>
         </div>
       </div>
