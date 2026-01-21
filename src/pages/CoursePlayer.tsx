@@ -39,6 +39,7 @@ interface Video {
     url?: string;
     content_text?: string | null;
     is_preview?: boolean | null;
+    is_drive_video?: boolean;
 }
 
 interface Module {
@@ -265,27 +266,29 @@ const CoursePlayer = () => {
                 <main className="flex-1 flex flex-col overflow-y-auto bg-background">
 
                     {/* Video Player Area */}
-                    <div className="w-full aspect-video bg-black relative flex items-center justify-center">
-                        {selectedVideo?.url ? (
-                            selectedVideo.is_drive_video ? (
-                                <iframe
-                                    src={selectedVideo.video_path}
-                                    className="w-full h-full"
-                                    allow="autoplay; encrypted-media"
-                                    allowFullScreen
-                                />
+                    <div className="w-full bg-black flex justify-center">
+                        <div className="w-full max-w-4xl aspect-video relative flex items-center justify-center">
+                            {selectedVideo?.url ? (
+                                selectedVideo.is_drive_video ? (
+                                    <iframe
+                                        src={selectedVideo.video_path}
+                                        className="w-full h-full"
+                                        allow="autoplay; encrypted-media"
+                                        allowFullScreen
+                                    />
+                                ) : (
+                                    <video
+                                        ref={videoRef}
+                                        src={selectedVideo.url}
+                                        controls
+                                        className="w-full h-full"
+                                        onEnded={handleVideoEnded}
+                                    />
+                                )
                             ) : (
-                                <video
-                                    ref={videoRef}
-                                    src={selectedVideo.url}
-                                    controls
-                                    className="w-full h-full"
-                                    onEnded={handleVideoEnded}
-                                />
-                            )
-                        ) : (
-                            <div className="text-white">Selecciona una lección</div>
-                        )}
+                                <div className="text-white">Selecciona una lección</div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Video Details & Interaction */}

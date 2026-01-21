@@ -261,7 +261,7 @@ const DashboardStats = () => {
               return (
                 <Link
                   key={course.id}
-                  to={`/aprender/${course.slug}`}
+                  to={`/cursos/${course.slug}`}
                   className="group relative rounded-3xl bg-white overflow-hidden flex flex-col aspect-[9/16] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl shadow-sm"
                   style={{
                     borderColor: course.border_theme || 'transparent',
