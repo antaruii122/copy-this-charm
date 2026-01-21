@@ -33,7 +33,7 @@ export const useGoogleDrivePicker = () => {
                 clientId,
                 developerKey,
                 appId,
-                viewId: 'DOCS_VIDEOS',
+                viewId: 'DOCS',
                 showUploadView: true,
                 showUploadFolders: true,
                 supportDrives: true,
@@ -43,7 +43,7 @@ export const useGoogleDrivePicker = () => {
                 customViews: [
                     {
                         viewId: 'DOCS',
-                        mimeTypes: ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/x-matroska'],
+                        mimeTypes: ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/x-matroska', 'video/mpeg', 'video/x-flv'],
                     }
                 ],
                 locale: 'es',
