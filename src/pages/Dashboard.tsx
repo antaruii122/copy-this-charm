@@ -10,6 +10,7 @@ import DashboardContent from "@/components/dashboard/DashboardContent";
 const Dashboard = () => {
   const { courseId } = useParams<{ courseId?: string }>();
   const [activeSection, setActiveSection] = useState("Escritorio");
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   // If a courseId is provided in URL, show the course content
   useEffect(() => {
@@ -26,13 +27,20 @@ const Dashboard = () => {
       <DashboardHeader />
 
       <div className="flex-1 container mx-auto px-4 relative z-10">
-        <UserGreeting />
+        <UserGreeting
+          isEditing={isEditingProfile}
+          onEditToggle={() => setIsEditingProfile(!isEditingProfile)}
+        />
 
         <div className="flex gap-8 py-8">
           <DashboardSidebar activeItem={activeSection} onItemClick={setActiveSection} />
           <MobileSidebar />
 
-          <DashboardContent activeSection={activeSection} courseId={courseId} />
+          <DashboardContent
+            activeSection={activeSection}
+            courseId={courseId}
+            isEditingProfile={isEditingProfile}
+          />
         </div>
       </div>
 
