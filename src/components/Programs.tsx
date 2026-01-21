@@ -100,8 +100,8 @@ const Programs = () => {
 
                 {/* Content Container - Bottom 55% */}
                 <div className={`h-[55%] w-full flex flex-col p-5 transition-colors duration-300 ${program.card_style === 'elegant' ? "bg-[#F4F6F4]" : // Sage Tint
-                    program.card_style === 'bold' ? "bg-primary text-primary-foreground" :
-                      "bg-white" // Standard Minimal
+                  program.card_style === 'bold' ? "bg-primary text-primary-foreground" :
+                    "bg-white" // Standard Minimal
                   }`}>
                   {/* Badge */}
                   <div className="mb-3">
@@ -123,31 +123,43 @@ const Programs = () => {
                     {program.description || "Descubre el poder de transformar tu salud hormonal con este programa especializado."}
                   </p>
 
-                  <span className="text-primary font-bold text-2xl md:text-3xl">
-                    {program.price}
-                  </span>
-                  <div className="flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                    <span className="text-sm">Ver más</span>
-                    <ArrowRight className="w-4 h-4" />
+                  {/* Footer: Price & Action */}
+                  <div className="flex items-end justify-between mt-auto pt-4 border-t border-border/10">
+                    <div className="flex flex-col">
+                      {program.original_price && (
+                        <span className={`text-xs line-through mb-0.5 ${program.card_style === 'bold' ? "text-white/60" : "text-muted-foreground/70"
+                          }`}>
+                          {program.original_price}
+                        </span>
+                      )}
+                      <span className={`text-lg font-bold ${program.card_style === 'bold' ? "text-white" : "text-primary"
+                        }`}>
+                        {program.price || "Gratis"}
+                      </span>
+                    </div>
+
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${program.card_style === 'bold' ? "bg-white/20 text-white group-hover:bg-white group-hover:text-primary" : "bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"
+                      }`}>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
                   </div>
                 </div>
-              </div>
               </Link>
-        );
+            );
           })}
-      </div>
+        </div>
 
-      {/* Bottom CTA */}
-      <div className="text-center mt-16">
-        <Button
-          size="lg"
-          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-white px-12 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
-        >
-          Ver Todos los Programas
-          <ArrowRight className="ml-2 w-5 h-5" />
-        </Button>
+        {/* Bottom CTA */}
+        <div className="text-center mt-16">
+          <Button
+            size="lg"
+            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-white px-12 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+          >
+            Ver Todos los Programas
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </Button>
+        </div>
       </div>
-    </div>
     </section >
   );
 };
