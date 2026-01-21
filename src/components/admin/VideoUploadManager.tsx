@@ -118,19 +118,13 @@ const VideoUploadManager = () => {
     const [uploadMethod, setUploadMethod] = useState<'local' | 'drive'>('local');
     const { selectFromDrive, isLoading: isDriveLoading } = useGoogleDrivePicker();
     const [lastUploadedVideo, setLastUploadedVideo] = useState<{ name: string, embedUrl: string } | null>(null);
+    const [videoToPreview, setVideoToPreview] = useState<CourseVideo | null>(null);
 
     const [newCourseForm, setNewCourseForm] = useState({
         title: "",
-        slug: "",
         description: "",
-        price: "",
-        is_featured: false,
-        long_description: "",
-        learning_outcomes: [] as string[],
-        target_audience: "",
-        curriculum_summary: "",
-        author_name: "",
-        author_role: "",
+        price: 0,
+        image_url: ""
     });
 
     const [videoMetadata, setVideoMetadata] = useState({
@@ -1357,6 +1351,36 @@ const VideoUploadManager = () => {
                         </DialogContent>
                     </Dialog>
 
+                    {/* Dialog for Video Preview */}
+                    <Dialog open={!!videoToPreview} onOpenChange={(open) => !open && setVideoToPreview(null)}>
+                        <DialogContent className="rounded-3xl border-none shadow-2xl max-w-4xl bg-black/95 p-0 overflow-hidden">
+                            <DialogHeader className="sr-only">
+                                <DialogTitle>Vista Previa: {videoToPreview?.title}</DialogTitle>
+                            </DialogHeader>
+
+                            {videoToPreview && (
+                                <div className="relative w-full aspect-video">
+                                    {videoToPreview.is_drive_video ? (
+                                        <iframe
+                                            src={videoToPreview.video_path}
+                                            className="w-full h-full"
+                                            allow="autoplay; encrypted-media"
+                                            allowFullScreen
+                                            title={videoToPreview.title}
+                                        />
+                                    ) : (
+                                        <video
+                                            src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${videoToPreview.video_path}`}
+                                            className="w-full h-full"
+                                            controls
+                                            autoPlay
+                                        />
+                                    )}
+                                </div>
+                            )}
+                        </DialogContent>
+                    </Dialog>
+
                     {/* Dialog for Advanced Video Editing (Rich Text & Settings) */}
                     <Dialog open={isAdvancedEditDialogOpen} onOpenChange={(open) => {
                         if (!open) setAdvancedEditingVideo(null);
@@ -1499,16 +1523,25 @@ const VideoUploadManager = () => {
                                     )}
                                 </TableCell>
                                 <TableCell>
-                                    <div className="w-32 h-20 bg-sage rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-border group/preview relative">
-                                        <video
-                                            src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${video.video_path}`}
-                                            className="w-full h-full object-cover opacity-60 group-hover/preview:opacity-100 transition-opacity"
-                                            muted
-                                            playsInline
-                                        />
+                                    <div
+                                        className="w-32 h-20 bg-sage rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-border group/preview relative cursor-pointer hover:ring-2 ring-primary/50 transition-all"
+                                        onClick={() => setVideoToPreview(video)}
+                                    >
+                                        {video.is_drive_video ? (
+                                            <div className="w-full h-full bg-black/10 flex items-center justify-center">
+                                                <Cloud className="w-6 h-6 text-muted-foreground opacity-50" />
+                                            </div>
+                                        ) : (
+                                            <video
+                                                src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${video.video_path}`}
+                                                className="w-full h-full object-cover opacity-60 group-hover/preview:opacity-100 transition-opacity pointer-events-none"
+                                                muted
+                                                playsInline
+                                            />
+                                        )}
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity pointer-events-none">
-                                                <Video className="w-4 h-4 text-white" />
+                                            <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity">
+                                                <Play className="w-4 h-4 text-white fill-white" />
                                             </div>
                                         </div>
                                     </div>
