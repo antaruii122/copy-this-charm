@@ -1,17 +1,14 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { Mail, Phone, User, Calendar, Briefcase, FileText, Save, Loader2 } from "lucide-react";
+import { Mail, Phone, User, Calendar, Briefcase, FileText, Save, Loader2, Pencil, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-interface ProfileViewProps {
-  isEditing?: boolean;
-}
-
-const ProfileView = ({ isEditing = false }: ProfileViewProps) => {
+const ProfileView = () => {
   const { user } = useUser();
+  const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // Form State
@@ -58,12 +55,34 @@ const ProfileView = ({ isEditing = false }: ProfileViewProps) => {
         },
       });
       toast.success("Perfil actualizado correctamente");
+      setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Error al actualizar el perfil");
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const toggleEdit = () => {
+    // Reset form data if cancelling? Or just toggle. 
+    // If cancelling, ideally we reset to user data, but the effect will handle it if we don't save.
+    // Actually the effect only runs on [user] change. 
+    // For now simple toggle is fine, or we can force reset on cancel.
+    if (isEditing) {
+      // Cancelling
+      if (user) {
+        setFormData({
+          firstName: user.firstName || "",
+          lastName: user.lastName || "",
+          username: user.username || "",
+          phone: (user.unsafeMetadata?.phone as string) || user.primaryPhoneNumber?.phoneNumber || "",
+          occupation: (user.unsafeMetadata?.occupation as string) || "",
+          bio: (user.unsafeMetadata?.bio as string) || "",
+        });
+      }
+    }
+    setIsEditing(!isEditing);
   };
 
   const formatDate = (date: Date | null | undefined) => {
@@ -130,12 +149,26 @@ const ProfileView = ({ isEditing = false }: ProfileViewProps) => {
           </div>
           <h1 className="text-3xl font-serif font-bold text-foreground">Mi perfil</h1>
         </div>
-        {isEditing && (
-          <Button onClick={handleSave} disabled={isSaving} className="bg-primary hover:bg-primary/90">
-            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Guardar Cambios
-          </Button>
-        )}
+
+        <div className="flex items-center gap-3">
+          {isEditing ? (
+            <>
+              <Button variant="outline" onClick={toggleEdit} disabled={isSaving} className="border-rose-200 text-rose-600 hover:bg-rose-50">
+                <X className="mr-2 h-4 w-4" />
+                Cancelar
+              </Button>
+              <Button onClick={handleSave} disabled={isSaving} className="bg-primary hover:bg-primary/90">
+                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                Guardar Cambios
+              </Button>
+            </>
+          ) : (
+            <Button variant="outline" onClick={toggleEdit} className="border-primary/20 hover:bg-primary/5">
+              <Pencil className="mr-2 h-4 w-4 text-foreground/70" />
+              Editar
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Profile cards grid */}

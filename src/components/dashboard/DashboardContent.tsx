@@ -11,10 +11,9 @@ import VideoUploadManager from "@/components/admin/VideoUploadManager";
 interface DashboardContentProps {
   activeSection: string;
   courseId?: string;
-  isEditingProfile?: boolean;
 }
 
-const DashboardContent = ({ activeSection, courseId, isEditingProfile = false }: DashboardContentProps) => {
+const DashboardContent = ({ activeSection, courseId }: DashboardContentProps) => {
   const renderContent = () => {
     switch (activeSection) {
       case "Escritorio":
@@ -25,7 +24,7 @@ const DashboardContent = ({ activeSection, courseId, isEditingProfile = false }:
           </>
         );
       case "Mi perfil":
-        return <ProfileView isEditing={isEditingProfile} />;
+        return <ProfileView />;
       case "Mis Cursos":
         return courseId ? <CourseVideos courseId={courseId} /> : <DashboardStats />;
       case "Agenda":

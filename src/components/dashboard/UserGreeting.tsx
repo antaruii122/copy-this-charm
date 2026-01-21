@@ -1,18 +1,13 @@
-import { Pencil, Sparkles, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
 
 interface UserGreetingProps {
   initials?: string;
   name?: string;
-  isEditing?: boolean;
-  onEditToggle?: () => void;
 }
 
 const UserGreeting = ({
   initials = "RT",
-  name = "Ricardo Tapia",
-  isEditing = false,
-  onEditToggle
+  name = "Ricardo Tapia"
 }: UserGreetingProps) => {
   return (
     <div className="flex items-center justify-between py-8 mb-6">
@@ -34,25 +29,6 @@ const UserGreeting = ({
           <h2 className="text-3xl font-serif font-bold text-foreground">{name}</h2>
         </div>
       </div>
-
-      {/* Edit Button */}
-      <Button
-        variant="outline"
-        onClick={onEditToggle}
-        className="rounded-xl border-border/50 bg-white/80 backdrop-blur-sm hover:bg-white hover:scale-105 transition-all shadow-soft h-12 px-6 gap-2"
-      >
-        {isEditing ? (
-          <>
-            <X size={18} className="text-rose-500" />
-            <span className="text-rose-500 font-medium">Cancelar</span>
-          </>
-        ) : (
-          <>
-            <Pencil size={18} className="text-foreground/60" />
-            <span className="text-foreground/80 font-medium">Editar</span>
-          </>
-        )}
-      </Button>
     </div>
   );
 };
