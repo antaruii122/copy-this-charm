@@ -78,6 +78,7 @@ type Course = Tables<"courses"> & {
     card_style?: string;
     original_price?: string;
     badge_text?: string;
+    border_color?: string;
 };
 type CourseVideo = Tables<"course_videos"> & { is_drive_video?: boolean };
 type Module = Tables<"modules">;
@@ -211,6 +212,7 @@ const VideoUploadManager = () => {
                     card_style: selectedCourseData.card_style,
                     original_price: selectedCourseData.original_price,
                     badge_text: selectedCourseData.badge_text,
+                    border_color: selectedCourseData.border_color,
                 })
                 .eq("id", selectedCourse);
 
@@ -991,8 +993,9 @@ const VideoUploadManager = () => {
                                         "group relative rounded-3xl border bg-white cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden flex flex-col",
                                         selectedCourse === course.id
                                             ? "border-primary border-2 shadow-[0_0_20px_rgba(191,89,103,0.1)] scale-[1.02]"
-                                            : "border-border hover:border-primary/20",
-                                        "aspect-[9/16]" // Enforce 9:16 aspect ratio
+                                            : "hover:border-primary/20",
+                                        "aspect-[9/16]", // Enforce 9:16 aspect ratio
+                                        course.border_color ? `border-2 ${course.border_color}` : "border-border"
                                     )}
                                 >
                                     {/* CLASIC VERTICAL SPLIT DESIGN (Option B) */}
@@ -1416,7 +1419,7 @@ const VideoUploadManager = () => {
                         </div>
 
                         <Card className="rounded-3xl border-none shadow-xl bg-card/50 backdrop-blur-md overflow-hidden">
-                            <CardHeader className="bg-primary/5 pb-8 pt-10 px-10 text-center">
+                            <CardHeader className="pb-8 pt-10 px-10 text-center">
                                 <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6">
                                     <UserPlus className="w-8 h-8" />
                                 </div>
@@ -1501,40 +1504,14 @@ const VideoUploadManager = () => {
                                     <p className="text-sm text-muted-foreground">Detalles principales del curso.</p>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2 md:col-span-2">
-                                        <Label>Imagen de Portada</Label>
-                                        <div className="flex gap-6 items-start p-4 border border-border/50 rounded-xl bg-muted/30">
-                                            {selectedCourseData.image_url ? (
-                                                <img src={selectedCourseData.image_url} alt="Portada" className="w-32 h-20 object-cover rounded-lg border shadow-sm" />
-                                            ) : (
-                                                <div className="w-32 h-20 bg-muted rounded-lg border border-dashed flex items-center justify-center text-muted-foreground/50">
-                                                    <span className="text-xs">Sin imagen</span>
-                                                </div>
-                                            )}
-                                            <div className="flex-1 space-y-2">
-                                                <Input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={async (e) => {
-                                                        const file = e.target.files?.[0];
-                                                        if (file) {
-                                                            const url = await handleImageUpload(file);
-                                                            if (url) updateCourseMarketing({ image_url: url });
-                                                        }
-                                                    }}
-                                                    disabled={isUploadingImage}
-                                                    className="bg-background"
-                                                />
-                                                <p className="text-xs text-muted-foreground">Recomendado: 1280x720px (16:9)</p>
-                                            </div>
+                                    <div className="space-y-4 md:col-span-2">
+                                        <div className="space-y-2">
+                                            <Label>Título del Curso</Label>
+                                            <Input
+                                                value={selectedCourseData.title}
+                                                onChange={(e) => updateCourseMarketing({ title: e.target.value })}
+                                            />
                                         </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Título del Curso</Label>
-                                        <Input
-                                            value={selectedCourseData.title}
-                                            onChange={(e) => updateCourseMarketing({ title: e.target.value })}
-                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Slug (URL)</Label>
@@ -1560,32 +1537,97 @@ const VideoUploadManager = () => {
                                     <p className="text-sm text-muted-foreground">Personaliza y previsualiza cómo se verá este curso.</p>
                                 </div>
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                    {/* Left Column: Controls */}
-                                    <div className="lg:col-span-2 space-y-6">
-                                        <div className="space-y-3">
-                                            <Label>Estilo Visual</Label>
-                                            <div className="grid grid-cols-3 gap-3">
-                                                {[
-                                                    { id: 'minimal', label: 'Clásico', color: 'bg-white border-gray-200' },
-                                                    { id: 'elegant', label: 'Elegante', color: 'bg-[#F4F6F4] border-[#E8EAE8]' },
-                                                    { id: 'bold', label: 'Bold', color: 'bg-primary border-primary text-white' }
-                                                ].map((style) => (
-                                                    <div
-                                                        key={style.id}
-                                                        className={cn(
-                                                            "cursor-pointer rounded-xl border-2 p-3 text-center transition-all hover:scale-105",
-                                                            (selectedCourseData.card_style || 'minimal') === style.id
-                                                                ? "border-primary ring-2 ring-primary/20"
-                                                                : "border-transparent hover:border-border",
-                                                            style.color
-                                                        )}
-                                                        onClick={() => updateCourseMarketing({ card_style: style.id })}
-                                                    >
-                                                        <span className="text-xs font-bold">{style.label}</span>
-                                                    </div>
-                                                ))}
+                                    {/* Left Column: Visual Controls */}
+                                    <div className="lg:col-span-2 space-y-8">
+
+                                        {/* 1. Image Upload (Moved Here) */}
+                                        <div className="space-y-3 p-4 bg-muted/20 rounded-2xl border border-dashed border-border/60">
+                                            <Label className="text-base font-semibold">1. Imagen de Portada</Label>
+                                            <div className="flex gap-4 items-center">
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            const url = await handleImageUpload(file);
+                                                            if (url) updateCourseMarketing({ image_url: url });
+                                                        }
+                                                    }}
+                                                    disabled={isUploadingImage}
+                                                    className="bg-white"
+                                                />
+                                                <div className="text-xs text-muted-foreground">
+                                                    Formato Vertical (9:16) o Landscape<br />Recomendado: .jpg, .png
+                                                </div>
                                             </div>
                                         </div>
+
+                                        {/* 2. Style & Color Palettes */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {/* Background Color */}
+                                            <div className="space-y-3">
+                                                <Label>2. Color de Fondo (Estilo)</Label>
+                                                <div className="flex flex-wrap gap-3">
+                                                    {[
+                                                        { id: 'minimal', label: 'Blanco', color: 'bg-white border-gray-200' },
+                                                        { id: 'elegant', label: 'Sage', color: 'bg-[#F4F6F4] border-[#E8EAE8]' },
+                                                        { id: 'rose', label: 'Rose', color: 'bg-[#FFF0F5] border-pink-100' }, // Soft Rose
+                                                        { id: 'bold', label: 'Bold', color: 'bg-primary border-primary' }, // Dark Brand Color
+                                                        { id: 'dark', label: 'Dark', color: 'bg-slate-900 border-slate-800' }
+                                                    ].map((style) => (
+                                                        <div
+                                                            key={style.id}
+                                                            className={cn(
+                                                                "w-10 h-10 rounded-full cursor-pointer shadow-sm transition-all hover:scale-110 relative group",
+                                                                style.color,
+                                                                (selectedCourseData.card_style || 'minimal') === style.id ? "ring-2 ring-offset-2 ring-primary" : "border"
+                                                            )}
+                                                            onClick={() => updateCourseMarketing({ card_style: style.id })}
+                                                            title={style.label}
+                                                        >
+                                                            {(selectedCourseData.card_style || 'minimal') === style.id && (
+                                                                <CheckCircle2 className={cn(
+                                                                    "absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full text-primary",
+                                                                    style.id === 'bold' || style.id === 'dark' ? "text-primary" : "text-primary"
+                                                                )} />
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Border Color */}
+                                            <div className="space-y-3">
+                                                <Label>3. Color de Borde (Marco)</Label>
+                                                <div className="flex flex-wrap gap-3">
+                                                    {[
+                                                        { id: 'border-transparent', label: 'Sin Borde', color: 'bg-transparent border-dashed border-gray-300' },
+                                                        { id: 'border-gray-200', label: 'Gris Suave', color: 'bg-gray-200' },
+                                                        { id: 'border-primary', label: 'Marca Principal', color: 'bg-primary' },
+                                                        { id: 'border-black', label: 'Negro', color: 'bg-black' },
+                                                        { id: 'border-accent', label: 'Dorado', color: 'bg-yellow-500' } // Example accent
+                                                    ].map((border) => (
+                                                        <div
+                                                            key={border.id}
+                                                            className={cn(
+                                                                "w-10 h-10 rounded-full cursor-pointer shadow-sm transition-all hover:scale-110 relative",
+                                                                border.color,
+                                                                (selectedCourseData.border_color || 'border-transparent') === border.id ? "ring-2 ring-offset-2 ring-primary" : ""
+                                                            )}
+                                                            onClick={() => updateCourseMarketing({ border_color: border.id })}
+                                                            title={border.label}
+                                                        >
+                                                            {(selectedCourseData.border_color === border.id) && (
+                                                                <CheckCircle2 className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full text-primary" />
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* 3. Text Inputs */}
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <Label>Etiqueta (Badge)</Label>
@@ -1620,8 +1662,9 @@ const VideoUploadManager = () => {
                                             <Label className="mb-3 block text-center text-muted-foreground text-xs uppercase tracking-widest">Vista Previa en Vivo</Label>
                                             <div className="mx-auto max-w-[220px] shadow-2xl rounded-3xl transform transition-all duration-500 hover:scale-[1.02]">
                                                 <div className={cn(
-                                                    "group relative rounded-3xl border bg-white overflow-hidden flex flex-col aspect-[9/16]",
-                                                    "border-border shadow-sm"
+                                                    "group relative rounded-3xl bg-white overflow-hidden flex flex-col aspect-[9/16]",
+                                                    "shadow-sm",
+                                                    selectedCourseData.border_color ? `border-4 ${selectedCourseData.border_color}` : "border border-border"
                                                 )}>
 
                                                     {/* Preview: Image Top (45%) */}
@@ -1649,14 +1692,15 @@ const VideoUploadManager = () => {
                                                     <div className={cn(
                                                         "h-[55%] w-full flex flex-col p-4 text-left",
                                                         selectedCourseData.card_style === 'elegant' ? "bg-[#F4F6F4]" :
-                                                            selectedCourseData.card_style === 'bold' ? "bg-primary text-primary-foreground" :
-                                                                "bg-white"
+                                                            selectedCourseData.card_style === 'rose' ? "bg-[#FFF0F5]" :
+                                                                selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark' ? "bg-primary text-primary-foreground" :
+                                                                    "bg-white"
                                                     )}>
                                                         {/* Preview Badge */}
                                                         <div className="mb-2">
                                                             <span className={cn(
                                                                 "text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-sm inline-block",
-                                                                selectedCourseData.card_style === 'bold' ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
+                                                                (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
                                                             )}>
                                                                 {selectedCourseData.badge_text || "PREMIUM"}
                                                             </span>
@@ -1665,7 +1709,7 @@ const VideoUploadManager = () => {
                                                         {/* Preview Title */}
                                                         <h3 className={cn(
                                                             "font-serif text-sm font-bold leading-tight line-clamp-2 mb-1",
-                                                            selectedCourseData.card_style === 'bold' ? "text-white" : "text-gray-900"
+                                                            (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "text-white" : "text-gray-900"
                                                         )}>
                                                             {selectedCourseData.title || "Título del Curso"}
                                                         </h3>
@@ -1673,7 +1717,7 @@ const VideoUploadManager = () => {
                                                         {/* Preview Description */}
                                                         <p className={cn(
                                                             "text-[10px] line-clamp-2 mb-2 flex-1 leading-normal",
-                                                            selectedCourseData.card_style === 'bold' ? "text-white/80" : "text-muted-foreground"
+                                                            (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "text-white/80" : "text-muted-foreground"
                                                         )}>
                                                             {selectedCourseData.description || "Descripción corta del curso..."}
                                                         </p>
@@ -1684,14 +1728,14 @@ const VideoUploadManager = () => {
                                                                 {selectedCourseData.original_price && (
                                                                     <span className={cn(
                                                                         "text-[8px] line-through",
-                                                                        selectedCourseData.card_style === 'bold' ? "text-white/60" : "text-muted-foreground/70"
+                                                                        (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "text-white/60" : "text-muted-foreground/70"
                                                                     )}>
                                                                         {selectedCourseData.original_price}
                                                                     </span>
                                                                 )}
                                                                 <span className={cn(
                                                                     "text-sm font-bold",
-                                                                    selectedCourseData.card_style === 'bold' ? "text-white" : "text-primary"
+                                                                    (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "text-white" : "text-primary"
                                                                 )}>
                                                                     {selectedCourseData.price || "Gratis"}
                                                                 </span>
@@ -1699,7 +1743,7 @@ const VideoUploadManager = () => {
 
                                                             <div className={cn(
                                                                 "w-6 h-6 rounded-full flex items-center justify-center",
-                                                                selectedCourseData.card_style === 'bold' ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
+                                                                (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
                                                             )}>
                                                                 <Edit className="w-3 h-3" />
                                                             </div>
