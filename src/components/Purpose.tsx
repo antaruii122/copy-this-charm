@@ -1,4 +1,5 @@
 import { Heart, Leaf, Moon, Sparkles } from "lucide-react";
+import purposeBg from "@/assets/Gemini_Generated_Image_d1gicwd1gicwd1gi.png";
 
 const Purpose = () => {
   const features = [
@@ -26,10 +27,24 @@ const Purpose = () => {
   ];
 
   return (
-    <section className="relative py-24 md:py-40 bg-background overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-20 right-10 w-64 h-64 bg-gradient-rose opacity-10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-20 left-10 w-48 h-48 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
+    <section className="relative py-24 md:py-40 overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url(${purposeBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        {/* White overlay for readability */}
+        <div className="absolute inset-0 bg-white/90" />
+      </div>
+
+      {/* Decorative Background Elements - Reduced opacity */}
+      <div className="absolute top-20 right-10 w-64 h-64 bg-gradient-rose opacity-10 rounded-full blur-3xl animate-float z-0" />
+      <div className="absolute bottom-20 left-10 w-48 h-48 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-float z-0" style={{ animationDelay: "1.5s" }} />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-20 animate-fade-up">
