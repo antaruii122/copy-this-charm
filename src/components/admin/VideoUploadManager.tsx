@@ -622,20 +622,34 @@ const VideoUploadManager = () => {
                 return;
             }
 
-            // Insert video with Drive URL
-            const { error } = await supabase
-                .from("course_videos")
-                .insert({
-                    title: videoMetadata.title || driveFile.name,
-                    video_path: driveFile.embedUrl,
-                    course_id: selectedCourse,
-                    module_id: videoMetadata.module_id === "none" ? null : videoMetadata.module_id,
-                    sort_order: videoMetadata.sort_order || 0,
-                    is_drive_video: true,
-                    drive_file_id: driveFile.id,
-                });
+            console.log('Drive file selected:', driveFile);
+            console.log('Video metadata:', videoMetadata);
 
-            if (error) throw error;
+            // Prepare insert data
+            const insertData = {
+                title: videoMetadata.title || driveFile.name,
+                video_path: driveFile.embedUrl,
+                course_id: selectedCourse,
+                module_id: videoMetadata.module_id === "none" || !videoMetadata.module_id ? null : videoMetadata.module_id,
+                sort_order: videoMetadata.sort_order || 0,
+                is_drive_video: true,
+                drive_file_id: driveFile.id,
+            };
+
+            console.log('Inserting data:', insertData);
+
+            // Insert video with Drive URL
+            const { data, error } = await supabase
+                .from("course_videos")
+                .insert(insertData)
+                .select();
+
+            if (error) {
+                console.error('Supabase error:', error);
+                throw error;
+            }
+
+            console.log('Insert successful:', data);
 
             toast({
                 title: "Video de Google Drive añadido",
@@ -656,7 +670,7 @@ const VideoUploadManager = () => {
             console.error("Error adding Drive video:", error);
             toast({
                 title: "Error",
-                description: "No se pudo añadir el video de Drive",
+                description: error instanceof Error ? error.message : "No se pudo añadir el video de Drive",
                 variant: "destructive",
             });
         }
