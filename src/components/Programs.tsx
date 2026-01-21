@@ -138,7 +138,7 @@ const Programs = () => {
 
                         {/* Title */}
                         <h3
-                          className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
+                          className="font-serif text-xl font-bold leading-tight line-clamp-2 mb-3"
                           style={{ color: textColor }}
                         >
                           {program.title}
@@ -146,7 +146,7 @@ const Programs = () => {
 
                         {/* Description */}
                         <p
-                          className="text-xs line-clamp-3 mb-4 flex-1 leading-relaxed"
+                          className="text-sm line-clamp-3 mb-4 flex-1 leading-relaxed"
                           style={{ color: subTextColor }}
                         >
                           {program.description}
