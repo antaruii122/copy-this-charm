@@ -23,6 +23,8 @@ interface Course {
   category: string;
   isNew?: boolean;
   isFeatured?: boolean;
+  color_theme?: string;
+  border_theme?: string;
 }
 
 // Category colors for nutrition-themed badges
@@ -260,145 +262,99 @@ const DashboardStats = () => {
                 <Link
                   key={course.id}
                   to={`/aprender/${course.slug}`}
-                  className="group relative bg-white/80 backdrop-blur-sm border border-border/50 rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1"
+                  className="group relative rounded-3xl bg-white overflow-hidden flex flex-col aspect-[9/16] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl shadow-sm"
+                  style={{
+                    borderColor: course.border_theme || 'transparent',
+                    borderWidth: course.border_theme ? '4px' : '0px',
+                    borderStyle: 'solid'
+                  }}
                 >
-                  {/* Course Thumbnail */}
-                  <div className="relative aspect-video bg-gradient-to-br from-cream to-sage-light/20 overflow-hidden">
+                  {/* Image Container - Top 45% */}
+                  <div className="h-[45%] w-full relative bg-muted/20 border-b overflow-hidden">
                     <img
                       src={course.thumbnail}
                       alt={course.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
                     />
 
-                    {/* Category Badge */}
-                    <div className="absolute top-3 left-3">
-                      <span className={`inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg shadow-md ${categoryColor}`}>
-                        {course.category}
-                      </span>
-                    </div>
-
-                    {/* New Badge */}
-                    {course.isNew && (
-                      <div className="absolute top-3 right-3">
-                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-gold text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md">
-                          <Sparkles className="w-3 h-3" />
-                          Nuevo
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Progress Overlay with Nutrition Icons */}
+                    {/* Progress Badge */}
                     {course.progress > 0 && course.progress < 100 && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-3">
-                        <div className="w-full px-3">
-                          {/* Progress bar with fruit milestone markers */}
-                          <div className="relative w-full h-3 bg-white/20 backdrop-blur-sm rounded-full overflow-visible">
-                            <div
-                              className="h-full bg-gradient-to-r from-sage to-primary rounded-full transition-all duration-500 relative"
-                              style={{ width: `${course.progress}%` }}
-                            >
-                              {/* Current progress icon */}
-                              <span className="absolute -right-2 -top-1 text-lg drop-shadow-md">
-                                ✨
-                              </span>
-                            </div>
-                            {/* Milestone markers */}
-                            <div className="absolute inset-0 flex justify-between items-center px-1">
-                              {progressIcons.map((milestone, idx) => (
-                                <span
-                                  key={idx}
-                                  className={`text-xs ${course.progress >= milestone.threshold ? 'opacity-100' : 'opacity-30'}`}
-                                  style={{ position: 'absolute', left: `${milestone.threshold - 2}%` }}
-                                >
-                                  {course.progress >= milestone.threshold ? "✦" : "○"}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
+                      <div className="absolute top-3 right-3">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-white/90 backdrop-blur-md text-primary text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm border border-primary/20">
+                          {course.progress}%
+                        </span>
                       </div>
                     )}
 
                     {/* Completed Badge */}
                     {course.progress === 100 && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-green-600/80 via-transparent to-transparent flex items-end justify-center pb-3">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-bold">
-                          <span className="text-lg">🍎</span>
-                          <CheckCircle className="w-4 h-4" />
+                      <div className="absolute top-3 right-3">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
+                          <CheckCircle className="w-3 h-3" />
                           Completado
-                        </div>
+                        </span>
                       </div>
                     )}
                   </div>
 
-                  {/* Course Info */}
-                  <div className="p-5 space-y-4">
-                    {/* Title */}
-                    <h3 className="font-serif text-lg font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                      {course.title}
-                    </h3>
+                  {/* Content Container - Bottom 55% */}
+                  <div
+                    className="h-[55%] w-full flex flex-col p-5 text-left transition-colors duration-300"
+                    style={{ backgroundColor: course.color_theme || '#ffffff' }}
+                  >
+                    {(() => {
+                      const bgColor = course.color_theme || '#ffffff';
+                      const isWhite = bgColor.toLowerCase() === '#ffffff';
 
-                    {/* Meta Info */}
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <BookOpen className="w-4 h-4" />
-                        <span>{course.completedLessons} / {course.lessons} lecciones</span>
-                      </div>
-                      {course.progress > 0 && course.progress < 100 && (
-                        <div className="flex items-center gap-1 text-sage-dark">
-                          <span>{progressMilestone.icon}</span>
-                          <span className="font-medium">{progressMilestone.label}</span>
-                        </div>
-                      )}
-                    </div>
+                      const textColor = isWhite ? '#111827' : '#ffffff';
+                      const subTextColor = isWhite ? '#6b7280' : 'rgba(255,255,255,0.8)';
+                      const badgeBg = isWhite ? 'rgba(191, 89, 103, 0.1)' : 'rgba(255,255,255,0.2)';
+                      const badgeText = isWhite ? '#bf5967' : '#ffffff';
 
-                    {/* Progress Text */}
-                    {course.progress > 0 && course.progress < 100 && (
-                      <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                        <span className="text-sm font-medium text-muted-foreground">
-                          {course.progress}% completado
-                        </span>
-                        <Button
-                          size="sm"
-                          className="bg-primary text-white hover:bg-primary/90 transition-all px-6 rounded-full font-bold uppercase text-[10px] tracking-widest"
-                        >
-                          Continuar
-                        </Button>
-                      </div>
-                    )}
+                      return (
+                        <>
+                          {/* Category Badge */}
+                          <div className="mb-3">
+                            <span
+                              className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-sm inline-block"
+                              style={{ backgroundColor: badgeBg, color: badgeText }}
+                            >
+                              {course.category || "PROGRAMA"}
+                            </span>
+                          </div>
 
-                    {/* Start Button */}
-                    {course.progress === 0 && (
-                      <div className="pt-2 border-t border-border/50">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="w-full border-primary text-primary hover:bg-primary hover:text-white transition-all"
-                        >
-                          <span className="mr-2">🌱</span>
-                          Comenzar curso
-                        </Button>
-                      </div>
-                    )}
+                          {/* Title */}
+                          <h3
+                            className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
+                            style={{ color: textColor }}
+                          >
+                            {course.title}
+                          </h3>
 
-                    {/* Review Button for Completed */}
-                    {course.progress === 100 && (
-                      <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                        <div className="flex items-center gap-1 text-gold">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-3 h-3 fill-current" />
-                          ))}
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all"
-                        >
-                          Revisar
-                        </Button>
-                      </div>
-                    )}
+                          {/* Meta Info */}
+                          <div className="flex items-center gap-4 text-xs mb-4" style={{ color: subTextColor }}>
+                            <div className="flex items-center gap-1">
+                              <BookOpen className="w-3.5 h-3.5" />
+                              <span>{course.completedLessons} / {course.lessons} lecciones</span>
+                            </div>
+                          </div>
+
+                          {/* Footer Button */}
+                          <div className="mt-auto pt-4 border-t" style={{ borderColor: isWhite ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)' }}>
+                            <Button
+                              size="sm"
+                              className={`w-full rounded-full font-bold text-xs uppercase tracking-wider ${isWhite
+                                ? "bg-primary text-white hover:bg-primary/90"
+                                : "bg-white text-primary hover:bg-white/90"
+                                }`}
+                            >
+                              {course.progress === 0 ? "Comenzar" : course.progress === 100 ? "Repasar" : "Continuar"}
+                            </Button>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 </Link>
               );
