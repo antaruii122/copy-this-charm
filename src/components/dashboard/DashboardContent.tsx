@@ -26,7 +26,7 @@ const DashboardContent = ({ activeSection, courseId }: DashboardContentProps) =>
       case "Mi perfil":
         return <ProfileView />;
       case "Mis Cursos":
-        return <CourseVideos courseId={courseId} />;
+        return courseId ? <CourseVideos courseId={courseId} /> : <DashboardStats />;
       case "Agenda":
         return <AgendaView />;
       case "Recursos":
