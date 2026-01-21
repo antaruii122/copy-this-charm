@@ -31,7 +31,8 @@ import {
     PieChart,
     UserPlus,
     ShieldCheck,
-    ChevronRight
+    ChevronRight,
+    Cloud
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -69,6 +70,7 @@ import {
 } from "@/components/ui/table";
 
 import { Tables } from "@/integrations/supabase/types";
+import { useGoogleDrivePicker } from "@/hooks/useGoogleDrivePicker";
 
 // Temporarily extend types until we can make them stricter or db schema is fully aligned
 type Course = Tables<"courses">;
@@ -111,6 +113,10 @@ const VideoUploadManager = () => {
     const [newAdminEmail, setNewAdminEmail] = useState("");
     const { toast } = useToast();
     const [activeTab, setActiveTab] = useState("cursos");
+
+    // Google Drive integration
+    const [uploadMethod, setUploadMethod] = useState<'local' | 'drive'>('local');
+    const { selectFromDrive, isLoading: isDriveLoading } = useGoogleDrivePicker();
 
     const [newCourseForm, setNewCourseForm] = useState({
         title: "",
@@ -598,6 +604,64 @@ const VideoUploadManager = () => {
         }
     };
 
+    const handleDriveUpload = async () => {
+        if (!selectedCourse) {
+            toast({
+                title: "Error",
+                description: "Selecciona un curso primero",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        try {
+            const driveFile = await selectFromDrive();
+
+            if (!driveFile) {
+                // User cancelled
+                return;
+            }
+
+            // Insert video with Drive URL
+            const { error } = await supabase
+                .from("course_videos")
+                .insert({
+                    title: videoMetadata.title || driveFile.name,
+                    video_path: driveFile.embedUrl,
+                    course_id: selectedCourse,
+                    module_id: videoMetadata.module_id === "none" ? null : videoMetadata.module_id,
+                    sort_order: videoMetadata.sort_order || 0,
+                    is_drive_video: true,
+                    drive_file_id: driveFile.id,
+                });
+
+            if (error) throw error;
+
+            toast({
+                title: "Video de Google Drive añadido",
+                description: `"${driveFile.name}" se agregó correctamente`,
+            });
+
+            // Reset form
+            setVideoMetadata({
+                title: "",
+                description: "",
+                course_id: selectedCourse,
+                module_id: "none",
+                sort_order: 0,
+            });
+
+            fetchCourseVideos(selectedCourse);
+        } catch (error) {
+            console.error("Error adding Drive video:", error);
+            toast({
+                title: "Error",
+                description: "No se pudo añadir el video de Drive",
+                variant: "destructive",
+            });
+        }
+    };
+
     const handleDeleteVideo = async (videoId: string, videoPath: string) => {
         if (!confirm("¿Estás seguro de eliminar este video?")) return;
 
@@ -931,33 +995,84 @@ const VideoUploadManager = () => {
                                         </div>
                                     </div>
 
-                                    <div className="group relative border-2 border-dashed border-primary/20 hover:border-primary/40 rounded-2xl p-10 text-center transition-all bg-primary/5">
-                                        <Input
-                                            type="file"
-                                            accept="video/*"
-                                            multiple
-                                            onChange={handleFileSelect}
-                                            disabled={isUploading || !selectedCourse}
-                                            className="hidden"
-                                            id="video-upload"
-                                        />
-                                        <Label
-                                            htmlFor="video-upload"
-                                            className="cursor-pointer flex flex-col items-center gap-3"
-                                        >
-                                            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                                                <Upload className="w-8 h-8 text-primary" />
+                                    {/* Upload Method Tabs */}
+                                    <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'local' | 'drive')} className="w-full">
+                                        <TabsList className="grid w-full grid-cols-2 mb-4">
+                                            <TabsTrigger value="local" className="gap-2">
+                                                <Upload className="w-4 h-4" />
+                                                Subir desde Computadora
+                                            </TabsTrigger>
+                                            <TabsTrigger value="drive" className="gap-2">
+                                                <Cloud className="w-4 h-4" />
+                                                Google Drive
+                                            </TabsTrigger>
+                                        </TabsList>
+
+                                        <TabsContent value="local" className="mt-0">
+                                            <div className="group relative border-2 border-dashed border-primary/20 hover:border-primary/40 rounded-2xl p-10 text-center transition-all bg-primary/5">
+                                                <Input
+                                                    type="file"
+                                                    accept="video/*"
+                                                    multiple
+                                                    onChange={handleFileSelect}
+                                                    disabled={isUploading || !selectedCourse}
+                                                    className="hidden"
+                                                    id="video-upload"
+                                                />
+                                                <Label
+                                                    htmlFor="video-upload"
+                                                    className="cursor-pointer flex flex-col items-center gap-3"
+                                                >
+                                                    <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                                                        <Upload className="w-8 h-8 text-primary" />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <span className="text-base font-semibold block">
+                                                            {isUploading ? "Subiendo contenido..." : "Sube tus videos educativos"}
+                                                        </span>
+                                                        <span className="text-xs text-muted-foreground block">
+                                                            Selecciona uno o varios archivos (MP4, MOV, etc.)
+                                                        </span>
+                                                    </div>
+                                                </Label>
                                             </div>
-                                            <div className="space-y-1">
-                                                <span className="text-base font-semibold block">
-                                                    {isUploading ? "Subiendo contenido..." : "Sube tus videos educativos"}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground block">
-                                                    Selecciona uno o varios archivos (MP4, MOV, etc.)
-                                                </span>
+                                        </TabsContent>
+
+                                        <TabsContent value="drive" className="mt-0">
+                                            <div className="border-2 border-dashed border-primary/20 rounded-2xl p-10 text-center bg-primary/5">
+                                                <div className="flex flex-col items-center gap-4">
+                                                    <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm">
+                                                        <Cloud className="w-8 h-8 text-primary" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-foreground mb-1">
+                                                            Selecciona un video de tu Google Drive
+                                                        </p>
+                                                        <p className="text-xs text-muted-foreground">
+                                                            El video debe estar configurado como "Cualquiera con el enlace puede ver"
+                                                        </p>
+                                                    </div>
+                                                    <Button
+                                                        onClick={handleDriveUpload}
+                                                        disabled={isDriveLoading || !selectedCourse}
+                                                        className="rounded-xl gap-2"
+                                                    >
+                                                        {isDriveLoading ? (
+                                                            <>
+                                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                                Abriendo Drive...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Cloud className="w-4 h-4" />
+                                                                Seleccionar de Google Drive
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                </div>
                                             </div>
-                                        </Label>
-                                    </div>
+                                        </TabsContent>
+                                    </Tabs>
 
                                     {uploadProgress.length > 0 && (
                                         <div className="space-y-4 pt-2">
