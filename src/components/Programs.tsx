@@ -77,12 +77,12 @@ const Programs = () => {
                 to={`/cursos/${program.slug}`}
                 className={`group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:scale-105 flex flex-col ${staggerClass}`}
               >
-                {/* Image Container - SQUARE 1:1 like Academia NUTFEM */}
-                <div className="relative aspect-square overflow-hidden bg-white">
+                {/* Image Container - Vertical 9:16 (Rectangulo Invertido) */}
+                <div className="relative aspect-[9/16] overflow-hidden bg-white">
                   <img
                     src={program.image_url || "/placeholder.svg"}
                     alt={program.title}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
                   {/* Category Tag - Top Left */}

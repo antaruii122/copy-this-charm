@@ -965,7 +965,7 @@ const VideoUploadManager = () => {
                         </Dialog>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
                         {courses.length === 0 ? (
                             <Card className="col-span-full border-dashed p-12 flex flex-col items-center justify-center text-center bg-muted/5 rounded-3xl">
                                 <FolderOpen className="w-12 h-12 text-muted-foreground/30 mb-4" />
