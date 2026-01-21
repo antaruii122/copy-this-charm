@@ -1436,6 +1436,34 @@ const VideoUploadManager = () => {
                                     <p className="text-sm text-muted-foreground">Detalles principales del curso.</p>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2 md:col-span-2">
+                                        <Label>Imagen de Portada</Label>
+                                        <div className="flex gap-6 items-start p-4 border border-border/50 rounded-xl bg-muted/30">
+                                            {selectedCourseData.image_url ? (
+                                                <img src={selectedCourseData.image_url} alt="Portada" className="w-32 h-20 object-cover rounded-lg border shadow-sm" />
+                                            ) : (
+                                                <div className="w-32 h-20 bg-muted rounded-lg border border-dashed flex items-center justify-center text-muted-foreground/50">
+                                                    <span className="text-xs">Sin imagen</span>
+                                                </div>
+                                            )}
+                                            <div className="flex-1 space-y-2">
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            const url = await handleImageUpload(file);
+                                                            if (url) updateCourseMarketing({ image_url: url });
+                                                        }
+                                                    }}
+                                                    disabled={isUploadingImage}
+                                                    className="bg-background"
+                                                />
+                                                <p className="text-xs text-muted-foreground">Recomendado: 1280x720px (16:9)</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="space-y-2">
                                         <Label>Título del Curso</Label>
                                         <Input
@@ -1475,26 +1503,6 @@ const VideoUploadManager = () => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label>Imagen de Portada del Curso</Label>
-                                        <div className="flex flex-col gap-4">
-                                            {selectedCourseData.image_url && (
-                                                <img src={selectedCourseData.image_url} alt="Portada" className="w-full h-48 object-cover rounded-xl border" />
-                                            )}
-                                            <Input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={async (e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (file) {
-                                                        const url = await handleImageUpload(file);
-                                                        if (url) updateCourseMarketing({ image_url: url });
-                                                    }
-                                                }}
-                                                disabled={isUploadingImage}
-                                            />
-                                        </div>
-                                    </div>
                                     <div className="space-y-2">
                                         <Label>Descripción Larga (Editor Rico)</Label>
                                         <RichTextEditor
