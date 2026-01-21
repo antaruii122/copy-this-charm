@@ -38,8 +38,8 @@ const Purpose = () => {
           backgroundRepeat: 'no-repeat',
         }}
       >
-        {/* White overlay for readability */}
-        <div className="absolute inset-0 bg-white/90" />
+        {/* White overlay for readability - drastically reduced to show image */}
+        <div className="absolute inset-0 bg-white/20" />
       </div>
 
       {/* Decorative Background Elements - Reduced opacity */}
