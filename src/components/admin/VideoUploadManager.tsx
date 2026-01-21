@@ -32,7 +32,8 @@ import {
     UserPlus,
     ShieldCheck,
     ChevronRight,
-    Cloud
+    Cloud,
+    Play
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -74,7 +75,7 @@ import { useGoogleDrivePicker } from "@/hooks/useGoogleDrivePicker";
 
 // Temporarily extend types until we can make them stricter or db schema is fully aligned
 type Course = Tables<"courses">;
-type CourseVideo = Tables<"course_videos">;
+type CourseVideo = Tables<"course_videos"> & { is_drive_video?: boolean };
 type Module = Tables<"modules">;
 
 import RichTextEditor from "@/components/ui/rich-text-editor";
@@ -122,9 +123,17 @@ const VideoUploadManager = () => {
 
     const [newCourseForm, setNewCourseForm] = useState({
         title: "",
+        slug: "",
         description: "",
-        price: 0,
-        image_url: ""
+        price: "" as string | number,
+        image_url: "",
+        is_featured: false,
+        long_description: "",
+        learning_outcomes: [] as string[],
+        target_audience: "",
+        curriculum_summary: "",
+        author_name: "",
+        author_role: "",
     });
 
     const [videoMetadata, setVideoMetadata] = useState({
