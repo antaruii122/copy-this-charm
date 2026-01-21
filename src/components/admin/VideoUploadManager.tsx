@@ -1051,6 +1051,108 @@ const VideoUploadManager = () => {
                                                 </Button>
                                             </div>
                                         </div>
+                                    ) : (
+                                        <>
+                                            <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'local' | 'drive')} className="w-full">
+                                                <TabsList className="grid w-full grid-cols-2 mb-4">
+                                                    <TabsTrigger value="local" className="gap-2">
+                                                        <Upload className="w-4 h-4" />
+                                                        Subir desde Computadora
+                                                    </TabsTrigger>
+                                                    <TabsTrigger value="drive" className="gap-2">
+                                                        <Cloud className="w-4 h-4" />
+                                                        Google Drive
+                                                    </TabsTrigger>
+                                                </TabsList>
+
+                                                <TabsContent value="local" className="mt-0">
+                                                    <div className="group relative border-2 border-dashed border-primary/20 hover:border-primary/40 rounded-2xl p-10 text-center transition-all bg-primary/5">
+                                                        <Input
+                                                            type="file"
+                                                            accept="video/*"
+                                                            multiple
+                                                            onChange={handleFileSelect}
+                                                            disabled={isUploading || !selectedCourse}
+                                                            className="hidden"
+                                                            id="video-upload"
+                                                        />
+                                                        <Label
+                                                            htmlFor="video-upload"
+                                                            className="cursor-pointer flex flex-col items-center gap-3"
+                                                        >
+                                                            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                                                                <Upload className="w-8 h-8 text-primary" />
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <span className="text-base font-semibold block">
+                                                                    {isUploading ? "Subiendo contenido..." : "Sube tus videos educativos"}
+                                                                </span>
+                                                                <span className="text-xs text-muted-foreground block">
+                                                                    Selecciona uno o varios archivos (MP4, MOV, etc.)
+                                                                </span>
+                                                            </div>
+                                                        </Label>
+                                                    </div>
+                                                </TabsContent>
+
+                                                <TabsContent value="drive" className="mt-0">
+                                                    <div className="border-2 border-dashed border-primary/20 rounded-2xl p-10 text-center bg-primary/5">
+                                                        <div className="flex flex-col items-center gap-4">
+                                                            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm">
+                                                                <Cloud className="w-8 h-8 text-primary" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-medium text-foreground mb-1">
+                                                                    Selecciona un video de tu Google Drive
+                                                                </p>
+                                                                <p className="text-xs text-muted-foreground">
+                                                                    El video debe estar configurado como "Cualquiera con el enlace puede ver"
+                                                                </p>
+                                                            </div>
+                                                            <Button
+                                                                onClick={handleDriveUpload}
+                                                                disabled={isDriveLoading || !selectedCourse}
+                                                                className="rounded-xl gap-2"
+                                                            >
+                                                                {isDriveLoading ? (
+                                                                    <>
+                                                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                                                        Abriendo Drive...
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Cloud className="w-4 h-4" />
+                                                                        Seleccionar de Google Drive
+                                                                    </>
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </TabsContent>
+                                            </Tabs>
+
+                                            {uploadProgress.length > 0 && (
+                                                <div className="space-y-4 pt-2">
+                                                    {uploadProgress.map((progress, index) => (
+                                                        <div key={index} className="bg-background/40 p-4 rounded-xl border border-border/50">
+                                                            <div className="flex items-center justify-between text-sm mb-2 font-medium">
+                                                                <span className="flex items-center gap-2 truncate">
+                                                                    {progress.status === "uploading" && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />}
+                                                                    {progress.status === "success" && <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />}
+                                                                    {progress.status === "error" && <AlertCircle className="w-3.5 h-3.5 text-red-500" />}
+                                                                    {progress.fileName}
+                                                                </span>
+                                                                <span className="text-xs text-muted-foreground">{progress.progress}%</span>
+                                                            </div>
+                                                            <Progress value={progress.progress} className="h-1.5" />
+                                                            {progress.error && (
+                                                                <p className="text-xs text-red-500 mt-2 font-medium">{progress.error}</p>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </>
                                     )}
                                 </CardContent>
                             </Card>
