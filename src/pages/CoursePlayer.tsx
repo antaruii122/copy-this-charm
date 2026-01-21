@@ -6,6 +6,7 @@ import {
     ChevronLeft,
     X,
     Play,
+    Pause,
     CheckCircle,
     Circle,
     ChevronRight,
@@ -13,6 +14,7 @@ import {
     Settings,
     Maximize,
     Volume2,
+    VolumeX,
     Share2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,6 +43,7 @@ interface Video {
     is_preview?: boolean | null;
     is_drive_video?: boolean;
     duration_seconds?: number | null;
+    thumbnail_url?: string | null;
 }
 
 interface Module {
@@ -48,6 +51,285 @@ interface Module {
     title: string;
     sort_order: number;
 }
+
+// YouTube-Style Video Player Component
+const YouTubeStyleVideoPlayer = ({
+    videoRef,
+    videoUrl,
+    thumbnailUrl,
+    onEnded
+}: {
+    videoRef: React.RefObject<HTMLVideoElement>;
+    videoUrl: string;
+    thumbnailUrl?: string;
+    onEnded: () => void;
+}) => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [volume, setVolume] = useState(1);
+    const [isMuted, setIsMuted] = useState(false);
+    const [playbackRate, setPlaybackRate] = useState(1);
+    const [showControls, setShowControls] = useState(true);
+    const [isBuffering, setIsBuffering] = useState(true);
+    const controlsTimeoutRef = useRef<NodeJS.Timeout>();
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const togglePlay = () => {
+        if (videoRef.current) {
+            if (isPlaying) {
+                videoRef.current.pause();
+            } else {
+                videoRef.current.play();
+            }
+        }
+    };
+
+    const handleTimeUpdate = () => {
+        if (videoRef.current) {
+            setCurrentTime(videoRef.current.currentTime);
+        }
+    };
+
+    const handleLoadedMetadata = () => {
+        if (videoRef.current) {
+            setDuration(videoRef.current.duration);
+            setIsBuffering(false);
+        }
+    };
+
+    const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (videoRef.current) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const clickPosition = (e.clientX - rect.left) / rect.width;
+            videoRef.current.currentTime = clickPosition * duration;
+        }
+    };
+
+    const toggleMute = () => {
+        if (videoRef.current) {
+            videoRef.current.muted = !isMuted;
+            setIsMuted(!isMuted);
+        }
+    };
+
+    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newVolume = parseFloat(e.target.value);
+        if (videoRef.current) {
+            videoRef.current.volume = newVolume;
+            setVolume(newVolume);
+            setIsMuted(newVolume === 0);
+        }
+    };
+
+    const handlePlaybackRateChange = (rate: number) => {
+        if (videoRef.current) {
+            videoRef.current.playbackRate = rate;
+            setPlaybackRate(rate);
+        }
+    };
+
+    const toggleFullscreen = () => {
+        if (videoRef.current?.parentElement) {
+            if (!document.fullscreenElement) {
+                videoRef.current.parentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+    };
+
+    const handleMouseMove = () => {
+        setShowControls(true);
+        if (controlsTimeoutRef.current) {
+            clearTimeout(controlsTimeoutRef.current);
+        }
+        controlsTimeoutRef.current = setTimeout(() => {
+            if (isPlaying) {
+                setShowControls(false);
+            }
+        }, 3000);
+    };
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyPress = (e: KeyboardEvent) => {
+            if (!videoRef.current) return;
+
+            switch (e.key) {
+                case ' ':
+                case 'k':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'f':
+                    e.preventDefault();
+                    toggleFullscreen();
+                    break;
+                case 'm':
+                    e.preventDefault();
+                    toggleMute();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 5);
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    videoRef.current.currentTime = Math.min(duration, videoRef.current.currentTime + 5);
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    handleVolumeChange({ target: { value: String(Math.min(1, volume + 0.1)) } } as any);
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    handleVolumeChange({ target: { value: String(Math.max(0, volume - 0.1)) } } as any);
+                    break;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [isPlaying, volume, duration]);
+
+    const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+    return (
+        <div
+            className="relative w-full h-full bg-black overflow-hidden cursor-pointer"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => isPlaying && setShowControls(false)}
+        >
+            <video
+                ref={videoRef}
+                src={videoUrl}
+                poster={thumbnailUrl}
+                className="w-full h-full object-contain"
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={onEnded}
+                onWaiting={() => setIsBuffering(true)}
+                onCanPlay={() => setIsBuffering(false)}
+            />
+
+            {/* Loading Spinner */}
+            {isBuffering && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                </div>
+            )}
+
+            {/* Center Play Button Overlay */}
+            {!isPlaying && (
+                <div
+                    className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity"
+                    onClick={togglePlay}
+                >
+                    <div className="w-20 h-20 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all">
+                        <Play className="w-10 h-10 text-white ml-1" fill="currentColor" />
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Controls */}
+            <div
+                className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent transition-opacity duration-300 ${showControls || !isPlaying ? 'opacity-100' : 'opacity-0'
+                    }`}
+            >
+                {/* Progress Bar */}
+                <div
+                    className="h-1.5 bg-white/20 cursor-pointer hover:h-2 transition-all group/progress"
+                    onClick={handleProgressClick}
+                >
+                    <div
+                        className="h-full bg-primary transition-all relative"
+                        style={{ width: `${progress}%` }}
+                    >
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full opacity-0 group-hover/progress:opacity-100 transition-opacity" />
+                    </div>
+                </div>
+
+                {/* Control Buttons */}
+                <div className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center gap-4">
+                        {/* Play/Pause */}
+                        <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
+                            {isPlaying ? (
+                                <Pause className="w-6 h-6" fill="currentColor" />
+                            ) : (
+                                <Play className="w-6 h-6" fill="currentColor" />
+                            )}
+                        </button>
+
+                        {/* Volume */}
+                        <div className="flex items-center gap-2 group/volume">
+                            <button onClick={toggleMute} className="text-white hover:text-primary transition-colors">
+                                {isMuted || volume === 0 ? (
+                                    <VolumeX className="w-6 h-6" />
+                                ) : (
+                                    <Volume2 className="w-6 h-6" />
+                                )}
+                            </button>
+                            <input
+                                type="range"
+                                min="0"
+                                max="1"
+                                step="0.1"
+                                value={isMuted ? 0 : volume}
+                                onChange={handleVolumeChange}
+                                className="w-0 group-hover/volume:w-20 transition-all duration-300 accent-primary"
+                            />
+                        </div>
+
+                        {/* Time */}
+                        <span className="text-white text-sm font-medium font-mono">
+                            {formatTime(currentTime)} / {formatTime(duration)}
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        {/* Playback Speed */}
+                        <div className="relative group/speed">
+                            <button className="text-white hover:text-primary transition-colors text-sm font-medium">
+                                {playbackRate}x
+                            </button>
+                            <div className="absolute bottom-full right-0 mb-2 bg-black/90 rounded-lg p-2 opacity-0 group-hover/speed:opacity-100 transition-opacity pointer-events-none group-hover/speed:pointer-events-auto">
+                                {[0.5, 0.75, 1, 1.25, 1.5, 2].map(rate => (
+                                    <button
+                                        key={rate}
+                                        onClick={() => handlePlaybackRateChange(rate)}
+                                        className={`block w-full text-left px-3 py-1 text-sm ${playbackRate === rate ? 'text-primary' : 'text-white hover:text-primary'
+                                            }`}
+                                    >
+                                        {rate}x
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Settings placeholder */}
+                        <button className="text-white hover:text-primary transition-colors">
+                            <Settings className="w-6 h-6" />
+                        </button>
+
+                        {/* Fullscreen */}
+                        <button onClick={toggleFullscreen} className="text-white hover:text-primary transition-colors">
+                            <Maximize className="w-6 h-6" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const CoursePlayer = () => {
     const { slug } = useParams();
@@ -275,7 +557,7 @@ const CoursePlayer = () => {
 
                     {/* Video Player Area */}
                     <div className="w-full bg-black flex justify-center">
-                        <div className="w-full max-w-4xl aspect-video relative flex items-center justify-center">
+                        <div className="w-full max-w-4xl aspect-video relative flex items-center justify-center group">
                             {selectedVideo?.url ? (
                                 selectedVideo.is_drive_video ? (
                                     <iframe
@@ -285,11 +567,10 @@ const CoursePlayer = () => {
                                         allowFullScreen
                                     />
                                 ) : (
-                                    <video
-                                        ref={videoRef}
-                                        src={selectedVideo.url}
-                                        controls
-                                        className="w-full h-full"
+                                    <YouTubeStyleVideoPlayer
+                                        videoRef={videoRef}
+                                        videoUrl={selectedVideo.url}
+                                        thumbnailUrl={selectedVideo.thumbnail_url || undefined}
                                         onEnded={handleVideoEnded}
                                     />
                                 )

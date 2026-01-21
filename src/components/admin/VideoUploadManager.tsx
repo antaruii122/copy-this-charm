@@ -152,6 +152,7 @@ const VideoUploadManager = () => {
         course_id: "",
         module_id: "",
         sort_order: 0,
+        thumbnail_url: "",
     });
 
     const [newModuleForm, setNewModuleForm] = useState({
@@ -638,6 +639,7 @@ const VideoUploadManager = () => {
                     description: videoMetadata.description || null,
                     video_path: fileName,
                     sort_order: videoMetadata.sort_order + index,
+                    thumbnail_url: videoMetadata.thumbnail_url || null,
                 });
 
             if (dbError) throw dbError;
@@ -736,6 +738,7 @@ const VideoUploadManager = () => {
                 course_id: selectedCourse,
                 module_id: "none",
                 sort_order: 0,
+                thumbnail_url: "",
             });
 
             fetchCourseVideos(selectedCourse);
@@ -1177,6 +1180,45 @@ const VideoUploadManager = () => {
                                                 className="rounded-xl h-12 bg-background/50"
                                                 placeholder="Nombre de la lección"
                                             />
+                                        </div>
+
+                                        {/* Thumbnail Upload */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="video-thumbnail" className="text-sm font-medium ml-1 flex items-center gap-2">
+                                                <ImagePlus className="w-4 h-4" />
+                                                Miniatura del Video (Opcional)
+                                            </Label>
+                                            <div className="flex gap-2">
+                                                <Input
+                                                    type="file"
+                                                    id="video-thumbnail"
+                                                    accept="image/*"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            const url = await handleImageUpload(file);
+                                                            if (url) {
+                                                                setVideoMetadata({ ...videoMetadata, thumbnail_url: url });
+                                                                toast({ title: "Miniatura subida", description: "La miniatura se ha subido correctamente" });
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="rounded-xl h-12 bg-background/50"
+                                                    disabled={isUploadingImage}
+                                                />
+                                                {videoMetadata.thumbnail_url && (
+                                                    <div className="relative w-20 h-12 rounded-lg overflow-hidden border border-border">
+                                                        <img
+                                                            src={videoMetadata.thumbnail_url}
+                                                            alt="Thumbnail preview"
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {isUploadingImage && (
+                                                <p className="text-xs text-muted-foreground">Subiendo miniatura...</p>
+                                            )}
                                         </div>
                                     </div>
 
