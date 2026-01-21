@@ -1670,8 +1670,11 @@ const VideoUploadManager = () => {
                                                 <DialogTrigger asChild>
                                                     <div className="mx-auto max-w-[280px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] rounded-[2rem] transform transition-all duration-500 hover:scale-[1.02] cursor-zoom-in relative group">
                                                         {/* Hover Overlay Hint */}
+                                                        {/* Hover Overlay Hint & Persistent Button */}
                                                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 z-20 rounded-[2rem] transition-colors flex items-center justify-center">
-                                                            <Maximize2 className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity" />
+                                                            <div className="absolute bottom-4 right-4 bg-white/90 p-2 rounded-full shadow-lg border border-black/5 hover:scale-110 transition-transform">
+                                                                <Maximize2 className="w-4 h-4 text-gray-700" />
+                                                            </div>
                                                         </div>
 
                                                         <div
