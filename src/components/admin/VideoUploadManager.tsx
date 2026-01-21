@@ -1811,325 +1811,171 @@ const VideoUploadManager = () => {
                             </div>
                         </Card>
                     )}
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-                        <Video className="w-8 h-8 text-primary/20" />
-                    </div>
-                                                        )}
-                    {/* Preview Featured Tag */}
-                    <div className="absolute top-2 right-2 opacity-80">
-                        <span className="text-[8px] font-bold text-primary px-2 py-0.5 bg-white/90 rounded-full uppercase border border-primary/20 shadow-sm">
-                            Destacado
-                        </span>
-                    </div>
-                </div>
 
-                {/* Preview: Content Bottom (55%) */}
-                <div className={cn(
-                    "h-[55%] w-full flex flex-col p-4 text-left",
-                    selectedCourseData.card_style === 'elegant' ? "bg-[#F4F6F4]" :
-                        selectedCourseData.card_style === 'rose' ? "bg-[#FFF0F5]" :
-                            selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark' ? "bg-primary text-primary-foreground" :
-                                "bg-white"
-                )}>
-                    {/* Preview Badge */}
-                    <div className="mb-2">
-                        <span className={cn(
-                            "text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-sm inline-block",
-                            (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
-                        )}>
-                            {selectedCourseData.badge_text || "PREMIUM"}
-                        </span>
-                    </div>
-
-                    {/* Preview Title */}
-                    <h3 className={cn(
-                        "font-serif text-sm font-bold leading-tight line-clamp-2 mb-1",
-                        (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "text-white" : "text-gray-900"
-                    )}>
-                        {selectedCourseData.title || "Título del Curso"}
-                    </h3>
-
-                    {/* Preview Description */}
-                    <p className={cn(
-                        "text-[10px] line-clamp-2 mb-2 flex-1 leading-normal",
-                        (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "text-white/80" : "text-muted-foreground"
-                    )}>
-                        {selectedCourseData.description || "Descripción corta del curso..."}
-                    </p>
-
-                    {/* Preview Footer */}
-                    <div className="flex items-end justify-between mt-auto pt-2 border-t border-border/10">
-                        <div className="flex flex-col">
-                            {selectedCourseData.original_price && (
-                                <span className={cn(
-                                    "text-[8px] line-through",
-                                    (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "text-white/60" : "text-muted-foreground/70"
-                                )}>
-                                    {selectedCourseData.original_price}
-                                </span>
-                            )}
-                            <span className={cn(
-                                "text-sm font-bold",
-                                (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "text-white" : "text-primary"
-                            )}>
-                                {selectedCourseData.price || "Gratis"}
-                            </span>
-                        </div>
-
-                        <div className={cn(
-                            "w-6 h-6 rounded-full flex items-center justify-center",
-                            (selectedCourseData.card_style === 'bold' || selectedCourseData.card_style === 'dark') ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
-                        )}>
-                            <Edit className="w-3 h-3" />
-                        </div>
-                    </div>
-                </div>
-        </div>
-                                            </div >
-                                        </div >
-                                    </div >
-                                </div >
-                            </Card >
-
-                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
-                                <div className="space-y-2">
-                                    <h3 className="font-serif text-2xl font-bold">Multimedia & Marketing</h3>
-                                    <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
-                                </div>
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label>Descripción Larga (Editor Rico)</Label>
-                                        <RichTextEditor
-                                            placeholder="Describe el curso en detalle (puedes usar negritas, listas, etc)..."
-                                            value={selectedCourseData.long_description || ""}
-                                            onChange={(value) => updateCourseMarketing({ long_description: value })}
-                                            className="min-h-[300px]"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label>¿A quién va dirigido?</Label>
-                                        <Textarea
-                                            placeholder="Ej: Mujeres que buscan equilibrio hormonal..."
-                                            value={selectedCourseData.target_audience || ""}
-                                            onChange={(e) => updateCourseMarketing({ target_audience: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                            </Card>
-
-                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
-                                <div className="space-y-2">
-                                    <h3 className="font-serif text-2xl font-bold">Autor & Diseño</h3>
-                                    <p className="text-sm text-muted-foreground">Define quién imparte el programa.</p>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label>Nombre del Autor</Label>
-                                            <Input
-                                                placeholder="Nombre..."
-                                                value={selectedCourseData.author_name || ""}
-                                                onChange={(e) => updateCourseMarketing({ author_name: e.target.value })}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Rol/Título</Label>
-                                            <Input
-                                                placeholder="Ej: Nutricionista Humana..."
-                                                value={selectedCourseData.author_role || ""}
-                                                onChange={(e) => updateCourseMarketing({ author_role: e.target.value })}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label>URL Imagen Autor</Label>
-                                        <Input
-                                            placeholder="https://..."
-                                            value={selectedCourseData.author_image_url || ""}
-                                            onChange={(e) => updateCourseMarketing({ author_image_url: e.target.value })}
-                                        />
-                                    </div>
-
-                                    <div className="pt-4 border-t">
-                                        <Button
-                                            className="w-full bg-primary text-white rounded-full hover:bg-primary/90"
-                                            onClick={() => handleSaveMarketing()}
-                                        >
-                                            <Save className="w-4 h-4 mr-2" />
-                                            Guardar Cambios de Marketing
-                                        </Button>
-                                    </div>
-                                </div>
-                            </Card>
-                        </div >
-                    )}
                 </TabsContent >
             </Tabs >
 
-    {/* Dialog for Module Creation (Shared across tabs if needed) */ }
-    < Dialog open = { isModuleDialogOpen } onOpenChange = { setIsModuleDialogOpen } >
-        <DialogContent className="rounded-3xl border-none shadow-2xl">
-            <DialogHeader>
-                <DialogTitle className="font-serif text-2xl">Gestionar Estructura</DialogTitle>
-                <DialogDescription>Añade un nuevo módulo a tu programa curricular.</DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleCreateModule} className="space-y-4 pt-4">
-                <div className="space-y-2">
-                    <Label htmlFor="module-title-dialog">Título del Módulo</Label>
-                    <Input
-                        id="module-title-dialog"
-                        value={newModuleForm.title}
-                        onChange={(e) =>
-                            setNewModuleForm({ ...newModuleForm, title: e.target.value })
-                        }
-                        placeholder="Ej: Fundamentos del Mindfulness"
-                        required
-                        className="rounded-xl h-12"
-                    />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="module-description-dialog">Descripción</Label>
-                    <Textarea
-                        id="module-description-dialog"
-                        value={newModuleForm.description}
-                        onChange={(e) =>
-                            setNewModuleForm({ ...newModuleForm, description: e.target.value })
-                        }
-                        placeholder="Breve resumen de lo que aprenderán en este bloque..."
-                        rows={3}
-                        className="rounded-xl"
-                    />
-                </div>
-                <div className="flex gap-3 pt-6">
-                    <Button type="submit" className="flex-1 rounded-xl">Crear Módulo</Button>
-                    <Button type="button" variant="outline" className="rounded-xl" onClick={() => setIsModuleDialogOpen(false)}>Cancelar</Button>
-                </div>
-            </form>
-        </DialogContent>
+            {/* Dialog for Module Creation (Shared across tabs if needed) */}
+            < Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen} >
+                <DialogContent className="rounded-3xl border-none shadow-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="font-serif text-2xl">Gestionar Estructura</DialogTitle>
+                        <DialogDescription>Añade un nuevo módulo a tu programa curricular.</DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleCreateModule} className="space-y-4 pt-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="module-title-dialog">Título del Módulo</Label>
+                            <Input
+                                id="module-title-dialog"
+                                value={newModuleForm.title}
+                                onChange={(e) =>
+                                    setNewModuleForm({ ...newModuleForm, title: e.target.value })
+                                }
+                                placeholder="Ej: Fundamentos del Mindfulness"
+                                required
+                                className="rounded-xl h-12"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="module-description-dialog">Descripción</Label>
+                            <Textarea
+                                id="module-description-dialog"
+                                value={newModuleForm.description}
+                                onChange={(e) =>
+                                    setNewModuleForm({ ...newModuleForm, description: e.target.value })
+                                }
+                                placeholder="Breve resumen de lo que aprenderán en este bloque..."
+                                rows={3}
+                                className="rounded-xl"
+                            />
+                        </div>
+                        <div className="flex gap-3 pt-6">
+                            <Button type="submit" className="flex-1 rounded-xl">Crear Módulo</Button>
+                            <Button type="button" variant="outline" className="rounded-xl" onClick={() => setIsModuleDialogOpen(false)}>Cancelar</Button>
+                        </div>
+                    </form>
+                </DialogContent>
             </Dialog >
 
-    {/* Dialog for Video Preview */ }
-    < Dialog open = {!!videoToPreview} onOpenChange = {(open) => !open && setVideoToPreview(null)}>
-        <DialogContent className="rounded-3xl border-none shadow-2xl max-w-4xl bg-black/95 p-0 overflow-hidden">
-            <DialogHeader className="sr-only">
-                <DialogTitle>Vista Previa: {videoToPreview?.title}</DialogTitle>
-            </DialogHeader>
+            {/* Dialog for Video Preview */}
+            < Dialog open={!!videoToPreview} onOpenChange={(open) => !open && setVideoToPreview(null)}>
+                <DialogContent className="rounded-3xl border-none shadow-2xl max-w-4xl bg-black/95 p-0 overflow-hidden">
+                    <DialogHeader className="sr-only">
+                        <DialogTitle>Vista Previa: {videoToPreview?.title}</DialogTitle>
+                    </DialogHeader>
 
-            {videoToPreview && (
-                <div className="relative w-full aspect-video">
-                    {videoToPreview.is_drive_video ? (
-                        <iframe
-                            src={videoToPreview.video_path}
-                            className="w-full h-full"
-                            allow="autoplay; encrypted-media"
-                            allowFullScreen
-                            title={videoToPreview.title}
-                        />
-                    ) : (
-                        <video
-                            src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${videoToPreview.video_path}`}
-                            className="w-full h-full"
-                            controls
-                            autoPlay
-                        />
+                    {videoToPreview && (
+                        <div className="relative w-full aspect-video">
+                            {videoToPreview.is_drive_video ? (
+                                <iframe
+                                    src={videoToPreview.video_path}
+                                    className="w-full h-full"
+                                    allow="autoplay; encrypted-media"
+                                    allowFullScreen
+                                    title={videoToPreview.title}
+                                />
+                            ) : (
+                                <video
+                                    src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${videoToPreview.video_path}`}
+                                    className="w-full h-full"
+                                    controls
+                                    autoPlay
+                                />
+                            )}
+                        </div>
                     )}
-                </div>
-            )}
-        </DialogContent>
+                </DialogContent>
             </Dialog >
 
-    {/* Dialog for Advanced Video Editing (Rich Text & Settings) */ }
-    < Dialog open = { isAdvancedEditDialogOpen } onOpenChange = {(open) => {
-    if (!open) setAdvancedEditingVideo(null);
-    setIsAdvancedEditDialogOpen(open);
-}}>
-    <DialogContent className="rounded-3xl border-none shadow-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-            <DialogTitle className="font-serif text-2xl">Editar Contenido de Lección</DialogTitle>
-            <DialogDescription>Gestiona el contenido enriquecido y configuración de esta clase.</DialogDescription>
-        </DialogHeader>
+            {/* Dialog for Advanced Video Editing (Rich Text & Settings) */}
+            < Dialog open={isAdvancedEditDialogOpen} onOpenChange={(open) => {
+                if (!open) setAdvancedEditingVideo(null);
+                setIsAdvancedEditDialogOpen(open);
+            }}>
+                <DialogContent className="rounded-3xl border-none shadow-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="font-serif text-2xl">Editar Contenido de Lección</DialogTitle>
+                        <DialogDescription>Gestiona el contenido enriquecido y configuración de esta clase.</DialogDescription>
+                    </DialogHeader>
 
-        {advancedEditingVideo && (
-            <div className="space-y-6 pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label>Título de la Lección</Label>
-                        <Input
-                            value={advancedEditingVideo.title}
-                            onChange={(e) => setAdvancedEditingVideo({ ...advancedEditingVideo, title: e.target.value })}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Módulo Asignado</Label>
-                        <Select
-                            value={advancedEditingVideo.module_id || "none"}
-                            onValueChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, module_id: val === "none" ? null : val })}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Seleccionar Módulo" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="none">Sin Módulo (General)</SelectItem>
-                                {modules.map((mod) => (
-                                    <SelectItem key={mod.id} value={mod.id}>
-                                        {mod.title}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
+                    {advancedEditingVideo && (
+                        <div className="space-y-6 pt-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label>Título de la Lección</Label>
+                                    <Input
+                                        value={advancedEditingVideo.title}
+                                        onChange={(e) => setAdvancedEditingVideo({ ...advancedEditingVideo, title: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Módulo Asignado</Label>
+                                    <Select
+                                        value={advancedEditingVideo.module_id || "none"}
+                                        onValueChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, module_id: val === "none" ? null : val })}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Seleccionar Módulo" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">Sin Módulo (General)</SelectItem>
+                                            {modules.map((mod) => (
+                                                <SelectItem key={mod.id} value={mod.id}>
+                                                    {mod.title}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
 
-                <div className="space-y-2">
-                    <Label>Contenido de la Lección (Texto, Imágenes, Enlaces)</Label>
-                    <div className="border rounded-md p-1 bg-muted/20">
-                        <RichTextEditor
-                            className="min-h-[300px]"
-                            value={advancedEditingVideo.content_text || ""}
-                            onChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, content_text: val })}
-                            placeholder="Escribe aquí el contenido de apoyo para la clase. Puedes incluir resumen, puntos clave, o enlaces..."
-                        />
-                    </div>
-                </div>
+                            <div className="space-y-2">
+                                <Label>Contenido de la Lección (Texto, Imágenes, Enlaces)</Label>
+                                <div className="border rounded-md p-1 bg-muted/20">
+                                    <RichTextEditor
+                                        className="min-h-[300px]"
+                                        value={advancedEditingVideo.content_text || ""}
+                                        onChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, content_text: val })}
+                                        placeholder="Escribe aquí el contenido de apoyo para la clase. Puedes incluir resumen, puntos clave, o enlaces..."
+                                    />
+                                </div>
+                            </div>
 
-                <div className="flex items-center space-x-2 pt-2">
-                    <Checkbox
-                        id="is_preview"
-                        checked={advancedEditingVideo.is_preview || false}
-                        onCheckedChange={(checked) => setAdvancedEditingVideo({ ...advancedEditingVideo, is_preview: checked as boolean })}
-                    />
-                    <Label htmlFor="is_preview" className="font-medium cursor-pointer">
-                        Esta lección es una Vista Previa Gratuita (Free Preview)
-                    </Label>
-                </div>
+                            <div className="flex items-center space-x-2 pt-2">
+                                <Checkbox
+                                    id="is_preview"
+                                    checked={advancedEditingVideo.is_preview || false}
+                                    onCheckedChange={(checked) => setAdvancedEditingVideo({ ...advancedEditingVideo, is_preview: checked as boolean })}
+                                />
+                                <Label htmlFor="is_preview" className="font-medium cursor-pointer">
+                                    Esta lección es una Vista Previa Gratuita (Free Preview)
+                                </Label>
+                            </div>
 
-                <Separator className="my-6" />
+                            <Separator className="my-6" />
 
-                <LessonResourceManager videoId={advancedEditingVideo.id} />
+                            <LessonResourceManager videoId={advancedEditingVideo.id} />
 
-                <div className="flex gap-3 pt-6 border-t mt-4">
-                    <Button
-                        className="flex-1 rounded-xl"
-                        onClick={() => {
-                            if (advancedEditingVideo) {
-                                handleUpdateVideo(advancedEditingVideo);
-                                setIsAdvancedEditDialogOpen(false);
-                            }
-                        }}
-                    >
-                        <Save className="w-4 h-4 mr-2" />
-                        Guardar Cambios
-                    </Button>
-                    <Button variant="outline" className="rounded-xl" onClick={() => setIsAdvancedEditDialogOpen(false)}>
-                        Cancelar
-                    </Button>
-                </div>
-            </div>
-        )}
-    </DialogContent>
+                            <div className="flex gap-3 pt-6 border-t mt-4">
+                                <Button
+                                    className="flex-1 rounded-xl"
+                                    onClick={() => {
+                                        if (advancedEditingVideo) {
+                                            handleUpdateVideo(advancedEditingVideo);
+                                            setIsAdvancedEditDialogOpen(false);
+                                        }
+                                    }}
+                                >
+                                    <Save className="w-4 h-4 mr-2" />
+                                    Guardar Cambios
+                                </Button>
+                                <Button variant="outline" className="rounded-xl" onClick={() => setIsAdvancedEditDialogOpen(false)}>
+                                    Cancelar
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
             </Dialog >
         </div >
     );
