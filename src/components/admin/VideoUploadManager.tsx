@@ -1743,14 +1743,14 @@ const VideoUploadManager = () => {
                                                                             </div>
 
                                                                             <h3
-                                                                                className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
+                                                                                className="font-serif text-xl font-bold leading-tight line-clamp-2 mb-2"
                                                                                 style={{ color: textColor }}
                                                                             >
                                                                                 {selectedCourseData.title || "Título del Curso"}
                                                                             </h3>
 
                                                                             <p
-                                                                                className="text-xs line-clamp-3 mb-4 flex-1 leading-relaxed"
+                                                                                className="text-sm line-clamp-3 mb-4 flex-1 leading-relaxed"
                                                                                 style={{ color: subTextColor }}
                                                                             >
                                                                                 {selectedCourseData.description || "Descripción corta del curso..."}
@@ -1826,14 +1826,14 @@ const VideoUploadManager = () => {
                                                                         </div>
 
                                                                         <h3
-                                                                            className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
+                                                                            className="font-serif text-xl font-bold leading-tight line-clamp-2 mb-2"
                                                                             style={{ color: textColor }}
                                                                         >
                                                                             {selectedCourseData.title || "Título del Curso"}
                                                                         </h3>
 
                                                                         <p
-                                                                            className="text-xs line-clamp-3 mb-4 flex-1 leading-relaxed"
+                                                                            className="text-sm line-clamp-3 mb-4 flex-1 leading-relaxed"
                                                                             style={{ color: subTextColor }}
                                                                         >
                                                                             {selectedCourseData.description || "Descripción corta del curso..."}
@@ -1850,7 +1850,7 @@ const VideoUploadManager = () => {
                                                                                     </span>
                                                                                 )}
                                                                                 <span
-                                                                                    className="text-base font-bold"
+                                                                                    className="text-lg font-bold"
                                                                                     style={{ color: textColor }}
                                                                                 >
                                                                                     {selectedCourseData.price || "Gratis"}
