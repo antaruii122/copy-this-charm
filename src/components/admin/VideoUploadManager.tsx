@@ -79,6 +79,8 @@ type Course = Tables<"courses"> & {
     original_price?: string;
     badge_text?: string;
     border_color?: string;
+    color_theme?: string;
+    border_theme?: string;
 };
 type CourseVideo = Tables<"course_videos"> & { is_drive_video?: boolean };
 type Module = Tables<"modules">;
