@@ -23,8 +23,8 @@ const AboutMe = () => {
       }}
     />
 
-    {/* Contrast Overlay - Strong white/glass overlay for readability */}
-    <div className="absolute inset-0 bg-white/90 z-0 backdrop-blur-[2px]" />
+    {/* Contrast Overlay - Moderate white overlay so image is visible but softened */}
+    <div className="absolute inset-0 bg-white/60 z-0 backdrop-blur-[1px]" />
 
     <div className="container mx-auto px-4 relative z-10">
       <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -36,7 +36,7 @@ const AboutMe = () => {
         </div>
 
         <div>
-          <div className="bg-white/40 backdrop-blur-sm rounded-3xl p-8 shadow-sm border border-white/60">
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/80">
             <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground mb-6">
               Mi Historia
             </h2>
