@@ -1508,181 +1508,282 @@ const VideoUploadManager = () => {
                 </TabsContent>
                 <TabsContent value="marketing" className="space-y-8">
                     {selectedCourseData && (
-                        <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
-                            <div className="space-y-2 flex justify-between items-end">
-                                <div>
-                                    <h3 className="font-serif text-2xl font-bold">Editor de Tarjeta</h3>
-                                    <p className="text-sm text-muted-foreground">Diseña y personaliza tu curso en tiempo real.</p>
-                                </div>
-                                <div className="hidden lg:block">
-                                    <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                        Vista Previa Activa
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                                {/* Left Column: Form Controls (7 cols) */}
-                                <div className="lg:col-span-7 space-y-8">
-
-                                    {/* 1. Basic Info */}
-                                    <div className="space-y-5">
-                                        <div className="space-y-2">
-                                            <Label className="text-base font-semibold">1. Información del Curso</Label>
-                                            <Input
-                                                placeholder="Título del Curso"
-                                                value={selectedCourseData.title}
-                                                onChange={(e) => updateCourseMarketing({ title: e.target.value })}
-                                                className="font-serif text-lg"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Textarea
-                                                placeholder="Descripción Corta (Max 150 caracteres)"
-                                                className="resize-none h-24"
-                                                value={selectedCourseData.description || ""}
-                                                onChange={(e) => updateCourseMarketing({ description: e.target.value })}
-                                            />
-                                        </div>
+                        <div className="space-y-8">
+                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
+                                <div className="space-y-2 flex justify-between items-end">
+                                    <div>
+                                        <h3 className="font-serif text-2xl font-bold">Editor de Tarjeta</h3>
+                                        <p className="text-sm text-muted-foreground">Diseña y personaliza tu curso en tiempo real.</p>
                                     </div>
-
-                                    <div className="w-full h-px bg-border/50"></div>
-
-                                    {/* 2. Visuals */}
-                                    <div className="space-y-5">
-                                        <Label className="text-base font-semibold">2. Identidad Visual</Label>
-
-                                        {/* Image Upload */}
-                                        <div className="p-4 bg-muted/20 rounded-2xl border border-dashed border-border/60 hover:bg-muted/30 transition-colors cursor-pointer group relative">
-                                            <div className="flex gap-4 items-center">
-                                                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
-                                                    <ImagePlus className="w-6 h-6" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <div className="text-sm font-medium text-gray-900">Subir Imagen de Portada</div>
-                                                    <div className="text-xs text-muted-foreground">Vertical (9:16) recomendada.</div>
-                                                </div>
-                                                <Input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={async (e) => {
-                                                        const file = e.target.files?.[0];
-                                                        if (file) {
-                                                            const url = await handleImageUpload(file);
-                                                            if (url) updateCourseMarketing({ image_url: url });
-                                                        }
-                                                    }}
-                                                    disabled={isUploadingImage}
-                                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* COLOR PICKERS */}
-                                        <div className="grid grid-cols-2 gap-6 pt-2">
-                                            <div className="space-y-3">
-                                                <Label>Color de Fondo</Label>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-sm border ring-1 ring-black/5 hover:scale-105 transition-transform">
-                                                        <input
-                                                            type="color"
-                                                            value={selectedCourseData.color_theme || '#ffffff'}
-                                                            onChange={(e) => updateCourseMarketing({ color_theme: e.target.value })}
-                                                            className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] cursor-pointer p-0 border-0"
-                                                        />
-                                                    </div>
-                                                    <div className="text-xs text-muted-foreground">
-                                                        Clic para elegir<br /> cualquier color
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-3">
-                                                <Label>Color de Borde</Label>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-sm border ring-1 ring-black/5 hover:scale-105 transition-transform">
-                                                        <input
-                                                            type="color"
-                                                            value={selectedCourseData.border_theme || '#e5e7eb'}
-                                                            onChange={(e) => updateCourseMarketing({ border_theme: e.target.value })}
-                                                            className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] cursor-pointer p-0 border-0"
-                                                        />
-                                                    </div>
-                                                    <div className="text-xs text-muted-foreground">
-                                                        Define el marco<br /> de la tarjeta
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div className="hidden lg:block">
+                                        <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                            Vista Previa Activa
+                                        </span>
                                     </div>
+                                </div>
 
-                                    <div className="w-full h-px bg-border/50"></div>
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                                    {/* Left Column: Form Controls (7 cols) */}
+                                    <div className="lg:col-span-7 space-y-8">
 
-                                    {/* 3. Details */}
-                                    <div className="space-y-5">
-                                        <Label className="text-base font-semibold">3. Detalles de Venta</Label>
-                                        <div className="grid grid-cols-2 gap-5">
+                                        {/* 1. Basic Info */}
+                                        <div className="space-y-5">
                                             <div className="space-y-2">
-                                                <Label>Texto Destacado (Opcional)</Label>
+                                                <Label className="text-base font-semibold">1. Información del Curso</Label>
                                                 <Input
-                                                    placeholder="Ej: OFERTA, NUEVO..."
-                                                    value={selectedCourseData.badge_text || ""}
-                                                    onChange={(e) => updateCourseMarketing({ badge_text: e.target.value })}
+                                                    placeholder="Título del Curso"
+                                                    value={selectedCourseData.title}
+                                                    onChange={(e) => updateCourseMarketing({ title: e.target.value })}
+                                                    className="font-serif text-lg"
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Precio Normal (Tachado)</Label>
-                                                <Input
-                                                    placeholder="Ej: $197..."
-                                                    value={selectedCourseData.original_price || ""}
-                                                    onChange={(e) => updateCourseMarketing({ original_price: e.target.value })}
+                                                <Textarea
+                                                    placeholder="Descripción Corta (Max 150 caracteres)"
+                                                    className="resize-none h-24"
+                                                    value={selectedCourseData.description || ""}
+                                                    onChange={(e) => updateCourseMarketing({ description: e.target.value })}
                                                 />
                                             </div>
-                                            <div className="space-y-2 col-span-2">
-                                                <Label>Precio Actual (Final)</Label>
-                                                <Input
-                                                    value={selectedCourseData.price || ""}
-                                                    onChange={(e) => updateCourseMarketing({ price: e.target.value })}
-                                                    placeholder="Ej: $97 USD"
-                                                    className="font-bold bg-muted/20"
-                                                />
+                                        </div>
+
+                                        <div className="w-full h-px bg-border/50"></div>
+
+                                        {/* 2. Visuals */}
+                                        <div className="space-y-5">
+                                            <Label className="text-base font-semibold">2. Identidad Visual</Label>
+
+                                            {/* Image Upload */}
+                                            <div className="p-4 bg-muted/20 rounded-2xl border border-dashed border-border/60 hover:bg-muted/30 transition-colors cursor-pointer group relative">
+                                                <div className="flex gap-4 items-center">
+                                                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
+                                                        <ImagePlus className="w-6 h-6" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="text-sm font-medium text-gray-900">Subir Imagen de Portada</div>
+                                                        <div className="text-xs text-muted-foreground">Vertical (9:16) recomendada.</div>
+                                                    </div>
+                                                    <Input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={async (e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                const url = await handleImageUpload(file);
+                                                                if (url) updateCourseMarketing({ image_url: url });
+                                                            }
+                                                        }}
+                                                        disabled={isUploadingImage}
+                                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* COLOR PICKERS */}
+                                            <div className="grid grid-cols-2 gap-6 pt-2">
+                                                <div className="space-y-3">
+                                                    <Label>Color de Fondo</Label>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-sm border ring-1 ring-black/5 hover:scale-105 transition-transform">
+                                                            <input
+                                                                type="color"
+                                                                value={selectedCourseData.color_theme || '#ffffff'}
+                                                                onChange={(e) => updateCourseMarketing({ color_theme: e.target.value })}
+                                                                className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] cursor-pointer p-0 border-0"
+                                                            />
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground">
+                                                            Clic para elegir<br /> cualquier color
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-3">
+                                                    <Label>Color de Borde</Label>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-sm border ring-1 ring-black/5 hover:scale-105 transition-transform">
+                                                            <input
+                                                                type="color"
+                                                                value={selectedCourseData.border_theme || '#e5e7eb'}
+                                                                onChange={(e) => updateCourseMarketing({ border_theme: e.target.value })}
+                                                                className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] cursor-pointer p-0 border-0"
+                                                            />
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground">
+                                                            Define el marco<br /> de la tarjeta
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="w-full h-px bg-border/50"></div>
+
+                                        {/* 3. Details */}
+                                        <div className="space-y-5">
+                                            <Label className="text-base font-semibold">3. Detalles de Venta</Label>
+                                            <div className="grid grid-cols-2 gap-5">
+                                                <div className="space-y-2">
+                                                    <Label>Texto Destacado (Opcional)</Label>
+                                                    <Input
+                                                        placeholder="Ej: OFERTA, NUEVO..."
+                                                        value={selectedCourseData.badge_text || ""}
+                                                        onChange={(e) => updateCourseMarketing({ badge_text: e.target.value })}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>Precio Normal (Tachado)</Label>
+                                                    <Input
+                                                        placeholder="Ej: $197..."
+                                                        value={selectedCourseData.original_price || ""}
+                                                        onChange={(e) => updateCourseMarketing({ original_price: e.target.value })}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2 col-span-2">
+                                                    <Label>Precio Actual (Final)</Label>
+                                                    <Input
+                                                        value={selectedCourseData.price || ""}
+                                                        onChange={(e) => updateCourseMarketing({ price: e.target.value })}
+                                                        placeholder="Ej: $97 USD"
+                                                        className="font-bold bg-muted/20"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Right Column: Live Preview (5 cols) */}
-                                <div className="lg:col-span-5 relative">
-                                    <div className="sticky top-8">
+                                    {/* Right Column: Live Preview (5 cols) */}
+                                    <div className="lg:col-span-5 relative">
+                                        <div className="sticky top-8">
 
-                                        {/* Zoom / Info Hint */}
-                                        <div className="flex justify-center mb-4 opacity-50 hover:opacity-100 transition-opacity">
-                                            <span className="text-[10px] uppercase tracking-widest flex items-center gap-1.5 cursor-help">
-                                                <Eye className="w-3 h-3" /> Vista Previa Real
-                                            </span>
-                                        </div>
+                                            {/* Zoom / Info Hint */}
+                                            <div className="flex justify-center mb-4 opacity-50 hover:opacity-100 transition-opacity">
+                                                <span className="text-[10px] uppercase tracking-widest flex items-center gap-1.5 cursor-help">
+                                                    <Eye className="w-3 h-3" /> Vista Previa Real
+                                                </span>
+                                            </div>
 
-                                        {/* Preview Card Component */}
-                                        {/* Added onClick to expand logic */}
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <div className="mx-auto max-w-[280px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] rounded-[2rem] transform transition-all duration-500 hover:scale-[1.02] cursor-zoom-in relative group">
-                                                    {/* Hover Overlay Hint */}
-                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 z-20 rounded-[2rem] transition-colors flex items-center justify-center">
-                                                        <Maximize2 className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity" />
+                                            {/* Preview Card Component */}
+                                            {/* Added onClick to expand logic */}
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <div className="mx-auto max-w-[280px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] rounded-[2rem] transform transition-all duration-500 hover:scale-[1.02] cursor-zoom-in relative group">
+                                                        {/* Hover Overlay Hint */}
+                                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 z-20 rounded-[2rem] transition-colors flex items-center justify-center">
+                                                            <Maximize2 className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity" />
+                                                        </div>
+
+                                                        <div
+                                                            className="overflow-hidden flex flex-col aspect-[9/16] rounded-[2rem] bg-white relative z-10"
+                                                            style={{
+                                                                borderColor: selectedCourseData.border_theme || 'transparent',
+                                                                borderWidth: selectedCourseData.border_theme ? '4px' : '0px',
+                                                                borderStyle: 'solid'
+                                                            }}
+                                                        >
+
+                                                            {/* Preview: Image Top (45%) */}
+                                                            <div className="h-[45%] w-full relative bg-muted/20 border-b overflow-hidden">
+                                                                {selectedCourseData.image_url ? (
+                                                                    <img
+                                                                        src={selectedCourseData.image_url}
+                                                                        alt="Preview"
+                                                                        className="w-full h-full object-cover"
+                                                                    />
+                                                                ) : (
+                                                                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+                                                                        <Video className="w-8 h-8 text-primary/20" />
+                                                                    </div>
+                                                                )}
+                                                                {/* Example Featured Tag */}
+                                                                <div className="absolute top-3 right-3 opacity-90">
+                                                                    <span className="text-[9px] font-bold text-primary px-2.5 py-1 bg-white/95 rounded-full uppercase border border-primary/20 shadow-sm">
+                                                                        Destacado
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Preview: Content Bottom (55%) */}
+                                                            <div
+                                                                className="h-[55%] w-full flex flex-col p-6 text-left"
+                                                                style={{ backgroundColor: selectedCourseData.color_theme || '#ffffff' }}
+                                                            >
+                                                                {/* Dynamic Text Contrast Logic (Simple) */}
+                                                                {(() => {
+                                                                    const bgColor = selectedCourseData.color_theme || '#ffffff';
+                                                                    const isWhite = bgColor.toLowerCase() === '#ffffff';
+                                                                    const textColor = isWhite ? '#111827' : '#ffffff';
+                                                                    const subTextColor = isWhite ? '#6b7280' : 'rgba(255,255,255,0.8)';
+                                                                    const badgeBg = isWhite ? 'rgba(191, 89, 103, 0.1)' : 'rgba(255,255,255,0.2)';
+                                                                    const badgeText = isWhite ? '#bf5967' : '#ffffff';
+
+                                                                    return (
+                                                                        <>
+                                                                            <div className="mb-3">
+                                                                                <span
+                                                                                    className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-sm inline-block"
+                                                                                    style={{ backgroundColor: badgeBg, color: badgeText }}
+                                                                                >
+                                                                                    {selectedCourseData.badge_text || "PROGRAMA"}
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <h3
+                                                                                className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
+                                                                                style={{ color: textColor }}
+                                                                            >
+                                                                                {selectedCourseData.title || "Título del Curso"}
+                                                                            </h3>
+
+                                                                            <p
+                                                                                className="text-xs line-clamp-3 mb-4 flex-1 leading-relaxed"
+                                                                                style={{ color: subTextColor }}
+                                                                            >
+                                                                                {selectedCourseData.description || "Descripción corta del curso..."}
+                                                                            </p>
+
+                                                                            <div className="flex items-end justify-between mt-auto pt-3 border-t border-black/5">
+                                                                                <div className="flex flex-col">
+                                                                                    {selectedCourseData.original_price && (
+                                                                                        <span
+                                                                                            className="text-[10px] line-through mb-0.5"
+                                                                                            style={{ color: subTextColor, opacity: 0.7 }}
+                                                                                        >
+                                                                                            {selectedCourseData.original_price}
+                                                                                        </span>
+                                                                                    )}
+                                                                                    <span
+                                                                                        className="text-base font-bold"
+                                                                                        style={{ color: textColor }}
+                                                                                    >
+                                                                                        {selectedCourseData.price || "Gratis"}
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                <div
+                                                                                    className="w-8 h-8 rounded-full flex items-center justify-center bg-black/5"
+                                                                                    style={{ backgroundColor: isWhite ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.2)' }}
+                                                                                >
+                                                                                    <Edit className="w-4 h-4" style={{ color: textColor }} />
+                                                                                </div>
+                                                                            </div>
+                                                                        </>
+                                                                    );
+                                                                })()}
+                                                            </div>
+                                                        </div>
                                                     </div>
-
+                                                </DialogTrigger>
+                                                <DialogContent className="max-w-md bg-transparent border-none shadow-none p-0 flex items-center justify-center">
                                                     <div
-                                                        className="overflow-hidden flex flex-col aspect-[9/16] rounded-[2rem] bg-white relative z-10"
+                                                        className="w-[360px] overflow-hidden flex flex-col aspect-[9/16] rounded-[2rem] bg-white relative shadow-2xl scale-110"
                                                         style={{
                                                             borderColor: selectedCourseData.border_theme || 'transparent',
                                                             borderWidth: selectedCourseData.border_theme ? '4px' : '0px',
                                                             borderStyle: 'solid'
                                                         }}
                                                     >
-
-                                                        {/* Preview: Image Top (45%) */}
                                                         <div className="h-[45%] w-full relative bg-muted/20 border-b overflow-hidden">
                                                             {selectedCourseData.image_url ? (
                                                                 <img
@@ -1690,199 +1791,100 @@ const VideoUploadManager = () => {
                                                                     alt="Preview"
                                                                     className="w-full h-full object-cover"
                                                                 />
-                                                            ) : (
-                                                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-                                                                    <Video className="w-8 h-8 text-primary/20" />
-                                                                </div>
-                                                            )}
-                                                            {/* Example Featured Tag */}
-                                                            <div className="absolute top-3 right-3 opacity-90">
-                                                                <span className="text-[9px] font-bold text-primary px-2.5 py-1 bg-white/95 rounded-full uppercase border border-primary/20 shadow-sm">
-                                                                    Destacado
-                                                                </span>
-                                                            </div>
+                                                            ) : <div className="bg-gray-100 w-full h-full" />}
                                                         </div>
-
-                                                        {/* Preview: Content Bottom (55%) */}
                                                         <div
                                                             className="h-[55%] w-full flex flex-col p-6 text-left"
                                                             style={{ backgroundColor: selectedCourseData.color_theme || '#ffffff' }}
                                                         >
-                                                            {/* Dynamic Text Contrast Logic (Simple) */}
-                                                            {(() => {
-                                                                const bgColor = selectedCourseData.color_theme || '#ffffff';
-                                                                const isWhite = bgColor.toLowerCase() === '#ffffff';
-                                                                const textColor = isWhite ? '#111827' : '#ffffff';
-                                                                const subTextColor = isWhite ? '#6b7280' : 'rgba(255,255,255,0.8)';
-                                                                const badgeBg = isWhite ? 'rgba(191, 89, 103, 0.1)' : 'rgba(255,255,255,0.2)';
-                                                                const badgeText = isWhite ? '#bf5967' : '#ffffff';
-
-                                                                return (
-                                                                    <>
-                                                                        <div className="mb-3">
-                                                                            <span
-                                                                                className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-sm inline-block"
-                                                                                style={{ backgroundColor: badgeBg, color: badgeText }}
-                                                                            >
-                                                                                {selectedCourseData.badge_text || "PROGRAMA"}
-                                                                            </span>
-                                                                        </div>
-
-                                                                        <h3
-                                                                            className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
-                                                                            style={{ color: textColor }}
-                                                                        >
-                                                                            {selectedCourseData.title || "Título del Curso"}
-                                                                        </h3>
-
-                                                                        <p
-                                                                            className="text-xs line-clamp-3 mb-4 flex-1 leading-relaxed"
-                                                                            style={{ color: subTextColor }}
-                                                                        >
-                                                                            {selectedCourseData.description || "Descripción corta del curso..."}
-                                                                        </p>
-
-                                                                        <div className="flex items-end justify-between mt-auto pt-3 border-t border-black/5">
-                                                                            <div className="flex flex-col">
-                                                                                {selectedCourseData.original_price && (
-                                                                                    <span
-                                                                                        className="text-[10px] line-through mb-0.5"
-                                                                                        style={{ color: subTextColor, opacity: 0.7 }}
-                                                                                    >
-                                                                                        {selectedCourseData.original_price}
-                                                                                    </span>
-                                                                                )}
-                                                                                <span
-                                                                                    className="text-base font-bold"
-                                                                                    style={{ color: textColor }}
-                                                                                >
-                                                                                    {selectedCourseData.price || "Gratis"}
-                                                                                </span>
-                                                                            </div>
-
-                                                                            <div
-                                                                                className="w-8 h-8 rounded-full flex items-center justify-center bg-black/5"
-                                                                                style={{ backgroundColor: isWhite ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.2)' }}
-                                                                            >
-                                                                                <Edit className="w-4 h-4" style={{ color: textColor }} />
-                                                                            </div>
-                                                                        </div>
-                                                                    </>
-                                                                );
-                                                            })()}
+                                                            {/* Same content logic logic reused for modal (simplified for brevity) */}
+                                                            <div className="flex-1 flex items-center justify-center text-center opacity-50 italic">
+                                                                (Vista Ampliada)
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </DialogTrigger>
-                                            <DialogContent className="max-w-md bg-transparent border-none shadow-none p-0 flex items-center justify-center">
-                                                <div
-                                                    className="w-[360px] overflow-hidden flex flex-col aspect-[9/16] rounded-[2rem] bg-white relative shadow-2xl scale-110"
-                                                    style={{
-                                                        borderColor: selectedCourseData.border_theme || 'transparent',
-                                                        borderWidth: selectedCourseData.border_theme ? '4px' : '0px',
-                                                        borderStyle: 'solid'
-                                                    }}
-                                                >
-                                                    <div className="h-[45%] w-full relative bg-muted/20 border-b overflow-hidden">
-                                                        {selectedCourseData.image_url ? (
-                                                            <img
-                                                                src={selectedCourseData.image_url}
-                                                                alt="Preview"
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                        ) : <div className="bg-gray-100 w-full h-full" />}
-                                                    </div>
-                                                    <div
-                                                        className="h-[55%] w-full flex flex-col p-6 text-left"
-                                                        style={{ backgroundColor: selectedCourseData.color_theme || '#ffffff' }}
-                                                    >
-                                                        {/* Same content logic logic reused for modal (simplified for brevity) */}
-                                                        <div className="flex-1 flex items-center justify-center text-center opacity-50 italic">
-                                                            (Vista Ampliada)
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
+                                                </DialogContent>
+                                            </Dialog>
 
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Card>
+                            </Card>
 
-                        <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
-                            <div className="space-y-2">
-                                <h3 className="font-serif text-2xl font-bold">Multimedia & Marketing</h3>
-                                <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
-                            </div>
-                            <div className="space-y-4">
+                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
                                 <div className="space-y-2">
-                                    <Label>Descripción Larga (Editor Rico)</Label>
-                                    <RichTextEditor
-                                        placeholder="Describe el curso en detalle (puedes usar negritas, listas, etc)..."
-                                        value={selectedCourseData.long_description || ""}
-                                        onChange={(value) => updateCourseMarketing({ long_description: value })}
-                                        className="min-h-[300px]"
-                                    />
+                                    <h3 className="font-serif text-2xl font-bold">Multimedia & Marketing</h3>
+                                    <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
                                 </div>
-
-                                <div className="space-y-2">
-                                    <Label>¿A quién va dirigido?</Label>
-                                    <Textarea
-                                        placeholder="Ej: Mujeres que buscan equilibrio hormonal..."
-                                        value={selectedCourseData.target_audience || ""}
-                                        onChange={(e) => updateCourseMarketing({ target_audience: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                        </Card>
-
-                        <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
-                            <div className="space-y-2">
-                                <h3 className="font-serif text-2xl font-bold">Autor & Diseño</h3>
-                                <p className="text-sm text-muted-foreground">Define quién imparte el programa.</p>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label>Nombre del Autor</Label>
-                                        <Input
-                                            placeholder="Nombre..."
-                                            value={selectedCourseData.author_name || ""}
-                                            onChange={(e) => updateCourseMarketing({ author_name: e.target.value })}
+                                        <Label>Descripción Larga (Editor Rico)</Label>
+                                        <RichTextEditor
+                                            placeholder="Describe el curso en detalle (puedes usar negritas, listas, etc)..."
+                                            value={selectedCourseData.long_description || ""}
+                                            onChange={(value) => updateCourseMarketing({ long_description: value })}
+                                            className="min-h-[300px]"
                                         />
                                     </div>
+
                                     <div className="space-y-2">
-                                        <Label>Rol/Título</Label>
-                                        <Input
-                                            placeholder="Ej: Nutricionista Humana..."
-                                            value={selectedCourseData.author_role || ""}
-                                            onChange={(e) => updateCourseMarketing({ author_role: e.target.value })}
+                                        <Label>¿A quién va dirigido?</Label>
+                                        <Textarea
+                                            placeholder="Ej: Mujeres que buscan equilibrio hormonal..."
+                                            value={selectedCourseData.target_audience || ""}
+                                            onChange={(e) => updateCourseMarketing({ target_audience: e.target.value })}
                                         />
                                     </div>
                                 </div>
+                            </Card>
 
+                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
                                 <div className="space-y-2">
-                                    <Label>URL Imagen Autor</Label>
-                                    <Input
-                                        placeholder="https://..."
-                                        value={selectedCourseData.author_image_url || ""}
-                                        onChange={(e) => updateCourseMarketing({ author_image_url: e.target.value })}
-                                    />
+                                    <h3 className="font-serif text-2xl font-bold">Autor & Diseño</h3>
+                                    <p className="text-sm text-muted-foreground">Define quién imparte el programa.</p>
                                 </div>
 
-                                <div className="pt-4 border-t">
-                                    <Button
-                                        className="w-full bg-primary text-white rounded-full hover:bg-primary/90"
-                                        onClick={() => handleSaveMarketing()}
-                                    >
-                                        <Save className="w-4 h-4 mr-2" />
-                                        Guardar Cambios de Marketing
-                                    </Button>
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Nombre del Autor</Label>
+                                            <Input
+                                                placeholder="Nombre..."
+                                                value={selectedCourseData.author_name || ""}
+                                                onChange={(e) => updateCourseMarketing({ author_name: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Rol/Título</Label>
+                                            <Input
+                                                placeholder="Ej: Nutricionista Humana..."
+                                                value={selectedCourseData.author_role || ""}
+                                                onChange={(e) => updateCourseMarketing({ author_role: e.target.value })}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label>URL Imagen Autor</Label>
+                                        <Input
+                                            placeholder="https://..."
+                                            value={selectedCourseData.author_image_url || ""}
+                                            onChange={(e) => updateCourseMarketing({ author_image_url: e.target.value })}
+                                        />
+                                    </div>
+
+                                    <div className="pt-4 border-t">
+                                        <Button
+                                            className="w-full bg-primary text-white rounded-full hover:bg-primary/90"
+                                            onClick={() => handleSaveMarketing()}
+                                        >
+                                            <Save className="w-4 h-4 mr-2" />
+                                            Guardar Cambios de Marketing
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
-                        </Card>
+                            </Card>
+                        </div>
                     )}
 
                 </TabsContent >
