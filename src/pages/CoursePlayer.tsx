@@ -40,6 +40,7 @@ interface Video {
     content_text?: string | null;
     is_preview?: boolean | null;
     is_drive_video?: boolean;
+    duration_seconds?: number | null;
 }
 
 interface Module {
@@ -64,6 +65,13 @@ const CoursePlayer = () => {
     const [notes, setNotes] = useState("");
 
     const videoRef = useRef<HTMLVideoElement>(null);
+
+    const formatDuration = (seconds: number | null | undefined) => {
+        if (!seconds) return "00:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
 
     // Save notes to local storage
     useEffect(() => {
@@ -249,7 +257,7 @@ const CoursePlayer = () => {
                                                         </p>
                                                         <div className="flex items-center gap-2 mt-1">
                                                             <Play className="w-3 h-3 text-muted-foreground" />
-                                                            <span className="text-[9px] font-bold text-muted-foreground uppercase italic">00:44</span>
+                                                            <span className="text-[9px] font-bold text-muted-foreground uppercase italic">{formatDuration(video.duration_seconds)}</span>
                                                         </div>
                                                     </div>
                                                 </button>
