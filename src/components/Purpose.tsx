@@ -58,26 +58,32 @@ const Purpose = () => {
             <span className="block text-foreground font-bold mt-2">Alimenta tu Fertilidad</span>
           </h2>
 
-          <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
-            Soy nutricionista especializada en salud hormonal femenina. Te acompaño a entender
-            tu ciclo menstrual y nutrir tu cuerpo en cada fase para alcanzar el <span className="text-gradient font-semibold">equilibrio que mereces</span>.
-          </p>
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-sm border border-white/40 max-w-4xl mx-auto">
+            <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
+              Soy nutricionista especializada en salud hormonal femenina. Te acompaño a entender
+              tu ciclo menstrual y nutrir tu cuerpo en cada fase para alcanzar el <span className="text-gradient font-semibold">equilibrio que mereces</span>.
+            </p>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 md:gap-6 lg:gap-8">
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group bg-gradient-card rounded-3xl p-8 md:p-10 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-3 border border-border/50 hover:border-primary/30 relative overflow-hidden animate-fade-up"
+              className="group bg-gradient-card rounded-3xl p-6 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-3 border border-border/50 hover:border-primary/30 relative overflow-hidden animate-fade-up"
               style={{ animationDelay: feature.delay }}
             >
               {/* Decorative corner element */}
               <div className={`absolute -top-12 -right-12 w-32 h-32 ${feature.gradient} opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500`} />
 
-              {/* Icon with gradient background */}
-              <div className={`w-20 h-20 ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:glow-rose transition-all duration-300 relative`}>
-                <feature.icon className="w-10 h-10 text-white" />
-                <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              {/* Rectangular Header / Icon Container */}
+              <div className={`w-full aspect-[4/3] rounded-2xl ${feature.gradient} mb-6 flex items-center justify-center relative overflow-hidden shadow-inner group-hover:shadow-lg transition-all duration-500`}>
+                <feature.icon className="w-16 h-16 text-white relative z-10 group-hover:scale-110 duration-500" />
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                {/* Geometric decorative shapes */}
+                <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-white/20 rounded-full blur-xl" />
+                <div className="absolute top-4 right-4 w-12 h-12 bg-black/5 rounded-full blur-lg" />
               </div>
 
               <h3 className="font-serif text-2xl md:text-3xl text-foreground mb-4 group-hover:text-gradient transition-all">
