@@ -18,7 +18,6 @@ import {
     FolderOpen,
     Plus,
     Edit,
-    Settings,
     Eye,
     Maximize2,
     ImagePlus,
@@ -1807,6 +1806,80 @@ const VideoUploadManager = () => {
                                         </Dialog>
 
                                     </div>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
+                            <div className="space-y-2">
+                                <h3 className="font-serif text-2xl font-bold">Multimedia & Marketing</h3>
+                                <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label>Descripción Larga (Editor Rico)</Label>
+                                    <RichTextEditor
+                                        placeholder="Describe el curso en detalle (puedes usar negritas, listas, etc)..."
+                                        value={selectedCourseData.long_description || ""}
+                                        onChange={(value) => updateCourseMarketing({ long_description: value })}
+                                        className="min-h-[300px]"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>¿A quién va dirigido?</Label>
+                                    <Textarea
+                                        placeholder="Ej: Mujeres que buscan equilibrio hormonal..."
+                                        value={selectedCourseData.target_audience || ""}
+                                        onChange={(e) => updateCourseMarketing({ target_audience: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
+                            <div className="space-y-2">
+                                <h3 className="font-serif text-2xl font-bold">Autor & Diseño</h3>
+                                <p className="text-sm text-muted-foreground">Define quién imparte el programa.</p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label>Nombre del Autor</Label>
+                                        <Input
+                                            placeholder="Nombre..."
+                                            value={selectedCourseData.author_name || ""}
+                                            onChange={(e) => updateCourseMarketing({ author_name: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Rol/Título</Label>
+                                        <Input
+                                            placeholder="Ej: Nutricionista Humana..."
+                                            value={selectedCourseData.author_role || ""}
+                                            onChange={(e) => updateCourseMarketing({ author_role: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>URL Imagen Autor</Label>
+                                    <Input
+                                        placeholder="https://..."
+                                        value={selectedCourseData.author_image_url || ""}
+                                        onChange={(e) => updateCourseMarketing({ author_image_url: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="pt-4 border-t">
+                                    <Button
+                                        className="w-full bg-primary text-white rounded-full hover:bg-primary/90"
+                                        onClick={() => handleSaveMarketing()}
+                                    >
+                                        <Save className="w-4 h-4 mr-2" />
+                                        Guardar Cambios de Marketing
+                                    </Button>
                                 </div>
                             </div>
                         </Card>
