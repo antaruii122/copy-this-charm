@@ -1515,11 +1515,21 @@ const VideoUploadManager = () => {
                                         <h3 className="font-serif text-2xl font-bold">Editor de Tarjeta</h3>
                                         <p className="text-sm text-muted-foreground">Diseña y personaliza tu curso en tiempo real.</p>
                                     </div>
-                                    <div className="hidden lg:block">
-                                        <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                            Vista Previa Activa
-                                        </span>
+                                    <div className="flex items-center gap-4">
+                                        <div className="hidden lg:block">
+                                            <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-2">
+                                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                                Vista Previa Activa
+                                            </span>
+                                        </div>
+                                        <Button
+                                            size="sm"
+                                            onClick={() => handleSaveMarketing()}
+                                            className="rounded-full bg-primary text-white hover:bg-primary/90 shadow-sm"
+                                        >
+                                            <Save className="w-3.5 h-3.5 mr-1.5" />
+                                            Guardar
+                                        </Button>
                                     </div>
                                 </div>
 
