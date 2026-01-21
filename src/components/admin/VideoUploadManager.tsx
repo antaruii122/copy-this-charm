@@ -150,6 +150,37 @@ const VideoUploadManager = () => {
     });
 
     const selectedCourseData = courses.find(c => c.id === selectedCourse);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+    const handleImageUpload = async (file: File) => {
+        try {
+            setIsUploadingImage(true);
+            const fileExt = file.name.split('.').pop();
+            const fileName = `thumbnails/${Date.now()}.${fileExt}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('videodecurso')
+                .upload(fileName, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('videodecurso')
+                .getPublicUrl(fileName);
+
+            return publicUrl;
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            toast({
+                title: "Error",
+                description: "No se pudo subir la imagen",
+                variant: "destructive"
+            });
+            return null;
+        } finally {
+            setIsUploadingImage(false);
+        }
+    };
 
     const updateCourseMarketing = (updates: Partial<Course>) => {
         setCourses(prev => prev.map(c =>
@@ -168,6 +199,7 @@ const VideoUploadManager = () => {
                     author_name: selectedCourseData.author_name,
                     author_role: selectedCourseData.author_role,
                     author_image_url: selectedCourseData.author_image_url,
+                    image_url: selectedCourseData.image_url,
                 })
                 .eq("id", selectedCourse);
 
@@ -400,6 +432,7 @@ const VideoUploadManager = () => {
                     slug: newCourseForm.slug || generateSlug(newCourseForm.title),
                     description: newCourseForm.description || null,
                     price: newCourseForm.price || null,
+                    image_url: newCourseForm.image_url || null,
                     is_featured: newCourseForm.is_featured,
                 })
                 .select()
@@ -879,6 +912,26 @@ const VideoUploadManager = () => {
                                             placeholder="Descripción del curso..."
                                             rows={3}
                                         />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Imagen de Portada</Label>
+                                        <div className="flex gap-4 items-center">
+                                            {newCourseForm.image_url && (
+                                                <img src={newCourseForm.image_url} alt="Preview" className="w-16 h-16 object-cover rounded-md border" />
+                                            )}
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={async (e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        const url = await handleImageUpload(file);
+                                                        if (url) setNewCourseForm({ ...newCourseForm, image_url: url });
+                                                    }
+                                                }}
+                                                disabled={isUploadingImage}
+                                            />
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="price">Precio</Label>
@@ -1365,6 +1418,26 @@ const VideoUploadManager = () => {
                                 </div>
 
                                 <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Imagen de Portada del Curso</Label>
+                                        <div className="flex flex-col gap-4">
+                                            {selectedCourseData.image_url && (
+                                                <img src={selectedCourseData.image_url} alt="Portada" className="w-full h-48 object-cover rounded-xl border" />
+                                            )}
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={async (e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        const url = await handleImageUpload(file);
+                                                        if (url) updateCourseMarketing({ image_url: url });
+                                                    }
+                                                }}
+                                                disabled={isUploadingImage}
+                                            />
+                                        </div>
+                                    </div>
                                     <div className="space-y-2">
                                         <Label>Descripción Larga (Editor Rico)</Label>
                                         <RichTextEditor
