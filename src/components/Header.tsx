@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import UserButton from "./UserButton";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const { isSignedIn } = useAuth();
@@ -49,11 +50,12 @@ const Header = () => {
                 </a>
               )
             ))}
-            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Link to={isSignedIn ? "/aula-virtual" : "/auth"}>
-                {isSignedIn ? "Aula Virtual" : "Iniciar Sesión"}
-              </Link>
-            </Button>
+            <Link
+              to={isSignedIn ? "/aula-virtual" : "/auth"}
+              className={cn(buttonVariants({ size: "sm" }), "bg-primary hover:bg-primary/90 text-primary-foreground")}
+            >
+              {isSignedIn ? "Aula Virtual" : "Iniciar Sesión"}
+            </Link>
             {isSignedIn && <UserButton />}
           </nav>
 
@@ -92,11 +94,13 @@ const Header = () => {
                   </a>
                 )
               ))}
-              <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2">
-                <Link to={isSignedIn ? "/aula-virtual" : "/auth"} onClick={() => setIsMenuOpen(false)}>
-                  {isSignedIn ? "Aula Virtual" : "Iniciar Sesión"}
-                </Link>
-              </Button>
+              <Link
+                to={isSignedIn ? "/aula-virtual" : "/auth"}
+                onClick={() => setIsMenuOpen(false)}
+                className={cn(buttonVariants(), "w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2")}
+              >
+                {isSignedIn ? "Aula Virtual" : "Iniciar Sesión"}
+              </Link>
             </div>
           </nav>
         )}
