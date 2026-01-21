@@ -1,8 +1,12 @@
 import { ShoppingCart, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
+import { cn } from "@/lib/utils";
 
 const DashboardHeader = () => {
+  const { isSignedIn } = useAuth();
+
   const navItems = [
     { label: "Inicio", href: "/" },
     { label: "Propósito", href: "/#proposito" },
@@ -40,9 +44,12 @@ const DashboardHeader = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-3">
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
+            <Link
+              to={isSignedIn ? "/aula-virtual" : "/auth"}
+              className={cn(buttonVariants({ variant: "default" }), "bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6")}
+            >
               Aula Virtual
-            </Button>
+            </Link>
             <Button variant="outline" className="rounded-full px-4 gap-2 border-border">
               <span className="text-foreground/80">$0</span>
               <div className="relative">
