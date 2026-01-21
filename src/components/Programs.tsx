@@ -85,9 +85,13 @@ const Programs = () => {
                 className={cn(
                   "group relative rounded-3xl bg-white overflow-hidden flex flex-col aspect-[9/16] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
                   "shadow-sm",
-                  program.border_color ? `border-2 ${program.border_color}` : "border border-border",
                   staggerClass
                 )}
+                style={{
+                  borderColor: program.border_theme || 'transparent',
+                  borderWidth: program.border_theme ? '4px' : '0px',
+                  borderStyle: 'solid'
+                }}
               >
                 {/* Image Container - Top 45% */}
                 <div className="h-[45%] w-full relative bg-muted/20 border-b overflow-hidden">
@@ -107,70 +111,81 @@ const Programs = () => {
                   )}
                 </div>
 
-                <div className={cn(
-                  "h-[55%] w-full flex flex-col p-4 text-left",
-                  program.card_style === 'elegant' ? "bg-[#F4F6F4]" :
-                    program.card_style === 'rose' ? "bg-[#FFF0F5]" :
-                      program.card_style === 'bold' || program.card_style === 'dark' ? "bg-primary text-primary-foreground" :
-                        "bg-white"
-                )}>
-                  {/* Badge */}
-                  <div className="mb-2">
-                    <span className={cn(
-                      "text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-sm inline-block",
-                      (program.card_style === 'bold' || program.card_style === 'dark') ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
-                    )}>
-                      {program.badge_text || "PROGRAMA"}
-                    </span>
-                  </div>
+                <div
+                  className="h-[55%] w-full flex flex-col p-5 text-left transition-colors duration-300"
+                  style={{ backgroundColor: program.color_theme || '#ffffff' }}
+                >
+                  {(() => {
+                    const bgColor = program.color_theme || '#ffffff';
+                    const isWhite = bgColor.toLowerCase() === '#ffffff';
 
-                  {/* Title */}
-                  <h3 className={cn(
-                    "font-serif text-lg font-bold leading-tight line-clamp-2 mb-2",
-                    (program.card_style === 'bold' || program.card_style === 'dark') ? "text-white" : "text-gray-900"
-                  )}>
-                    {program.title}
-                  </h3>
+                    const textColor = isWhite ? '#111827' : '#ffffff';
+                    const subTextColor = isWhite ? '#6b7280' : 'rgba(255,255,255,0.8)';
+                    const badgeBg = isWhite ? 'rgba(191, 89, 103, 0.1)' : 'rgba(255,255,255,0.2)';
+                    const badgeText = isWhite ? '#bf5967' : '#ffffff';
 
-                  {/* Description */}
-                  <p className={cn(
-                    "text-xs line-clamp-3 mb-4 flex-1 leading-relaxed",
-                    (program.card_style === 'bold' || program.card_style === 'dark') ? "text-white/80" : "text-muted-foreground"
-                  )}>
-                    {program.description}
-                  </p>
+                    return (
+                      <>
+                        {/* Badge */}
+                        <div className="mb-3">
+                          <span
+                            className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-sm inline-block"
+                            style={{ backgroundColor: badgeBg, color: badgeText }}
+                          >
+                            {program.badge_text || "PROGRAMA"}
+                          </span>
+                        </div>
 
-                  {/* Footer */}
-                  <div className="flex items-end justify-between mt-auto pt-4 border-t border-border/10">
-                    <div className="flex flex-col">
-                      {program.original_price && (
-                        <span className={cn(
-                          "text-[10px] line-through mb-0.5",
-                          (program.card_style === 'bold' || program.card_style === 'dark') ? "text-white/60" : "text-muted-foreground/70"
-                        )}>
-                          {program.original_price}
-                        </span>
-                      )}
-                      <span className={cn(
-                        "text-base font-bold",
-                        (program.card_style === 'bold' || program.card_style === 'dark') ? "text-white" : "text-primary"
-                      )}>
-                        {program.price}
-                      </span>
-                    </div>
+                        {/* Title */}
+                        <h3
+                          className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
+                          style={{ color: textColor }}
+                        >
+                          {program.title}
+                        </h3>
 
-                    <Button
-                      size="sm"
-                      className={cn(
-                        "rounded-full px-4 h-8 text-xs font-bold shadow-none",
-                        (program.card_style === 'bold' || program.card_style === 'dark')
-                          ? "bg-white text-primary hover:bg-white/90"
-                          : "bg-primary text-white hover:bg-primary/90"
-                      )}
-                    >
-                      Ver más
-                    </Button>
-                  </div>
+                        {/* Description */}
+                        <p
+                          className="text-xs line-clamp-3 mb-4 flex-1 leading-relaxed"
+                          style={{ color: subTextColor }}
+                        >
+                          {program.description}
+                        </p>
+
+                        {/* Footer */}
+                        <div className="flex items-end justify-between mt-auto pt-4 border-t" style={{ borderColor: isWhite ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)' }}>
+                          <div className="flex flex-col">
+                            {program.original_price && (
+                              <span
+                                className="text-[10px] line-through mb-0.5"
+                                style={{ color: subTextColor, opacity: 0.7 }}
+                              >
+                                {program.original_price}
+                              </span>
+                            )}
+                            <span
+                              className="text-base font-bold"
+                              style={{ color: textColor }}
+                            >
+                              {program.price || "Gratis"}
+                            </span>
+                          </div>
+
+                          <Button
+                            size="sm"
+                            className={cn(
+                              "rounded-full px-4 h-8 text-xs font-bold shadow-none",
+                              isWhite
+                                ? "bg-primary text-white hover:bg-primary/90"
+                                : "bg-white text-primary hover:bg-white/90"
+                            )}
+                          >
+                            Ver más
+                          </Button>
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
               </Link>
             );
