@@ -400,74 +400,77 @@ const CourseVideos = ({ courseId }: CourseVideosProps) => {
       <div className="grid lg:grid-cols-4 gap-8">
         {/* Video Player - Main Area */}
         <div className="lg:col-span-3 space-y-6">
-          <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video group border border-white/5">
-            {selectedVideo?.url ? (
-              <>
-                <video
-                  ref={videoRef}
-                  src={selectedVideo.url}
-                  className="w-full h-full object-contain"
-                  onTimeUpdate={handleTimeUpdate}
-                  onLoadedMetadata={handleLoadedMetadata}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                  onEnded={() => {
-                    setIsPlaying(false);
-                    if (selectedVideo) {
-                      markAsCompleted(selectedVideo.id, true);
-                    }
-                  }}
-                />
+          {/* Constrained Video Container - YouTube Style */}
+          <div className="relative w-full max-w-4xl mx-auto">
+            <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video group border border-white/5">
+              {selectedVideo?.url ? (
+                <>
+                  <video
+                    ref={videoRef}
+                    src={selectedVideo.url}
+                    className="w-full h-full object-contain"
+                    onTimeUpdate={handleTimeUpdate}
+                    onLoadedMetadata={handleLoadedMetadata}
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                    onEnded={() => {
+                      setIsPlaying(false);
+                      if (selectedVideo) {
+                        markAsCompleted(selectedVideo.id, true);
+                      }
+                    }}
+                  />
 
-                {/* Play/Pause Overlay */}
-                <div
-                  className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/0 hover:bg-black/10 transition-colors"
-                  onClick={togglePlay}
-                >
-                  {!isPlaying && (
-                    <div className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform backdrop-blur-sm">
-                      <Play className="w-8 h-8 text-primary-foreground ml-1" fill="currentColor" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Controls Bar */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {/* Progress Bar */}
+                  {/* Play/Pause Overlay */}
                   <div
-                    className="h-1.5 bg-white/20 rounded-full mb-4 cursor-pointer group/progress overflow-hidden"
-                    onClick={handleProgressClick}
+                    className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/0 hover:bg-black/10 transition-colors"
+                    onClick={togglePlay}
                   >
-                    <div
-                      className="h-full bg-primary rounded-full relative transition-all"
-                      style={{ width: `${progress}%` }}
-                    />
+                    {!isPlaying && (
+                      <div className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform backdrop-blur-sm">
+                        <Play className="w-8 h-8 text-primary-foreground ml-1" fill="currentColor" />
+                      </div>
+                    )}
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
-                        {isPlaying ? <Pause className="w-6 h-6" fill="currentColor" /> : <Play className="w-6 h-6" fill="currentColor" />}
-                      </button>
-                      <button onClick={toggleMute} className="text-white hover:text-primary transition-colors">
-                        {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-                      </button>
-                      <span className="text-white text-sm font-medium font-mono">
-                        {currentTime} / {duration}
-                      </span>
+                  {/* Controls Bar */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {/* Progress Bar */}
+                    <div
+                      className="h-1.5 bg-white/20 rounded-full mb-4 cursor-pointer group/progress overflow-hidden"
+                      onClick={handleProgressClick}
+                    >
+                      <div
+                        className="h-full bg-primary rounded-full relative transition-all"
+                        style={{ width: `${progress}%` }}
+                      />
                     </div>
-                    <button onClick={handleFullscreen} className="text-white hover:text-primary transition-colors">
-                      <Maximize className="w-6 h-6" />
-                    </button>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
+                          {isPlaying ? <Pause className="w-6 h-6" fill="currentColor" /> : <Play className="w-6 h-6" fill="currentColor" />}
+                        </button>
+                        <button onClick={toggleMute} className="text-white hover:text-primary transition-colors">
+                          {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+                        </button>
+                        <span className="text-white text-sm font-medium font-mono">
+                          {currentTime} / {duration}
+                        </span>
+                      </div>
+                      <button onClick={handleFullscreen} className="text-white hover:text-primary transition-colors">
+                        <Maximize className="w-6 h-6" />
+                      </button>
+                    </div>
                   </div>
+                </>
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-4">
+                  <PlayCircle className="w-16 h-16 opacity-20" />
+                  <p>Selecciona una lección para comenzar</p>
                 </div>
-              </>
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-4">
-                <PlayCircle className="w-16 h-16 opacity-20" />
-                <p>Selecciona una lección para comenzar</p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <Tabs defaultValue="lessons" className="w-full">
