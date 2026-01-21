@@ -34,12 +34,19 @@ export const useGoogleDrivePicker = () => {
                 developerKey,
                 appId,
                 viewId: 'DOCS_VIDEOS',
-                showUploadView: false,
-                showUploadFolders: false,
+                showUploadView: true,
+                showUploadFolders: true,
                 supportDrives: true,
                 multiselect: false,
                 setIncludeFolders: true,
                 setSelectFolderEnabled: false,
+                customViews: [
+                    {
+                        viewId: 'DOCS',
+                        mimeTypes: ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/x-matroska'],
+                    }
+                ],
+                locale: 'es',
                 callbackFunction: (data) => {
                     setIsLoading(false);
 
