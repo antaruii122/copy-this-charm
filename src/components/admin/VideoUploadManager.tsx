@@ -1016,122 +1016,9 @@ const VideoUploadManager = () => {
                                         </div>
                                     </div>
 
-                                    {/* Upload Method Tabs */}
-                                    <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'local' | 'drive')} className="w-full">
-                                        <TabsList className="grid w-full grid-cols-2 mb-4">
-                                            <TabsTrigger value="local" className="gap-2">
-                                                <Upload className="w-4 h-4" />
-                                                Subir desde Computadora
-                                            </TabsTrigger>
-                                            <TabsTrigger value="drive" className="gap-2">
-                                                <Cloud className="w-4 h-4" />
-                                                Google Drive
-                                            </TabsTrigger>
-                                        </TabsList>
-
-                                        <TabsContent value="local" className="mt-0">
-                                            <div className="group relative border-2 border-dashed border-primary/20 hover:border-primary/40 rounded-2xl p-10 text-center transition-all bg-primary/5">
-                                                <Input
-                                                    type="file"
-                                                    accept="video/*"
-                                                    multiple
-                                                    onChange={handleFileSelect}
-                                                    disabled={isUploading || !selectedCourse}
-                                                    className="hidden"
-                                                    id="video-upload"
-                                                />
-                                                <Label
-                                                    htmlFor="video-upload"
-                                                    className="cursor-pointer flex flex-col items-center gap-3"
-                                                >
-                                                    <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                                                        <Upload className="w-8 h-8 text-primary" />
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <span className="text-base font-semibold block">
-                                                            {isUploading ? "Subiendo contenido..." : "Sube tus videos educativos"}
-                                                        </span>
-                                                        <span className="text-xs text-muted-foreground block">
-                                                            Selecciona uno o varios archivos (MP4, MOV, etc.)
-                                                        </span>
-                                                    </div>
-                                                </Label>
-                                            </div>
-                                        </TabsContent>
-
-                                        <TabsContent value="drive" className="mt-0">
-                                            <div className="border-2 border-dashed border-primary/20 rounded-2xl p-10 text-center bg-primary/5">
-                                                <div className="flex flex-col items-center gap-4">
-                                                    <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm">
-                                                        <Cloud className="w-8 h-8 text-primary" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium text-foreground mb-1">
-                                                            Selecciona un video de tu Google Drive
-                                                        </p>
-                                                        <p className="text-xs text-muted-foreground">
-                                                            El video debe estar configurado como "Cualquiera con el enlace puede ver"
-                                                        </p>
-                                                    </div>
-                                                    <Button
-                                                        onClick={handleDriveUpload}
-                                                        disabled={isDriveLoading || !selectedCourse}
-                                                        className="rounded-xl gap-2"
-                                                    >
-                                                        {isDriveLoading ? (
-                                                            <>
-                                                                <Loader2 className="w-4 h-4 animate-spin" />
-                                                                Abriendo Drive...
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Cloud className="w-4 h-4" />
-                                                                Seleccionar de Google Drive
-                                                            </>
-                                                        )}
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </TabsContent>
-                                    </Tabs>
-
-                                    {uploadProgress.length > 0 && (
-                                        <div className="space-y-4 pt-2">
-                                            {uploadProgress.map((progress, index) => (
-                                                <div key={index} className="bg-background/40 p-4 rounded-xl border border-border/50">
-                                                    <div className="flex items-center justify-between text-sm mb-2 font-medium">
-                                                        <span className="flex items-center gap-2 truncate">
-                                                            {progress.status === "uploading" && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />}
-                                                            {progress.status === "success" && <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />}
-                                                            {progress.status === "error" && <AlertCircle className="w-3.5 h-3.5 text-red-500" />}
-                                                            {progress.fileName}
-                                                        </span>
-                                                        <span className="text-xs text-muted-foreground">{progress.progress}%</span>
-                                                    </div>
-                                                    <Progress value={progress.progress} className="h-1.5" />
-                                                    {progress.error && (
-                                                        <p className="text-xs text-red-500 mt-2 font-medium">{progress.error}</p>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Video Preview after Drive Upload */}
-                                    {lastUploadedVideo && (
-                                        <div className="mt-6 space-y-4">
-                                            <div className="flex items-center justify-between">
-                                                <h3 className="text-sm font-semibold text-foreground">Vista Previa del Video</h3>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => setLastUploadedVideo(null)}
-                                                    className="text-muted-foreground hover:text-foreground"
-                                                >
-                                                    <X className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-
+                                    {/* Upload Method Tabs OR Video Preview */}
+                                    {lastUploadedVideo ? (
+                                        <div className="space-y-4">
                                             <div className="rounded-xl overflow-hidden border border-border/50 bg-black">
                                                 <iframe
                                                     src={lastUploadedVideo.embedUrl}
@@ -1141,30 +1028,26 @@ const VideoUploadManager = () => {
                                                     title={lastUploadedVideo.name}
                                                 />
                                             </div>
-
-                                            <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
+                                            
+                                            <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border/50">
                                                 <div>
-                                                    <p className="text-sm font-medium text-foreground">{lastUploadedVideo.name}</p>
-                                                    <p className="text-xs text-muted-foreground mt-1">Video añadido correctamente</p>
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                                        <p className="text-sm font-semibold text-foreground">{lastUploadedVideo.name}</p>
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground ml-6">El video se ha añadido correctamente a la estructura curricular.</p>
                                                 </div>
                                                 <Button
                                                     onClick={() => {
                                                         setLastUploadedVideo(null);
-                                                        setUploadMethod('drive');
                                                     }}
                                                     className="rounded-xl gap-2"
-                                                    variant="outline"
                                                 >
                                                     <Plus className="w-4 h-4" />
                                                     Subir Otro Video
                                                 </Button>
                                             </div>
                                         </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-
-                            {/* Course Builder Structure */}
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-xl font-serif font-semibold text-foreground/80 flex items-center gap-2">
@@ -1264,473 +1147,473 @@ const VideoUploadManager = () => {
                             </div>
                         </>
                     )}
-                </TabsContent>
+                            </TabsContent>
 
-                <TabsContent value="admins" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                    <div className="max-w-4xl mx-auto space-y-8">
-                        <div className="text-center space-y-2">
-                            <h2 className="font-serif text-3xl font-semibold text-foreground">Control de Accesos</h2>
-                            <p className="text-muted-foreground">Gestiona quién tiene autorización para editar contenido en la plataforma.</p>
-                        </div>
-
-                        <Card className="rounded-3xl border-none shadow-xl bg-card/50 backdrop-blur-md overflow-hidden">
-                            <CardHeader className="bg-primary/5 pb-8 pt-10 px-10 text-center">
-                                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6">
-                                    <UserPlus className="w-8 h-8" />
-                                </div>
-                                <CardTitle className="text-2xl font-serif">Añadir Administrador</CardTitle>
-                                <CardDescription>
-                                    El nuevo administrador podrá crear cursos, subir videos y gestionar otros accesos.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-10">
-                                <form onSubmit={handleAddAdminEmail} className="flex flex-col sm:flex-row gap-4">
-                                    <div className="flex-1 relative">
-                                        <Input
-                                            type="email"
-                                            placeholder="correo@ejemplo.com"
-                                            value={newAdminEmail}
-                                            onChange={(e) => setNewAdminEmail(e.target.value)}
-                                            className="rounded-2xl h-14 pl-6 text-lg bg-background/80"
-                                            required
-                                        />
+                            <TabsContent value="admins" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                <div className="max-w-4xl mx-auto space-y-8">
+                                    <div className="text-center space-y-2">
+                                        <h2 className="font-serif text-3xl font-semibold text-foreground">Control de Accesos</h2>
+                                        <p className="text-muted-foreground">Gestiona quién tiene autorización para editar contenido en la plataforma.</p>
                                     </div>
-                                    <Button type="submit" size="lg" className="rounded-2xl h-14 px-10 font-bold transition-all hover:shadow-lg">
-                                        Otorgar Acceso
-                                    </Button>
-                                </form>
-                            </CardContent>
-                        </Card>
 
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between px-2">
-                                <h3 className="font-serif text-xl font-medium">Equipo Autorizado</h3>
-                                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{adminEmails.length} Miembros</span>
-                            </div>
+                                    <Card className="rounded-3xl border-none shadow-xl bg-card/50 backdrop-blur-md overflow-hidden">
+                                        <CardHeader className="bg-primary/5 pb-8 pt-10 px-10 text-center">
+                                            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6">
+                                                <UserPlus className="w-8 h-8" />
+                                            </div>
+                                            <CardTitle className="text-2xl font-serif">Añadir Administrador</CardTitle>
+                                            <CardDescription>
+                                                El nuevo administrador podrá crear cursos, subir videos y gestionar otros accesos.
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="p-10">
+                                            <form onSubmit={handleAddAdminEmail} className="flex flex-col sm:flex-row gap-4">
+                                                <div className="flex-1 relative">
+                                                    <Input
+                                                        type="email"
+                                                        placeholder="correo@ejemplo.com"
+                                                        value={newAdminEmail}
+                                                        onChange={(e) => setNewAdminEmail(e.target.value)}
+                                                        className="rounded-2xl h-14 pl-6 text-lg bg-background/80"
+                                                        required
+                                                    />
+                                                </div>
+                                                <Button type="submit" size="lg" className="rounded-2xl h-14 px-10 font-bold transition-all hover:shadow-lg">
+                                                    Otorgar Acceso
+                                                </Button>
+                                            </form>
+                                        </CardContent>
+                                    </Card>
 
-                            <div className="grid gap-3">
-                                {adminEmails.map((admin) => (
-                                    <div
-                                        key={admin.id}
-                                        className="flex items-center justify-between p-5 bg-card/40 backdrop-blur-sm rounded-2xl border border-border/50 group hover:border-primary/20 transition-all hover:shadow-md"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center text-primary font-bold text-lg">
-                                                {admin.email.charAt(0).toUpperCase()}
-                                            </div>
-                                            <div className="space-y-1">
-                                                <p className="font-medium text-foreground">{admin.email}</p>
-                                                {admin.email === user?.primaryEmailAddress?.emailAddress && (
-                                                    <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full uppercase">Tú (Propietario)</span>
-                                                )}
-                                            </div>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between px-2">
+                                            <h3 className="font-serif text-xl font-medium">Equipo Autorizado</h3>
+                                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{adminEmails.length} Miembros</span>
                                         </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 opacity-0 group-hover:opacity-100 transition-all"
-                                            onClick={() => handleDeleteAdminEmail(admin.id, admin.email)}
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </TabsContent>
 
-                <TabsContent value="ajustes" className="animate-in fade-in duration-500">
-                    <div className="max-w-2xl mx-auto py-20 text-center space-y-6">
-                        <div className="w-20 h-20 rounded-3xl bg-muted flex items-center justify-center mx-auto">
-                            <Settings className="w-10 h-10 text-muted-foreground" />
-                        </div>
-                        <h2 className="text-2xl font-serif font-semibold">Configuración General</h2>
-                        <p className="text-muted-foreground">Próximamente: Podrás configurar colores de marca, integraciones de pago y personalización avanzada de la plataforma.</p>
-                        <Button variant="outline" className="rounded-2xl" disabled>Configurar Marca</Button>
-                    </div>
-                </TabsContent>
-                <TabsContent value="marketing" className="space-y-8">
-                    {selectedCourseData && (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
+                                        <div className="grid gap-3">
+                                            {adminEmails.map((admin) => (
+                                                <div
+                                                    key={admin.id}
+                                                    className="flex items-center justify-between p-5 bg-card/40 backdrop-blur-sm rounded-2xl border border-border/50 group hover:border-primary/20 transition-all hover:shadow-md"
+                                                >
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center text-primary font-bold text-lg">
+                                                            {admin.email.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="font-medium text-foreground">{admin.email}</p>
+                                                            {admin.email === user?.primaryEmailAddress?.emailAddress && (
+                                                                <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full uppercase">Tú (Propietario)</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 opacity-0 group-hover:opacity-100 transition-all"
+                                                        onClick={() => handleDeleteAdminEmail(admin.id, admin.email)}
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="ajustes" className="animate-in fade-in duration-500">
+                                <div className="max-w-2xl mx-auto py-20 text-center space-y-6">
+                                    <div className="w-20 h-20 rounded-3xl bg-muted flex items-center justify-center mx-auto">
+                                        <Settings className="w-10 h-10 text-muted-foreground" />
+                                    </div>
+                                    <h2 className="text-2xl font-serif font-semibold">Configuración General</h2>
+                                    <p className="text-muted-foreground">Próximamente: Podrás configurar colores de marca, integraciones de pago y personalización avanzada de la plataforma.</p>
+                                    <Button variant="outline" className="rounded-2xl" disabled>Configurar Marca</Button>
+                                </div>
+                            </TabsContent>
+                            <TabsContent value="marketing" className="space-y-8">
+                                {selectedCourseData && (
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                        <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
+                                            <div className="space-y-2">
+                                                <h3 className="font-serif text-2xl font-bold">Página de Ventas</h3>
+                                                <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <div className="space-y-2">
+                                                    <Label>Descripción Larga (Editor Rico)</Label>
+                                                    <RichTextEditor
+                                                        placeholder="Describe el curso en detalle (puedes usar negritas, listas, etc)..."
+                                                        value={selectedCourseData.long_description || ""}
+                                                        onChange={(value) => updateCourseMarketing({ long_description: value })}
+                                                        className="min-h-[300px]"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label>¿A quién va dirigido?</Label>
+                                                    <Textarea
+                                                        placeholder="Ej: Mujeres que buscan equilibrio hormonal..."
+                                                        value={selectedCourseData.target_audience || ""}
+                                                        onChange={(e) => updateCourseMarketing({ target_audience: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Card>
+
+                                        <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
+                                            <div className="space-y-2">
+                                                <h3 className="font-serif text-2xl font-bold">Autor & Diseño</h3>
+                                                <p className="text-sm text-muted-foreground">Define quién imparte el programa.</p>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label>Nombre del Autor</Label>
+                                                        <Input
+                                                            placeholder="Nombre..."
+                                                            value={selectedCourseData.author_name || ""}
+                                                            onChange={(e) => updateCourseMarketing({ author_name: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Rol/Título</Label>
+                                                        <Input
+                                                            placeholder="Ej: Nutricionista Humana..."
+                                                            value={selectedCourseData.author_role || ""}
+                                                            onChange={(e) => updateCourseMarketing({ author_role: e.target.value })}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label>URL Imagen Autor</Label>
+                                                    <Input
+                                                        placeholder="https://..."
+                                                        value={selectedCourseData.author_image_url || ""}
+                                                        onChange={(e) => updateCourseMarketing({ author_image_url: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                <div className="pt-4 border-t">
+                                                    <Button
+                                                        className="w-full bg-primary text-white rounded-full hover:bg-primary/90"
+                                                        onClick={() => handleSaveMarketing()}
+                                                    >
+                                                        <Save className="w-4 h-4 mr-2" />
+                                                        Guardar Cambios de Marketing
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </div>
+                                )}
+                            </TabsContent>
+                        </Tabs>
+
+                    {/* Dialog for Module Creation (Shared across tabs if needed) */}
+                    <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
+                        <DialogContent className="rounded-3xl border-none shadow-2xl">
+                            <DialogHeader>
+                                <DialogTitle className="font-serif text-2xl">Gestionar Estructura</DialogTitle>
+                                <DialogDescription>Añade un nuevo módulo a tu programa curricular.</DialogDescription>
+                            </DialogHeader>
+                            <form onSubmit={handleCreateModule} className="space-y-4 pt-4">
                                 <div className="space-y-2">
-                                    <h3 className="font-serif text-2xl font-bold">Página de Ventas</h3>
-                                    <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
+                                    <Label htmlFor="module-title-dialog">Título del Módulo</Label>
+                                    <Input
+                                        id="module-title-dialog"
+                                        value={newModuleForm.title}
+                                        onChange={(e) =>
+                                            setNewModuleForm({ ...newModuleForm, title: e.target.value })
+                                        }
+                                        placeholder="Ej: Fundamentos del Mindfulness"
+                                        required
+                                        className="rounded-xl h-12"
+                                    />
                                 </div>
-
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label>Descripción Larga (Editor Rico)</Label>
-                                        <RichTextEditor
-                                            placeholder="Describe el curso en detalle (puedes usar negritas, listas, etc)..."
-                                            value={selectedCourseData.long_description || ""}
-                                            onChange={(value) => updateCourseMarketing({ long_description: value })}
-                                            className="min-h-[300px]"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label>¿A quién va dirigido?</Label>
-                                        <Textarea
-                                            placeholder="Ej: Mujeres que buscan equilibrio hormonal..."
-                                            value={selectedCourseData.target_audience || ""}
-                                            onChange={(e) => updateCourseMarketing({ target_audience: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                            </Card>
-
-                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
                                 <div className="space-y-2">
-                                    <h3 className="font-serif text-2xl font-bold">Autor & Diseño</h3>
-                                    <p className="text-sm text-muted-foreground">Define quién imparte el programa.</p>
+                                    <Label htmlFor="module-description-dialog">Descripción</Label>
+                                    <Textarea
+                                        id="module-description-dialog"
+                                        value={newModuleForm.description}
+                                        onChange={(e) =>
+                                            setNewModuleForm({ ...newModuleForm, description: e.target.value })
+                                        }
+                                        placeholder="Breve resumen de lo que aprenderán en este bloque..."
+                                        rows={3}
+                                        className="rounded-xl"
+                                    />
                                 </div>
+                                <div className="flex gap-3 pt-6">
+                                    <Button type="submit" className="flex-1 rounded-xl">Crear Módulo</Button>
+                                    <Button type="button" variant="outline" className="rounded-xl" onClick={() => setIsModuleDialogOpen(false)}>Cancelar</Button>
+                                </div>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
 
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
+                    {/* Dialog for Advanced Video Editing (Rich Text & Settings) */}
+                    <Dialog open={isAdvancedEditDialogOpen} onOpenChange={(open) => {
+                        if (!open) setAdvancedEditingVideo(null);
+                        setIsAdvancedEditDialogOpen(open);
+                    }}>
+                        <DialogContent className="rounded-3xl border-none shadow-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle className="font-serif text-2xl">Editar Contenido de Lección</DialogTitle>
+                                <DialogDescription>Gestiona el contenido enriquecido y configuración de esta clase.</DialogDescription>
+                            </DialogHeader>
+
+                            {advancedEditingVideo && (
+                                <div className="space-y-6 pt-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <Label>Nombre del Autor</Label>
+                                            <Label>Título de la Lección</Label>
                                             <Input
-                                                placeholder="Nombre..."
-                                                value={selectedCourseData.author_name || ""}
-                                                onChange={(e) => updateCourseMarketing({ author_name: e.target.value })}
+                                                value={advancedEditingVideo.title}
+                                                onChange={(e) => setAdvancedEditingVideo({ ...advancedEditingVideo, title: e.target.value })}
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Rol/Título</Label>
-                                            <Input
-                                                placeholder="Ej: Nutricionista Humana..."
-                                                value={selectedCourseData.author_role || ""}
-                                                onChange={(e) => updateCourseMarketing({ author_role: e.target.value })}
-                                            />
+                                            <Label>Módulo Asignado</Label>
+                                            <Select
+                                                value={advancedEditingVideo.module_id || "none"}
+                                                onValueChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, module_id: val === "none" ? null : val })}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Seleccionar Módulo" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">Sin Módulo (General)</SelectItem>
+                                                    {modules.map((mod) => (
+                                                        <SelectItem key={mod.id} value={mod.id}>
+                                                            {mod.title}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>URL Imagen Autor</Label>
-                                        <Input
-                                            placeholder="https://..."
-                                            value={selectedCourseData.author_image_url || ""}
-                                            onChange={(e) => updateCourseMarketing({ author_image_url: e.target.value })}
-                                        />
+                                        <Label>Contenido de la Lección (Texto, Imágenes, Enlaces)</Label>
+                                        <div className="border rounded-md p-1 bg-muted/20">
+                                            <RichTextEditor
+                                                className="min-h-[300px]"
+                                                value={advancedEditingVideo.content_text || ""}
+                                                onChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, content_text: val })}
+                                                placeholder="Escribe aquí el contenido de apoyo para la clase. Puedes incluir resumen, puntos clave, o enlaces..."
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="pt-4 border-t">
+                                    <div className="flex items-center space-x-2 pt-2">
+                                        <Checkbox
+                                            id="is_preview"
+                                            checked={advancedEditingVideo.is_preview || false}
+                                            onCheckedChange={(checked) => setAdvancedEditingVideo({ ...advancedEditingVideo, is_preview: checked as boolean })}
+                                        />
+                                        <Label htmlFor="is_preview" className="font-medium cursor-pointer">
+                                            Esta lección es una Vista Previa Gratuita (Free Preview)
+                                        </Label>
+                                    </div>
+
+                                    <Separator className="my-6" />
+
+                                    <LessonResourceManager videoId={advancedEditingVideo.id} />
+
+                                    <div className="flex gap-3 pt-6 border-t mt-4">
                                         <Button
-                                            className="w-full bg-primary text-white rounded-full hover:bg-primary/90"
-                                            onClick={() => handleSaveMarketing()}
+                                            className="flex-1 rounded-xl"
+                                            onClick={() => {
+                                                if (advancedEditingVideo) {
+                                                    handleUpdateVideo(advancedEditingVideo);
+                                                    setIsAdvancedEditDialogOpen(false);
+                                                }
+                                            }}
                                         >
                                             <Save className="w-4 h-4 mr-2" />
-                                            Guardar Cambios de Marketing
+                                            Guardar Cambios
+                                        </Button>
+                                        <Button variant="outline" className="rounded-xl" onClick={() => setIsAdvancedEditDialogOpen(false)}>
+                                            Cancelar
                                         </Button>
                                     </div>
                                 </div>
-                            </Card>
-                        </div>
-                    )}
-                </TabsContent>
-            </Tabs>
-
-            {/* Dialog for Module Creation (Shared across tabs if needed) */}
-            <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
-                <DialogContent className="rounded-3xl border-none shadow-2xl">
-                    <DialogHeader>
-                        <DialogTitle className="font-serif text-2xl">Gestionar Estructura</DialogTitle>
-                        <DialogDescription>Añade un nuevo módulo a tu programa curricular.</DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleCreateModule} className="space-y-4 pt-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="module-title-dialog">Título del Módulo</Label>
-                            <Input
-                                id="module-title-dialog"
-                                value={newModuleForm.title}
-                                onChange={(e) =>
-                                    setNewModuleForm({ ...newModuleForm, title: e.target.value })
-                                }
-                                placeholder="Ej: Fundamentos del Mindfulness"
-                                required
-                                className="rounded-xl h-12"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="module-description-dialog">Descripción</Label>
-                            <Textarea
-                                id="module-description-dialog"
-                                value={newModuleForm.description}
-                                onChange={(e) =>
-                                    setNewModuleForm({ ...newModuleForm, description: e.target.value })
-                                }
-                                placeholder="Breve resumen de lo que aprenderán en este bloque..."
-                                rows={3}
-                                className="rounded-xl"
-                            />
-                        </div>
-                        <div className="flex gap-3 pt-6">
-                            <Button type="submit" className="flex-1 rounded-xl">Crear Módulo</Button>
-                            <Button type="button" variant="outline" className="rounded-xl" onClick={() => setIsModuleDialogOpen(false)}>Cancelar</Button>
-                        </div>
-                    </form>
-                </DialogContent>
-            </Dialog>
-
-            {/* Dialog for Advanced Video Editing (Rich Text & Settings) */}
-            <Dialog open={isAdvancedEditDialogOpen} onOpenChange={(open) => {
-                if (!open) setAdvancedEditingVideo(null);
-                setIsAdvancedEditDialogOpen(open);
-            }}>
-                <DialogContent className="rounded-3xl border-none shadow-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle className="font-serif text-2xl">Editar Contenido de Lección</DialogTitle>
-                        <DialogDescription>Gestiona el contenido enriquecido y configuración de esta clase.</DialogDescription>
-                    </DialogHeader>
-
-                    {advancedEditingVideo && (
-                        <div className="space-y-6 pt-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <Label>Título de la Lección</Label>
-                                    <Input
-                                        value={advancedEditingVideo.title}
-                                        onChange={(e) => setAdvancedEditingVideo({ ...advancedEditingVideo, title: e.target.value })}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Módulo Asignado</Label>
-                                    <Select
-                                        value={advancedEditingVideo.module_id || "none"}
-                                        onValueChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, module_id: val === "none" ? null : val })}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Seleccionar Módulo" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="none">Sin Módulo (General)</SelectItem>
-                                            {modules.map((mod) => (
-                                                <SelectItem key={mod.id} value={mod.id}>
-                                                    {mod.title}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label>Contenido de la Lección (Texto, Imágenes, Enlaces)</Label>
-                                <div className="border rounded-md p-1 bg-muted/20">
-                                    <RichTextEditor
-                                        className="min-h-[300px]"
-                                        value={advancedEditingVideo.content_text || ""}
-                                        onChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, content_text: val })}
-                                        placeholder="Escribe aquí el contenido de apoyo para la clase. Puedes incluir resumen, puntos clave, o enlaces..."
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex items-center space-x-2 pt-2">
-                                <Checkbox
-                                    id="is_preview"
-                                    checked={advancedEditingVideo.is_preview || false}
-                                    onCheckedChange={(checked) => setAdvancedEditingVideo({ ...advancedEditingVideo, is_preview: checked as boolean })}
-                                />
-                                <Label htmlFor="is_preview" className="font-medium cursor-pointer">
-                                    Esta lección es una Vista Previa Gratuita (Free Preview)
-                                </Label>
-                            </div>
-
-                            <Separator className="my-6" />
-
-                            <LessonResourceManager videoId={advancedEditingVideo.id} />
-
-                            <div className="flex gap-3 pt-6 border-t mt-4">
-                                <Button
-                                    className="flex-1 rounded-xl"
-                                    onClick={() => {
-                                        if (advancedEditingVideo) {
-                                            handleUpdateVideo(advancedEditingVideo);
-                                            setIsAdvancedEditDialogOpen(false);
-                                        }
-                                    }}
-                                >
-                                    <Save className="w-4 h-4 mr-2" />
-                                    Guardar Cambios
-                                </Button>
-                                <Button variant="outline" className="rounded-xl" onClick={() => setIsAdvancedEditDialogOpen(false)}>
-                                    Cancelar
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
-        </div >
-    );
+                            )}
+                        </DialogContent>
+                    </Dialog>
+                </div >
+                );
 };
 
-const VideoTable = ({
-    videos,
-    editingVideo,
-    setEditingVideo,
-    handleUpdateVideo,
-    handleDeleteVideo,
-    modules,
-    onEditAdvanced
-}: {
-    videos: CourseVideo[];
-    editingVideo: CourseVideo | null;
+                const VideoTable = ({
+                    videos,
+                    editingVideo,
+                    setEditingVideo,
+                    handleUpdateVideo,
+                    handleDeleteVideo,
+                    modules,
+                    onEditAdvanced
+                }: {
+                    videos: CourseVideo[];
+                editingVideo: CourseVideo | null;
     setEditingVideo: (v: CourseVideo | null) => void;
     handleUpdateVideo: (v: CourseVideo) => void;
     handleDeleteVideo: (id: string, path: string) => void;
-    modules: Module[];
+                modules: Module[];
     onEditAdvanced: (v: CourseVideo) => void;
 }) => (
-    <Table>
-        <TableHeader>
-            <TableRow className="bg-muted/30">
-                <TableHead className="w-20">Orden</TableHead>
-                <TableHead className="w-40">Vista Previa</TableHead>
-                <TableHead>Título</TableHead>
-                <TableHead>Módulo</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            {videos.map((video) => (
-                <TableRow key={video.id}>
-                    <TableCell>
-                        {editingVideo?.id === video.id ? (
-                            <Input
-                                type="number"
-                                value={editingVideo.sort_order}
-                                onChange={(e) =>
-                                    setEditingVideo({
-                                        ...editingVideo,
-                                        sort_order: parseInt(e.target.value) || 0,
-                                    })
-                                }
-                                className="w-16"
-                            />
-                        ) : (
-                            video.sort_order
-                        )}
-                    </TableCell>
-                    <TableCell>
-                        <div className="w-32 h-20 bg-sage rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-border group/preview relative">
-                            <video
-                                src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${video.video_path}`}
-                                className="w-full h-full object-cover opacity-60 group-hover/preview:opacity-100 transition-opacity"
-                                muted
-                                playsInline
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity pointer-events-none">
-                                    <Video className="w-4 h-4 text-white" />
-                                </div>
-                            </div>
-                        </div>
-                    </TableCell>
-                    <TableCell>
-                        {editingVideo?.id === video.id ? (
-                            <Input
-                                value={editingVideo.title}
-                                onChange={(e) =>
-                                    setEditingVideo({
-                                        ...editingVideo,
-                                        title: e.target.value,
-                                    })
-                                }
-                            />
-                        ) : (
-                            video.title
-                        )}
-                    </TableCell>
-                    <TableCell>
-                        {editingVideo?.id === video.id ? (
-                            <Select
-                                value={editingVideo.module_id || "none"}
-                                onValueChange={(val) => setEditingVideo({ ...editingVideo, module_id: val })}
-                            >
-                                <SelectTrigger className="w-40">
-                                    <SelectValue placeholder="Módulo" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="none">Sin Módulo</SelectItem>
-                                    {modules.map((mod) => (
-                                        <SelectItem key={mod.id} value={mod.id}>
-                                            {mod.title}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        ) : (
-                            <span className="text-xs text-muted-foreground">
-                                {modules.find(m => m.id === video.module_id)?.title || "-"}
-                            </span>
-                        )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                        <div className="flex gap-2 justify-end">
-                            {editingVideo?.id === video.id ? (
-                                <>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => handleUpdateVideo(editingVideo)}
-                                        title="Guardar Cambios Rápidos"
-                                    >
-                                        <Save className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => setEditingVideo(null)}
-                                        title="Cancelar"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </Button>
-                                </>
-                            ) : (
-                                <>
-                                    <Button
-                                        variant="secondary"
-                                        size="sm"
-                                        className="h-9 px-3 text-xs font-medium"
-                                        onClick={() => onEditAdvanced(video)}
-                                    >
-                                        <ClipboardList className="w-3 h-3 mr-2" />
-                                        Contenido
-                                    </Button>
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-muted/30">
+                            <TableHead className="w-20">Orden</TableHead>
+                            <TableHead className="w-40">Vista Previa</TableHead>
+                            <TableHead>Título</TableHead>
+                            <TableHead>Módulo</TableHead>
+                            <TableHead className="text-right">Acciones</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {videos.map((video) => (
+                            <TableRow key={video.id}>
+                                <TableCell>
+                                    {editingVideo?.id === video.id ? (
+                                        <Input
+                                            type="number"
+                                            value={editingVideo.sort_order}
+                                            onChange={(e) =>
+                                                setEditingVideo({
+                                                    ...editingVideo,
+                                                    sort_order: parseInt(e.target.value) || 0,
+                                                })
+                                            }
+                                            className="w-16"
+                                        />
+                                    ) : (
+                                        video.sort_order
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    <div className="w-32 h-20 bg-sage rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-border group/preview relative">
+                                        <video
+                                            src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${video.video_path}`}
+                                            className="w-full h-full object-cover opacity-60 group-hover/preview:opacity-100 transition-opacity"
+                                            muted
+                                            playsInline
+                                        />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity pointer-events-none">
+                                                <Video className="w-4 h-4 text-white" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    {editingVideo?.id === video.id ? (
+                                        <Input
+                                            value={editingVideo.title}
+                                            onChange={(e) =>
+                                                setEditingVideo({
+                                                    ...editingVideo,
+                                                    title: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        video.title
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    {editingVideo?.id === video.id ? (
+                                        <Select
+                                            value={editingVideo.module_id || "none"}
+                                            onValueChange={(val) => setEditingVideo({ ...editingVideo, module_id: val })}
+                                        >
+                                            <SelectTrigger className="w-40">
+                                                <SelectValue placeholder="Módulo" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="none">Sin Módulo</SelectItem>
+                                                {modules.map((mod) => (
+                                                    <SelectItem key={mod.id} value={mod.id}>
+                                                        {mod.title}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    ) : (
+                                        <span className="text-xs text-muted-foreground">
+                                            {modules.find(m => m.id === video.module_id)?.title || "-"}
+                                        </span>
+                                    )}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    <div className="flex gap-2 justify-end">
+                                        {editingVideo?.id === video.id ? (
+                                            <>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => handleUpdateVideo(editingVideo)}
+                                                    title="Guardar Cambios Rápidos"
+                                                >
+                                                    <Save className="w-4 h-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => setEditingVideo(null)}
+                                                    title="Cancelar"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </Button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    className="h-9 px-3 text-xs font-medium"
+                                                    onClick={() => onEditAdvanced(video)}
+                                                >
+                                                    <ClipboardList className="w-3 h-3 mr-2" />
+                                                    Contenido
+                                                </Button>
 
-                                    <div className="w-px h-6 bg-border mx-1" />
+                                                <div className="w-px h-6 bg-border mx-1" />
 
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => setEditingVideo(video)}
-                                        title="Edición Rápida"
-                                    >
-                                        <Edit className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() =>
-                                            handleDeleteVideo(video.id, video.video_path)
-                                        }
-                                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                                        title="Eliminar Video"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                </>
-                            )}
-                        </div>
-                    </TableCell>
-                </TableRow>
-            ))}
-        </TableBody>
-    </Table>
-);
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => setEditingVideo(video)}
+                                                    title="Edición Rápida"
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() =>
+                                                        handleDeleteVideo(video.id, video.video_path)
+                                                    }
+                                                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                                    title="Eliminar Video"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                );
 
-export default VideoUploadManager;
+                export default VideoUploadManager;
