@@ -1767,7 +1767,7 @@ const VideoUploadManager = () => {
                                                                                         </span>
                                                                                     )}
                                                                                     <span
-                                                                                        className="text-base font-bold"
+                                                                                        className="text-lg font-bold"
                                                                                         style={{ color: textColor }}
                                                                                     >
                                                                                         {selectedCourseData.price || "Gratis"}
