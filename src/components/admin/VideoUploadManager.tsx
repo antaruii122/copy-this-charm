@@ -1800,10 +1800,68 @@ const VideoUploadManager = () => {
                                                             className="h-[55%] w-full flex flex-col p-6 text-left"
                                                             style={{ backgroundColor: selectedCourseData.color_theme || '#ffffff' }}
                                                         >
-                                                            {/* Same content logic logic reused for modal (simplified for brevity) */}
-                                                            <div className="flex-1 flex items-center justify-center text-center opacity-50 italic">
-                                                                (Vista Ampliada)
-                                                            </div>
+                                                            {/* Actual Preview Content in Modal */}
+                                                            {(() => {
+                                                                const bgColor = selectedCourseData.color_theme || '#ffffff';
+                                                                const isWhite = bgColor.toLowerCase() === '#ffffff';
+                                                                const textColor = isWhite ? '#111827' : '#ffffff';
+                                                                const subTextColor = isWhite ? '#6b7280' : 'rgba(255,255,255,0.8)';
+                                                                const badgeBg = isWhite ? 'rgba(191, 89, 103, 0.1)' : 'rgba(255,255,255,0.2)';
+                                                                const badgeText = isWhite ? '#bf5967' : '#ffffff';
+
+                                                                return (
+                                                                    <>
+                                                                        <div className="mb-3">
+                                                                            <span
+                                                                                className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-sm inline-block"
+                                                                                style={{ backgroundColor: badgeBg, color: badgeText }}
+                                                                            >
+                                                                                {selectedCourseData.badge_text || "PROGRAMA"}
+                                                                            </span>
+                                                                        </div>
+
+                                                                        <h3
+                                                                            className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
+                                                                            style={{ color: textColor }}
+                                                                        >
+                                                                            {selectedCourseData.title || "Título del Curso"}
+                                                                        </h3>
+
+                                                                        <p
+                                                                            className="text-xs line-clamp-3 mb-4 flex-1 leading-relaxed"
+                                                                            style={{ color: subTextColor }}
+                                                                        >
+                                                                            {selectedCourseData.description || "Descripción corta del curso..."}
+                                                                        </p>
+
+                                                                        <div className="flex items-end justify-between mt-auto pt-3 border-t border-black/5">
+                                                                            <div className="flex flex-col">
+                                                                                {selectedCourseData.original_price && (
+                                                                                    <span
+                                                                                        className="text-[10px] line-through mb-0.5"
+                                                                                        style={{ color: subTextColor, opacity: 0.7 }}
+                                                                                    >
+                                                                                        {selectedCourseData.original_price}
+                                                                                    </span>
+                                                                                )}
+                                                                                <span
+                                                                                    className="text-base font-bold"
+                                                                                    style={{ color: textColor }}
+                                                                                >
+                                                                                    {selectedCourseData.price || "Gratis"}
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <div
+                                                                                className="w-8 h-8 rounded-full flex items-center justify-center bg-black/5"
+                                                                                style={{ backgroundColor: isWhite ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.2)' }}
+                                                                            >
+                                                                                <Edit className="w-4 h-4" style={{ color: textColor }} />
+                                                                            </div>
+                                                                        </div>
+                                                                    </>
+                                                                );
+                                                            })()}
                                                         </div>
                                                     </div>
                                                 </DialogContent>
