@@ -200,6 +200,10 @@ const VideoUploadManager = () => {
                     author_role: selectedCourseData.author_role,
                     author_image_url: selectedCourseData.author_image_url,
                     image_url: selectedCourseData.image_url,
+                    title: selectedCourseData.title,
+                    slug: selectedCourseData.slug,
+                    description: selectedCourseData.description,
+                    price: selectedCourseData.price,
                 })
                 .eq("id", selectedCourse);
 
@@ -993,15 +997,30 @@ const VideoUploadManager = () => {
                                     <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-6">
                                         {course.description || "Sin descripción proporcionada."}
                                     </p>
-                                    <div className="flex items-center gap-4 pt-4 border-t border-border/30">
-                                        <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest text-primary/70">
-                                            {course.price || "Gratis"}
-                                        </span>
-                                        {course.is_featured && (
-                                            <span className="flex items-center gap-1.5 text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full uppercase">
-                                                Destacado
+                                    <div className="flex items-center justify-between pt-4 border-t border-border/30">
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest text-primary/70">
+                                                {course.price || "Gratis"}
                                             </span>
-                                        )}
+                                            {course.is_featured && (
+                                                <span className="flex items-center gap-1.5 text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full uppercase">
+                                                    Destacado
+                                                </span>
+                                            )}
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg pr-3 pl-2"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedCourse(course.id);
+                                                setActiveTab("marketing");
+                                            }}
+                                        >
+                                            <Edit className="w-3.5 h-3.5" />
+                                            Editar
+                                        </Button>
                                     </div>
                                 </div>
                             ))
@@ -1411,9 +1430,47 @@ const VideoUploadManager = () => {
                 <TabsContent value="marketing" className="space-y-8">
                     {selectedCourseData && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
+                                <div className="space-y-2">
+                                    <h3 className="font-serif text-2xl font-bold">Información Básica</h3>
+                                    <p className="text-sm text-muted-foreground">Detalles principales del curso.</p>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <Label>Título del Curso</Label>
+                                        <Input
+                                            value={selectedCourseData.title}
+                                            onChange={(e) => updateCourseMarketing({ title: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Slug (URL)</Label>
+                                        <Input
+                                            value={selectedCourseData.slug}
+                                            onChange={(e) => updateCourseMarketing({ slug: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <Label>Descripción Corta</Label>
+                                        <Textarea
+                                            value={selectedCourseData.description || ""}
+                                            onChange={(e) => updateCourseMarketing({ description: e.target.value })}
+                                            rows={2}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Precio</Label>
+                                        <Input
+                                            value={selectedCourseData.price || ""}
+                                            onChange={(e) => updateCourseMarketing({ price: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </Card>
+
                             <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
                                 <div className="space-y-2">
-                                    <h3 className="font-serif text-2xl font-bold">Página de Ventas</h3>
+                                    <h3 className="font-serif text-2xl font-bold">Multimedia & Marketing</h3>
                                     <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
                                 </div>
 
