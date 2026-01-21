@@ -23,6 +23,10 @@ import {
     AccordionItem,
     AccordionTrigger
 } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import RichTextEditor from "@/components/ui/rich-text-editor";
+import LessonResourcesList from "@/components/CoursePlayer/LessonResourcesList";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -33,6 +37,8 @@ interface Video {
     module_id: string | null;
     sort_order: number | null;
     url?: string;
+    content_text?: string | null;
+    is_preview?: boolean | null;
 }
 
 interface Module {
@@ -54,8 +60,24 @@ const CoursePlayer = () => {
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState<Record<string, boolean>>({});
+    const [notes, setNotes] = useState("");
 
     const videoRef = useRef<HTMLVideoElement>(null);
+
+    // Save notes to local storage
+    useEffect(() => {
+        if (selectedVideo) {
+            const savedNotes = localStorage.getItem(`notes-${course?.id}-${selectedVideo.id}`);
+            setNotes(savedNotes || "");
+        }
+    }, [selectedVideo, course]);
+
+    const handleSaveNotes = (value: string) => {
+        setNotes(value);
+        if (selectedVideo && course) {
+            localStorage.setItem(`notes-${course.id}-${selectedVideo.id}`, value);
+        }
+    };
 
     useEffect(() => {
         const init = async () => {
@@ -111,18 +133,54 @@ const CoursePlayer = () => {
         }
     };
 
-    const markCompleted = async (videoId: string) => {
+    const handleNext = () => {
+        if (!selectedVideo || videos.length === 0) return;
+        const currentIndex = videos.findIndex(v => v.id === selectedVideo.id);
+        if (currentIndex < videos.length - 1) {
+            handleLessonSelect(videos[currentIndex + 1]);
+        }
+    };
+
+    const handlePrevious = () => {
+        if (!selectedVideo || videos.length === 0) return;
+        const currentIndex = videos.findIndex(v => v.id === selectedVideo.id);
+        if (currentIndex > 0) {
+            handleLessonSelect(videos[currentIndex - 1]);
+        }
+    };
+
+    const toggleCompleted = async (videoId: string) => {
         if (!user) return;
+        const isCurrentlyCompleted = progress[videoId] || false;
+        const newStatus = !isCurrentlyCompleted;
+
+        // Optimistic update
+        setProgress(prev => ({ ...prev, [videoId]: newStatus }));
+
         try {
             await supabase.from("video_progress").upsert({
                 user_id: user.id,
                 video_id: videoId,
-                is_completed: true,
+                is_completed: newStatus,
                 updated_at: new Date().toISOString()
             }, { onConflict: "user_id,video_id" });
-            setProgress(prev => ({ ...prev, [videoId]: true }));
         } catch (err) {
             console.error(err);
+            // Revert on error
+            setProgress(prev => ({ ...prev, [videoId]: isCurrentlyCompleted }));
+        }
+    };
+
+    const handleVideoEnded = () => {
+        if (selectedVideo) {
+            if (!progress[selectedVideo.id]) {
+                toggleCompleted(selectedVideo.id);
+            }
+            toast({
+                title: "Lección Completada",
+                description: "Siguiente lección en 3 segundos...",
+            });
+            setTimeout(() => handleNext(), 3000);
         }
     };
 
@@ -214,7 +272,7 @@ const CoursePlayer = () => {
                                 src={selectedVideo.url}
                                 controls
                                 className="w-full h-full"
-                                onEnded={() => markCompleted(selectedVideo.id)}
+                                onEnded={handleVideoEnded}
                             />
                         ) : (
                             <div className="text-white">Selecciona una lección</div>
@@ -226,48 +284,115 @@ const CoursePlayer = () => {
 
                         <div className="space-y-4">
                             <h2 className="text-2xl font-bold">{selectedVideo?.title}</h2>
-                            <div className="flex items-center gap-4 border-t pt-8">
+                            <div className="flex items-center gap-4 border-b pb-8">
                                 <Button variant="outline" className="rounded-full gap-2">
                                     <Share2 className="w-4 h-4" />
                                     Compartir
                                 </Button>
-                                <Button variant="outline" className="rounded-full gap-2">
-                                    <Settings className="w-4 h-4" />
-                                    Ajustes
-                                </Button>
+                                {selectedVideo && (
+                                    <Button
+                                        onClick={() => toggleCompleted(selectedVideo.id)}
+                                        className={cn(
+                                            "rounded-full gap-2 transition-all",
+                                            progress[selectedVideo.id] ? "bg-green-100 text-green-700 hover:bg-green-200 border-green-200" : ""
+                                        )}
+                                        variant={progress[selectedVideo.id] ? "outline" : "default"}
+                                    >
+                                        <CheckCircle className="w-4 h-4" />
+                                        {progress[selectedVideo.id] ? "Completada" : "Marcar como Vista"}
+                                    </Button>
+                                )}
                             </div>
-                        </div>
 
-                        {/* Conversation / Comments as in photo */}
-                        <div className="space-y-8">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold flex items-center gap-2">
-                                    <MessageSquare className="w-5 h-5" />
-                                    Participa en la conversación
-                                </h3>
-                            </div>
+                            <Tabs defaultValue="clase" className="w-full">
+                                <TabsList className="bg-muted p-1 rounded-xl mb-8">
+                                    <TabsTrigger value="clase" className="rounded-lg px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Clase</TabsTrigger>
+                                    <TabsTrigger value="recursos" className="rounded-lg px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Recursos</TabsTrigger>
+                                    <TabsTrigger value="notas" className="rounded-lg px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Mis Notas</TabsTrigger>
+                                    <TabsTrigger value="comentarios" className="rounded-lg px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Comentarios</TabsTrigger>
+                                </TabsList>
 
-                            <div className="flex gap-4">
-                                <div className="w-10 h-10 rounded-full bg-muted shrink-0 border border-border"></div>
-                                <div className="flex-1 space-y-4">
-                                    <textarea
-                                        className="w-full p-4 border rounded-xl bg-muted focus:ring-1 focus:ring-primary outline-none min-h-[100px] text-sm"
-                                        placeholder="Escribe tu comentario aquí..."
-                                    />
-                                    <div className="flex justify-end">
-                                        <Button className="rounded-lg px-8 border border-border bg-background text-muted-foreground hover:bg-muted font-medium">Enviar</Button>
+                                <TabsContent value="clase" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="prose prose-stone max-w-none">
+                                        <RichTextEditor
+                                            value={selectedVideo?.content_text || ""}
+                                            readOnly={true}
+                                            className="border-none px-0"
+                                        />
+                                        {(!selectedVideo?.content_text) && (
+                                            <p className="text-muted-foreground italic">No hay descripción adicional para esta lección.</p>
+                                        )}
                                     </div>
-                                </div>
-                            </div>
+                                </TabsContent>
+
+                                <TabsContent value="recursos" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <Share2 className="w-5 h-5 text-primary" />
+                                            <h3 className="font-semibold text-lg">Materiales Descargables</h3>
+                                        </div>
+                                        {selectedVideo && <LessonResourcesList videoId={selectedVideo.id} />}
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent value="notas" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="font-semibold text-lg">Tu Cuaderno Digital</h3>
+                                            <span className="text-xs text-muted-foreground">Se guarda automáticamente</span>
+                                        </div>
+                                        <Textarea
+                                            placeholder="Escribe tus apuntes de esta clase aquí..."
+                                            className="min-h-[300px] p-6 text-base leading-relaxed bg-yellow-50/50 border-yellow-200 focus:border-yellow-400 focus:ring-yellow-200 resize-none rounded-xl"
+                                            value={notes}
+                                            onChange={(e) => handleSaveNotes(e.target.value)}
+                                        />
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent value="comentarios" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="space-y-8">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-lg font-bold flex items-center gap-2">
+                                                <MessageSquare className="w-5 h-5" />
+                                                Participa en la conversación
+                                            </h3>
+                                        </div>
+
+                                        <div className="flex gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-muted shrink-0 border border-border"></div>
+                                            <div className="flex-1 space-y-4">
+                                                <Textarea
+                                                    className="w-full p-4 border rounded-xl bg-muted focus:ring-1 focus:ring-primary outline-none min-h-[100px] text-sm"
+                                                    placeholder="Escribe tu comentario aquí..."
+                                                />
+                                                <div className="flex justify-end">
+                                                    <Button className="rounded-lg px-8 border border-border bg-background text-muted-foreground hover:bg-muted font-medium">Enviar</Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </TabsContent>
+                            </Tabs>
                         </div>
 
                         {/* Footer Navigation Buttons */}
                         <div className="flex items-center justify-center gap-4 border-t border-border pt-12 pb-20">
-                            <Button variant="ghost" className="bg-muted text-muted-foreground rounded-md px-6 text-[10px] font-bold uppercase tracking-wider gap-2 hover:bg-primary/10 hover:text-primary">
+                            <Button
+                                variant="ghost"
+                                onClick={handlePrevious}
+                                disabled={!selectedVideo || videos.findIndex(v => v.id === selectedVideo.id) === 0}
+                                className="bg-muted text-muted-foreground rounded-md px-6 text-[10px] font-bold uppercase tracking-wider gap-2 hover:bg-primary/10 hover:text-primary disabled:opacity-50"
+                            >
                                 <ChevronLeft className="w-3 h-3" />
                                 Anterior
                             </Button>
-                            <Button variant="ghost" className="bg-muted text-muted-foreground rounded-md px-6 text-[10px] font-bold uppercase tracking-wider gap-2 hover:bg-primary/10 hover:text-primary">
+                            <Button
+                                variant="ghost"
+                                onClick={handleNext}
+                                disabled={!selectedVideo || videos.findIndex(v => v.id === selectedVideo.id) === videos.length - 1}
+                                className="bg-muted text-muted-foreground rounded-md px-6 text-[10px] font-bold uppercase tracking-wider gap-2 hover:bg-primary/10 hover:text-primary disabled:opacity-50"
+                            >
                                 Siguiente
                                 <ChevronRight className="w-3 h-3" />
                             </Button>

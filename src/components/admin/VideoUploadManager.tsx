@@ -57,6 +57,8 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Separator } from "@/components/ui/separator";
+
 import {
     Table,
     TableBody,
@@ -72,6 +74,10 @@ import { Tables } from "@/integrations/supabase/types";
 type Course = Tables<"courses">;
 type CourseVideo = Tables<"course_videos">;
 type Module = Tables<"modules">;
+
+import RichTextEditor from "@/components/ui/rich-text-editor";
+import LessonResourceManager from "@/components/admin/LessonResourceManager";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface UploadProgress {
     fileName: string;
@@ -98,8 +104,13 @@ const VideoUploadManager = () => {
     const [editingVideo, setEditingVideo] = useState<CourseVideo | null>(null);
     const [editingModule, setEditingModule] = useState<Module | null>(null);
     const [adminEmails, setAdminEmails] = useState<{ id: string; email: string }[]>([]);
+
+    // New state for advanced video editing dialog
+    const [advancedEditingVideo, setAdvancedEditingVideo] = useState<CourseVideo | null>(null);
+    const [isAdvancedEditDialogOpen, setIsAdvancedEditDialogOpen] = useState(false);
     const [newAdminEmail, setNewAdminEmail] = useState("");
     const { toast } = useToast();
+    const [activeTab, setActiveTab] = useState("cursos");
 
     const [newCourseForm, setNewCourseForm] = useState({
         title: "",
@@ -311,8 +322,10 @@ const VideoUploadManager = () => {
 
             if (error) throw error;
 
-            toast({ title: "Administrador eliminado" });
-            fetchAdminEmails();
+            if (error) throw error;
+
+            await fetchAdminEmails();
+            toast({ title: "Administrador eliminado correctamente" });
         } catch (error) {
             console.error("Error deleting admin email:", error);
             const errorMessage = error instanceof Error ? error.message : "No se pudo eliminar el administrador";
@@ -688,7 +701,7 @@ const VideoUploadManager = () => {
                 </div>
             </header>
 
-            <Tabs defaultValue="cursos" className="space-y-8">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
                 <TabsList className="bg-muted p-1 rounded-2xl border border-border backdrop-blur-sm">
                     <TabsTrigger value="cursos" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white">
                         <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-primary text-[10px] font-bold mr-1">1</span>
@@ -704,7 +717,7 @@ const VideoUploadManager = () => {
                     </TabsTrigger>
                     <TabsTrigger value="marketing" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white" disabled={!selectedCourse}>
                         <Layout className="w-4 h-4" />
-                        Marketing
+                        Detalles
                     </TabsTrigger>
                     <TabsTrigger value="ajustes" className="rounded-xl gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-white">
                         <Settings className="w-4 h-4" />
@@ -810,7 +823,10 @@ const VideoUploadManager = () => {
                             courses.map((course) => (
                                 <div
                                     key={course.id}
-                                    onClick={() => setSelectedCourse(course.id)}
+                                    onClick={() => {
+                                        setSelectedCourse(course.id);
+                                        setActiveTab("contenido");
+                                    }}
                                     className={cn(
                                         "group relative p-6 rounded-3xl border bg-white cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1",
                                         selectedCourse === course.id
@@ -1033,6 +1049,10 @@ const VideoUploadManager = () => {
                                                             handleUpdateVideo={handleUpdateVideo}
                                                             handleDeleteVideo={handleDeleteVideo}
                                                             modules={modules}
+                                                            onEditAdvanced={(v) => {
+                                                                setAdvancedEditingVideo(v);
+                                                                setIsAdvancedEditDialogOpen(true);
+                                                            }}
                                                         />
                                                     </CardContent>
                                                 </Card>
@@ -1052,6 +1072,10 @@ const VideoUploadManager = () => {
                                                         handleUpdateVideo={handleUpdateVideo}
                                                         handleDeleteVideo={handleDeleteVideo}
                                                         modules={modules}
+                                                        onEditAdvanced={(v) => {
+                                                            setAdvancedEditingVideo(v);
+                                                            setIsAdvancedEditDialogOpen(true);
+                                                        }}
                                                     />
                                                 </CardContent>
                                             </Card>
@@ -1158,12 +1182,12 @@ const VideoUploadManager = () => {
 
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label>Descripción Larga (Markdown)</Label>
-                                        <Textarea
-                                            placeholder="Describe el curso en detalle..."
-                                            className="min-h-[200px]"
+                                        <Label>Descripción Larga (Editor Rico)</Label>
+                                        <RichTextEditor
+                                            placeholder="Describe el curso en detalle (puedes usar negritas, listas, etc)..."
                                             value={selectedCourseData.long_description || ""}
-                                            onChange={(e) => updateCourseMarketing({ long_description: e.target.value })}
+                                            onChange={(value) => updateCourseMarketing({ long_description: value })}
+                                            className="min-h-[300px]"
                                         />
                                     </div>
 
@@ -1270,7 +1294,98 @@ const VideoUploadManager = () => {
                     </form>
                 </DialogContent>
             </Dialog>
-        </div>
+
+            {/* Dialog for Advanced Video Editing (Rich Text & Settings) */}
+            <Dialog open={isAdvancedEditDialogOpen} onOpenChange={(open) => {
+                if (!open) setAdvancedEditingVideo(null);
+                setIsAdvancedEditDialogOpen(open);
+            }}>
+                <DialogContent className="rounded-3xl border-none shadow-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="font-serif text-2xl">Editar Contenido de Lección</DialogTitle>
+                        <DialogDescription>Gestiona el contenido enriquecido y configuración de esta clase.</DialogDescription>
+                    </DialogHeader>
+
+                    {advancedEditingVideo && (
+                        <div className="space-y-6 pt-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label>Título de la Lección</Label>
+                                    <Input
+                                        value={advancedEditingVideo.title}
+                                        onChange={(e) => setAdvancedEditingVideo({ ...advancedEditingVideo, title: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Módulo Asignado</Label>
+                                    <Select
+                                        value={advancedEditingVideo.module_id || "none"}
+                                        onValueChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, module_id: val === "none" ? null : val })}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Seleccionar Módulo" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">Sin Módulo (General)</SelectItem>
+                                            {modules.map((mod) => (
+                                                <SelectItem key={mod.id} value={mod.id}>
+                                                    {mod.title}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Contenido de la Lección (Texto, Imágenes, Enlaces)</Label>
+                                <div className="border rounded-md p-1 bg-muted/20">
+                                    <RichTextEditor
+                                        className="min-h-[300px]"
+                                        value={advancedEditingVideo.content_text || ""}
+                                        onChange={(val) => setAdvancedEditingVideo({ ...advancedEditingVideo, content_text: val })}
+                                        placeholder="Escribe aquí el contenido de apoyo para la clase. Puedes incluir resumen, puntos clave, o enlaces..."
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center space-x-2 pt-2">
+                                <Checkbox
+                                    id="is_preview"
+                                    checked={advancedEditingVideo.is_preview || false}
+                                    onCheckedChange={(checked) => setAdvancedEditingVideo({ ...advancedEditingVideo, is_preview: checked as boolean })}
+                                />
+                                <Label htmlFor="is_preview" className="font-medium cursor-pointer">
+                                    Esta lección es una Vista Previa Gratuita (Free Preview)
+                                </Label>
+                            </div>
+
+                            <Separator className="my-6" />
+
+                            <LessonResourceManager videoId={advancedEditingVideo.id} />
+
+                            <div className="flex gap-3 pt-6 border-t mt-4">
+                                <Button
+                                    className="flex-1 rounded-xl"
+                                    onClick={() => {
+                                        if (advancedEditingVideo) {
+                                            handleUpdateVideo(advancedEditingVideo);
+                                            setIsAdvancedEditDialogOpen(false);
+                                        }
+                                    }}
+                                >
+                                    <Save className="w-4 h-4 mr-2" />
+                                    Guardar Cambios
+                                </Button>
+                                <Button variant="outline" className="rounded-xl" onClick={() => setIsAdvancedEditDialogOpen(false)}>
+                                    Cancelar
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+        </div >
     );
 };
 
@@ -1281,6 +1396,7 @@ const VideoTable = ({
     handleUpdateVideo,
     handleDeleteVideo,
     modules,
+    onEditAdvanced
 }: {
     videos: CourseVideo[];
     editingVideo: CourseVideo | null;
@@ -1288,6 +1404,7 @@ const VideoTable = ({
     handleUpdateVideo: (v: CourseVideo) => void;
     handleDeleteVideo: (id: string, path: string) => void;
     modules: Module[];
+    onEditAdvanced: (v: CourseVideo) => void;
 }) => (
     <Table>
         <TableHeader>
@@ -1381,6 +1498,7 @@ const VideoTable = ({
                                         variant="outline"
                                         size="icon"
                                         onClick={() => handleUpdateVideo(editingVideo)}
+                                        title="Guardar Cambios Rápidos"
                                     >
                                         <Save className="w-4 h-4" />
                                     </Button>
@@ -1388,6 +1506,7 @@ const VideoTable = ({
                                         variant="outline"
                                         size="icon"
                                         onClick={() => setEditingVideo(null)}
+                                        title="Cancelar"
                                     >
                                         <X className="w-4 h-4" />
                                     </Button>
@@ -1395,9 +1514,22 @@ const VideoTable = ({
                             ) : (
                                 <>
                                     <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        className="h-9 px-3 text-xs font-medium"
+                                        onClick={() => onEditAdvanced(video)}
+                                    >
+                                        <ClipboardList className="w-3 h-3 mr-2" />
+                                        Contenido
+                                    </Button>
+
+                                    <div className="w-px h-6 bg-border mx-1" />
+
+                                    <Button
                                         variant="outline"
                                         size="icon"
                                         onClick={() => setEditingVideo(video)}
+                                        title="Edición Rápida"
                                     >
                                         <Edit className="w-4 h-4" />
                                     </Button>
@@ -1407,6 +1539,8 @@ const VideoTable = ({
                                         onClick={() =>
                                             handleDeleteVideo(video.id, video.video_path)
                                         }
+                                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                        title="Eliminar Video"
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </Button>

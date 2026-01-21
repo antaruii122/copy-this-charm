@@ -1,35 +1,7 @@
-# Robots.txt for SomaIntegra
-# Sitemap location
-Sitemap: https://somaintegra.com/sitemap.xml
-
-# Google bot
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 0
-
-# Bing bot
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
-
-# Twitter bot (for card preview)
-User-agent: Twitterbot
-Allow: /
-
-# Facebook bot (for Open Graph preview)
-User-agent: facebookexternalhit
-Allow: /
-
-# LinkedIn bot
-User-agent: LinkedInBot
-Allow: /
-
-# All other bots
 User-agent: *
 Allow: /
-Crawl-delay: 2
+Disallow: /aula-virtual/
+Disallow: /admin/
+Disallow: /auth/
 
-# Disallow authentication pages from indexing
-User-agent: *
-Disallow: /auth
-Disallow: /aula-virtual
+Sitemap: https://alimentatufertilidad.com/sitemap.xml

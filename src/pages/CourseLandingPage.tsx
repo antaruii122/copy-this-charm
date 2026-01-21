@@ -9,6 +9,9 @@ import { CheckCircle2, Play, Users, Star, ArrowRight, ShieldCheck, Clock, Medal 
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardFooter from "@/components/dashboard/DashboardFooter";
 import { Tables } from "@/integrations/supabase/types";
+import RichTextEditor from "@/components/ui/rich-text-editor";
+import { useToast } from "@/hooks/use-toast";
+import { Helmet } from 'react-helmet-async';
 
 interface Module {
     id: string;
@@ -23,6 +26,8 @@ const CourseLandingPage = () => {
     const [course, setCourse] = useState<Tables<"courses"> | null>(null);
     const [modules, setModules] = useState<Module[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isEnrolled, setIsEnrolled] = useState(false);
+    const { toast } = useToast();
 
     useEffect(() => {
         const fetchCourseData = async () => {
@@ -72,11 +77,77 @@ const CourseLandingPage = () => {
         if (slug) fetchCourseData();
     }, [slug]);
 
+    useEffect(() => {
+        const checkEnrollment = async () => {
+            if (!course || !isSignedIn) return;
+            // Here we would check the enrollments table
+            // For now, we'll just check if they are logged in as a placeholder 
+            // and maybe if they have progress. 
+            // Real implementation:
+            /*
+            const { data } = await supabase.from('enrollments')
+               .select('*')
+               .eq('user_id', user.id)
+               .eq('course_id', course.id)
+               .single();
+           if (data) setIsEnrolled(true);
+           */
+        }
+        checkEnrollment();
+    }, [course, isSignedIn]);
+
+    const handleEnroll = () => {
+        if (!isSignedIn) {
+            navigate("/auth");
+            return;
+        }
+
+        if (isEnrolled) {
+            navigate(`/aprender/${course?.slug}`);
+            return;
+        }
+
+        // Logic for enrollment (Free or Payment)
+        // For now, let's simulate a free enrollment -> go to player
+        toast({
+            title: "¡Inscripción Exitosa!",
+            description: "Bienvenido al curso. Has sido inscrito correctamente.",
+        });
+        navigate(`/aprender/${course?.slug}`);
+    };
+
     if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div></div>;
     if (!course) return <div className="min-h-screen flex items-center justify-center bg-white text-primary font-serif text-2xl uppercase tracking-widest">Curso no encontrado</div>;
 
+    const courseSchema = {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": course.title,
+        "description": course.description,
+        "provider": {
+            "@type": "Organization",
+            "name": "NUTFEM",
+            "sameAs": "https://nutfem.com"
+        },
+        "instructor": {
+            "@type": "Person",
+            "name": course.author_name || "Gabriela Suazo",
+        }
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground selection:bg-gold/30">
+            <Helmet>
+                <title>{course.title} | NUTFEM</title>
+                <meta name="description" content={course.description || `Curso de ${course.title} en NUTFEM`} />
+                <meta property="og:title" content={course.title} />
+                <meta property="og:description" content={course.description || "Mejora tu salud con NUTFEM"} />
+                <meta property="og:image" content={course.image_url || "/placeholder.svg"} />
+                <meta property="og:type" content="website" />
+                <script type="application/ld+json">
+                    {JSON.stringify(courseSchema)}
+                </script>
+            </Helmet>
             <DashboardHeader />
 
             {/* Hero Section */}
@@ -134,7 +205,11 @@ const CourseLandingPage = () => {
                                 Acerca de este curso
                             </h2>
                             <div className="prose prose-neutral max-w-none text-foreground leading-relaxed text-lg">
-                                {course.long_description || course.description}
+                                <RichTextEditor
+                                    value={course.long_description || course.description || ""}
+                                    readOnly={true}
+                                    className="border-none px-0"
+                                />
                             </div>
                         </div>
 
@@ -166,37 +241,49 @@ const CourseLandingPage = () => {
                                 </p>
                             </div>
 
-                            <Accordion type="single" collapsible className="w-full space-y-4">
-                                {modules.map((module, mIdx) => (
-                                    <AccordionItem key={module.id} value={`module-${mIdx}`} className="border rounded-2xl px-6 bg-white overflow-hidden data-[state=open]:border-primary/30 transition-colors">
-                                        <AccordionTrigger className="hover:no-underline py-6">
-                                            <div className="flex items-center gap-4 text-left">
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-[10px] font-bold">
-                                                    {mIdx + 1}
-                                                </span>
-                                                <span className="font-serif text-xl font-bold uppercase">{module.title}</span>
-                                            </div>
-                                        </AccordionTrigger>
-                                        <AccordionContent className="pb-6">
-                                            <div className="space-y-2 pt-2">
-                                                {module.videos.map((video, vIdx) => (
-                                                    <div key={vIdx} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted group transition-colors">
-                                                        <div className="flex items-center gap-3">
-                                                            <Play className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                                            <span className="text-foreground font-medium">{video.title}</span>
+                            {modules.length === 0 ? (
+                                <div className="bg-muted/30 rounded-2xl p-8 text-center border border-dashed border-border">
+                                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Clock className="w-8 h-8 text-primary" />
+                                    </div>
+                                    <h3 className="font-serif text-xl font-bold mb-2">Contenido en preparación</h3>
+                                    <p className="text-muted-foreground">
+                                        Estamos finalizando los detalles de este curso. ¡Vuelve pronto para ver las lecciones!
+                                    </p>
+                                </div>
+                            ) : (
+                                <Accordion type="single" collapsible className="w-full space-y-4">
+                                    {modules.map((module, mIdx) => (
+                                        <AccordionItem key={module.id} value={`module-${mIdx}`} className="border rounded-2xl px-6 bg-white overflow-hidden data-[state=open]:border-primary/30 transition-colors">
+                                            <AccordionTrigger className="hover:no-underline py-6">
+                                                <div className="flex items-center gap-4 text-left">
+                                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-[10px] font-bold">
+                                                        {mIdx + 1}
+                                                    </span>
+                                                    <span className="font-serif text-xl font-bold uppercase">{module.title}</span>
+                                                </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent className="pb-6">
+                                                <div className="space-y-2 pt-2">
+                                                    {module.videos.map((video, vIdx) => (
+                                                        <div key={vIdx} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted group transition-colors">
+                                                            <div className="flex items-center gap-3">
+                                                                <Play className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                                                <span className="text-foreground font-medium">{video.title}</span>
+                                                            </div>
+                                                            {video.duration_seconds && (
+                                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                                                                    {Math.floor(video.duration_seconds / 60)}:{(video.duration_seconds % 60).toString().padStart(2, '0')}
+                                                                </span>
+                                                            )}
                                                         </div>
-                                                        {video.duration_seconds && (
-                                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                                                                {Math.floor(video.duration_seconds / 60)}:{(video.duration_seconds % 60).toString().padStart(2, '0')}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                ))}
-                            </Accordion>
+                                                    ))}
+                                                </div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            )}
                         </div>
 
                         {/* target audience */}
@@ -230,9 +317,9 @@ const CourseLandingPage = () => {
 
                             <Button
                                 className="w-full py-8 text-lg font-bold uppercase tracking-widest bg-gradient-primary text-white hover:opacity-90 rounded-2xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
-                                onClick={() => isSignedIn ? navigate(`/aprender/${course.slug}`) : navigate('/auth')}
+                                onClick={handleEnroll}
                             >
-                                {isSignedIn ? "Ver Programa" : "Inscribirse Ahora"}
+                                {isEnrolled ? "Ir al Curso" : (isSignedIn ? "Inscribirse Ahora" : "Inicia Sesión para Inscribirte")}
                                 <ArrowRight className="w-5 h-5 ml-2" />
                             </Button>
 
