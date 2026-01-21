@@ -326,7 +326,7 @@ const DashboardStats = () => {
 
                           {/* Title */}
                           <h3
-                            className="font-serif text-lg font-bold leading-tight line-clamp-2 mb-2"
+                            className="font-serif text-xl font-bold leading-tight line-clamp-2 mb-2"
                             style={{ color: textColor }}
                           >
                             {course.title}
