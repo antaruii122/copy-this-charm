@@ -322,8 +322,6 @@ const VideoUploadManager = () => {
 
             if (error) throw error;
 
-            if (error) throw error;
-
             await fetchAdminEmails();
             toast({ title: "Administrador eliminado correctamente" });
         } catch (error) {
