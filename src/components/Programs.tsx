@@ -14,7 +14,9 @@ type Program = Tables<"courses"> & {
   card_style?: string;
   badge_text?: string;
   original_price?: string;
-  border_color?: string; // Added border_color
+  border_color?: string;
+  color_theme?: string;
+  border_theme?: string;
 };
 
 const Programs = () => {
