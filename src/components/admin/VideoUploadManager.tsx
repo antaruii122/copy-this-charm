@@ -74,7 +74,11 @@ import { Tables } from "@/integrations/supabase/types";
 import { useGoogleDrivePicker } from "@/hooks/useGoogleDrivePicker";
 
 // Temporarily extend types until we can make them stricter or db schema is fully aligned
-type Course = Tables<"courses">;
+type Course = Tables<"courses"> & {
+    card_style?: string;
+    original_price?: string;
+    badge_text?: string;
+};
 type CourseVideo = Tables<"course_videos"> & { is_drive_video?: boolean };
 type Module = Tables<"modules">;
 
@@ -204,6 +208,9 @@ const VideoUploadManager = () => {
                     slug: selectedCourseData.slug,
                     description: selectedCourseData.description,
                     price: selectedCourseData.price,
+                    card_style: selectedCourseData.card_style,
+                    original_price: selectedCourseData.original_price,
+                    badge_text: selectedCourseData.badge_text,
                 })
                 .eq("id", selectedCourse);
 
@@ -984,50 +991,99 @@ const VideoUploadManager = () => {
                                         "group relative rounded-3xl border bg-white cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden flex flex-col",
                                         selectedCourse === course.id
                                             ? "border-primary border-2 shadow-[0_0_20px_rgba(191,89,103,0.1)] scale-[1.02]"
-                                            : "border-border hover:border-primary/20"
+                                            : "border-border hover:border-primary/20",
+                                        "aspect-[9/16]" // Enforce 9:16 aspect ratio
                                     )}
                                 >
-                                    <div className="relative w-full aspect-[9/16] bg-muted/20 border-b">
+                                    {/* CLASIC VERTICAL SPLIT DESIGN (Option B) */}
+                                    {/* Image Top (45%) */}
+                                    <div className="h-[45%] w-full relative bg-muted/20 border-b overflow-hidden">
                                         {course.image_url ? (
                                             <img
                                                 src={course.image_url}
                                                 alt={course.title}
-                                                className="w-full h-full object-cover"
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-                                                <Video className="w-12 h-12 text-primary/20" />
+                                                <Video className="w-8 h-8 text-primary/20" />
                                             </div>
                                         )}
                                         {course.is_featured && (
-                                            <div className="absolute top-3 right-3">
-                                                <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-white/90 backdrop-blur-sm rounded-full uppercase border border-primary/20 shadow-sm">
+                                            <div className="absolute top-2 right-2">
+                                                <span className="text-[9px] font-bold text-primary px-2 py-0.5 bg-white/90 backdrop-blur-sm rounded-full uppercase border border-primary/20 shadow-sm">
                                                     Destacado
                                                 </span>
                                             </div>
                                         )}
                                     </div>
 
-                                    <div className="p-5 flex flex-col flex-1 gap-3">
-                                        <h3 className="font-serif text-lg font-bold leading-tight line-clamp-2 min-h-[3rem]">{course.title}</h3>
-                                        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                                    {/* Content Bottom (55%) */}
+                                    <div className={cn(
+                                        "h-[55%] w-full flex flex-col p-4",
+                                        course.card_style === 'elegant' ? "bg-[#F4F6F4]" : // Sage Tint
+                                            course.card_style === 'bold' ? "bg-primary text-primary-foreground" :
+                                                "bg-white" // Standard Minimal
+                                    )}>
+                                        {/* Badge */}
+                                        <div className="mb-2">
+                                            <span className={cn(
+                                                "text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-sm",
+                                                course.card_style === 'bold' ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
+                                            )}>
+                                                {course.badge_text || (course.price ? "Premium" : "Gratis")}
+                                            </span>
+                                        </div>
+
+                                        {/* Title */}
+                                        <h3 className={cn(
+                                            "font-serif text-lg font-bold leading-tight line-clamp-2 mb-2",
+                                            course.card_style === 'bold' ? "text-white" : "text-gray-900"
+                                        )}>
+                                            {course.title}
+                                        </h3>
+
+                                        {/* Description */}
+                                        <p className={cn(
+                                            "text-xs line-clamp-2 mb-4 flex-1",
+                                            course.card_style === 'bold' ? "text-white/80" : "text-muted-foreground"
+                                        )}>
                                             {course.description || "Sin descripción proporcionada."}
                                         </p>
 
-                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
-                                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest text-primary/70">{course.price || "Gratis"}</span>
+                                        {/* Footer: Price & Edit */}
+                                        <div className="flex items-end justify-between mt-auto pt-3 border-t border-border/10">
+                                            <div className="flex flex-col">
+                                                {course.original_price && (
+                                                    <span className={cn(
+                                                        "text-[10px] line-through",
+                                                        course.card_style === 'bold' ? "text-white/60" : "text-muted-foreground/70"
+                                                    )}>
+                                                        {course.original_price}
+                                                    </span>
+                                                )}
+                                                <span className={cn(
+                                                    "text-sm font-bold",
+                                                    course.card_style === 'bold' ? "text-white" : "text-primary"
+                                                )}>
+                                                    {course.price || "Gratis"}
+                                                </span>
+                                            </div>
+
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="h-8 gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg pr-3 pl-2"
+                                                className={cn(
+                                                    "h-8 w-8 p-0 rounded-full hover:bg-black/5",
+                                                    course.card_style === 'bold' ? "text-white hover:text-white hover:bg-white/20" : "text-muted-foreground hover:text-primary"
+                                                )}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setSelectedCourse(course.id);
                                                     setActiveTab("marketing");
                                                 }}
                                             >
-                                                <Edit className="w-3.5 h-3.5" />
-                                                Editar
+                                                <Edit className="w-4 h-4" />
                                             </Button>
                                         </div>
                                     </div>
@@ -1495,11 +1551,53 @@ const VideoUploadManager = () => {
                                             rows={2}
                                         />
                                     </div>
+                                </div>
+                            </Card>
+
+                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
+                                <div className="space-y-2">
+                                    <h3 className="font-serif text-2xl font-bold">Apariencia de Tarjeta</h3>
+                                    <p className="text-sm text-muted-foreground">Personaliza cómo se ve este curso en el catálogo.</p>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <Label>Precio</Label>
+                                        <Label>Estilo Visual</Label>
+                                        <Select
+                                            value={selectedCourseData.card_style || "minimal"}
+                                            onValueChange={(value) => updateCourseMarketing({ card_style: value })}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Selecciona un estilo" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="minimal">Clásico (Fondo Blanco)</SelectItem>
+                                                <SelectItem value="elegant">Elegante (Fondo Sage)</SelectItem>
+                                                <SelectItem value="bold">Bold (Fondo Oscuro)</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Etiqueta (Badge)</Label>
+                                        <Input
+                                            placeholder="Ej: NUEVO, -50%, PREMIUM"
+                                            value={selectedCourseData.badge_text || ""}
+                                            onChange={(e) => updateCourseMarketing({ badge_text: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Precio Original (Antes)</Label>
+                                        <Input
+                                            placeholder="Ej: $197 USD"
+                                            value={selectedCourseData.original_price || ""}
+                                            onChange={(e) => updateCourseMarketing({ original_price: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Precio Actual</Label>
                                         <Input
                                             value={selectedCourseData.price || ""}
                                             onChange={(e) => updateCourseMarketing({ price: e.target.value })}
+                                            placeholder="Ej: $97 USD"
                                         />
                                     </div>
                                 </div>
@@ -1510,7 +1608,6 @@ const VideoUploadManager = () => {
                                     <h3 className="font-serif text-2xl font-bold">Multimedia & Marketing</h3>
                                     <p className="text-sm text-muted-foreground">Configura el contenido público que verán los interesados.</p>
                                 </div>
-
                                 <div className="space-y-4">
                                     <div className="space-y-2">
                                         <Label>Descripción Larga (Editor Rico)</Label>
