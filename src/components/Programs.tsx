@@ -160,14 +160,14 @@ const Programs = () => {
                                 className="text-[10px] line-through mb-0.5"
                                 style={{ color: subTextColor, opacity: 0.7 }}
                               >
-                                {program.original_price}
+                                {program.original_price.toString().startsWith('$') ? program.original_price : `$${program.original_price}`}
                               </span>
                             )}
                             <span
-                              className="text-base font-bold"
+                              className="text-lg font-bold"
                               style={{ color: textColor }}
                             >
-                              {program.price || "Gratis"}
+                              {program.price ? (program.price.toString().startsWith('$') ? program.price : `$${program.price}`) : "Gratis"}
                             </span>
                           </div>
 
