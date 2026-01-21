@@ -1,5 +1,8 @@
 import { Heart, Leaf, Moon, Sparkles } from "lucide-react";
 import purposeBg from "@/assets/Gemini_Generated_Image_d1gicwd1gicwd1gi.png";
+import nutricionImg from "@/assets/nutricion_hormonal.png";
+import fertilidadImg from "@/assets/fertilidad_natural.png";
+import cicloImg from "@/assets/ciclo_menstrual.png";
 
 const Purpose = () => {
   const features = [
@@ -8,21 +11,24 @@ const Purpose = () => {
       title: "Nutrición Hormonal",
       description: "Aprende a alimentarte según las fases de tu ciclo menstrual para optimizar tu energía y bienestar hormonal.",
       gradient: "bg-gradient-rose",
-      delay: "0s"
+      delay: "0s",
+      image: nutricionImg
     },
     {
       icon: Leaf,
       title: "Fertilidad Natural",
       description: "Descubre cómo la nutrición puede potenciar tu fertilidad y preparar tu cuerpo para la maternidad de forma natural.",
       gradient: "bg-gradient-primary",
-      delay: "0.1s"
+      delay: "0.1s",
+      image: fertilidadImg
     },
     {
       icon: Moon,
       title: "Ciclo Menstrual Consciente",
       description: "Entiende las etapas de tu ciclo vital y nutre tu cuerpo según lo que necesita en cada fase.",
       gradient: "bg-gradient-sunset",
-      delay: "0.2s"
+      delay: "0.2s",
+      image: cicloImg
     },
   ];
 
@@ -58,26 +64,34 @@ const Purpose = () => {
             <span className="block text-foreground font-bold mt-2">Alimenta tu Fertilidad</span>
           </h2>
 
-          <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
-            Soy nutricionista especializada en salud hormonal femenina. Te acompaño a entender
-            tu ciclo menstrual y nutrir tu cuerpo en cada fase para alcanzar el <span className="text-gradient font-semibold">equilibrio que mereces</span>.
-          </p>
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-sm border border-white/40 max-w-4xl mx-auto">
+            <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
+              Soy nutricionista especializada en salud hormonal femenina. Te acompaño a entender
+              tu ciclo menstrual y nutrir tu cuerpo en cada fase para alcanzar el <span className="text-gradient font-semibold">equilibrio que mereces</span>.
+            </p>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 md:gap-6 lg:gap-8">
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group bg-gradient-card rounded-3xl p-8 md:p-10 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-3 border border-border/50 hover:border-primary/30 relative overflow-hidden animate-fade-up"
+              className="group bg-gradient-card rounded-3xl p-6 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-3 border border-border/50 hover:border-primary/30 relative overflow-hidden animate-fade-up"
               style={{ animationDelay: feature.delay }}
             >
               {/* Decorative corner element */}
               <div className={`absolute -top-12 -right-12 w-32 h-32 ${feature.gradient} opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500`} />
 
-              {/* Icon with gradient background */}
-              <div className={`w-20 h-20 ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:glow-rose transition-all duration-300 relative`}>
-                <feature.icon className="w-10 h-10 text-white" />
-                <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              {/* Rectangular Header / Image Container */}
+              <div className={`w-full aspect-[4/3] rounded-2xl ${feature.gradient} mb-6 relative overflow-hidden shadow-inner group-hover:shadow-lg transition-all duration-500`}>
+                <img
+                  src={feature.image}
+                  alt={feature.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+
+                {/* Overlay for icon visibility */}
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
               </div>
 
               <h3 className="font-serif text-2xl md:text-3xl text-foreground mb-4 group-hover:text-gradient transition-all">
