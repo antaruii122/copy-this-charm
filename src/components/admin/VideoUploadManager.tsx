@@ -1554,51 +1554,160 @@ const VideoUploadManager = () => {
                                 </div>
                             </Card>
 
-                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6">
+                            <Card className="rounded-3xl border-none shadow-xl bg-white p-8 space-y-6 lg:col-span-2">
                                 <div className="space-y-2">
                                     <h3 className="font-serif text-2xl font-bold">Apariencia de Tarjeta</h3>
-                                    <p className="text-sm text-muted-foreground">Personaliza cómo se ve este curso en el catálogo.</p>
+                                    <p className="text-sm text-muted-foreground">Personaliza y previsualiza cómo se verá este curso.</p>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <Label>Estilo Visual</Label>
-                                        <Select
-                                            value={selectedCourseData.card_style || "minimal"}
-                                            onValueChange={(value) => updateCourseMarketing({ card_style: value })}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Selecciona un estilo" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="minimal">Clásico (Fondo Blanco)</SelectItem>
-                                                <SelectItem value="elegant">Elegante (Fondo Sage)</SelectItem>
-                                                <SelectItem value="bold">Bold (Fondo Oscuro)</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    {/* Left Column: Controls */}
+                                    <div className="lg:col-span-2 space-y-6">
+                                        <div className="space-y-3">
+                                            <Label>Estilo Visual</Label>
+                                            <div className="grid grid-cols-3 gap-3">
+                                                {[
+                                                    { id: 'minimal', label: 'Clásico', color: 'bg-white border-gray-200' },
+                                                    { id: 'elegant', label: 'Elegante', color: 'bg-[#F4F6F4] border-[#E8EAE8]' },
+                                                    { id: 'bold', label: 'Bold', color: 'bg-primary border-primary text-white' }
+                                                ].map((style) => (
+                                                    <div
+                                                        key={style.id}
+                                                        className={cn(
+                                                            "cursor-pointer rounded-xl border-2 p-3 text-center transition-all hover:scale-105",
+                                                            (selectedCourseData.card_style || 'minimal') === style.id
+                                                                ? "border-primary ring-2 ring-primary/20"
+                                                                : "border-transparent hover:border-border",
+                                                            style.color
+                                                        )}
+                                                        onClick={() => updateCourseMarketing({ card_style: style.id })}
+                                                    >
+                                                        <span className="text-xs font-bold">{style.label}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label>Etiqueta (Badge)</Label>
+                                                <Input
+                                                    placeholder="Ej: NUEVO..."
+                                                    value={selectedCourseData.badge_text || ""}
+                                                    onChange={(e) => updateCourseMarketing({ badge_text: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Precio Original</Label>
+                                                <Input
+                                                    placeholder="Ej: $197..."
+                                                    value={selectedCourseData.original_price || ""}
+                                                    onChange={(e) => updateCourseMarketing({ original_price: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Precio Actual</Label>
+                                                <Input
+                                                    value={selectedCourseData.price || ""}
+                                                    onChange={(e) => updateCourseMarketing({ price: e.target.value })}
+                                                    placeholder="Ej: $97 USD"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>Etiqueta (Badge)</Label>
-                                        <Input
-                                            placeholder="Ej: NUEVO, -50%, PREMIUM"
-                                            value={selectedCourseData.badge_text || ""}
-                                            onChange={(e) => updateCourseMarketing({ badge_text: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Precio Original (Antes)</Label>
-                                        <Input
-                                            placeholder="Ej: $197 USD"
-                                            value={selectedCourseData.original_price || ""}
-                                            onChange={(e) => updateCourseMarketing({ original_price: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Precio Actual</Label>
-                                        <Input
-                                            value={selectedCourseData.price || ""}
-                                            onChange={(e) => updateCourseMarketing({ price: e.target.value })}
-                                            placeholder="Ej: $97 USD"
-                                        />
+
+                                    {/* Right Column: Live Preview */}
+                                    <div className="lg:col-span-1">
+                                        <div className="sticky top-4">
+                                            <Label className="mb-3 block text-center text-muted-foreground text-xs uppercase tracking-widest">Vista Previa en Vivo</Label>
+                                            <div className="mx-auto max-w-[220px] shadow-2xl rounded-3xl transform transition-all duration-500 hover:scale-[1.02]">
+                                                <div className={cn(
+                                                    "group relative rounded-3xl border bg-white overflow-hidden flex flex-col aspect-[9/16]",
+                                                    "border-border shadow-sm"
+                                                )}>
+
+                                                    {/* Preview: Image Top (45%) */}
+                                                    <div className="h-[45%] w-full relative bg-muted/20 border-b overflow-hidden">
+                                                        {selectedCourseData.image_url ? (
+                                                            <img
+                                                                src={selectedCourseData.image_url}
+                                                                alt="Preview"
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+                                                                <Video className="w-8 h-8 text-primary/20" />
+                                                            </div>
+                                                        )}
+                                                        {/* Preview Featured Tag */}
+                                                        <div className="absolute top-2 right-2 opacity-80">
+                                                            <span className="text-[8px] font-bold text-primary px-2 py-0.5 bg-white/90 rounded-full uppercase border border-primary/20 shadow-sm">
+                                                                Destacado
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Preview: Content Bottom (55%) */}
+                                                    <div className={cn(
+                                                        "h-[55%] w-full flex flex-col p-4 text-left",
+                                                        selectedCourseData.card_style === 'elegant' ? "bg-[#F4F6F4]" :
+                                                            selectedCourseData.card_style === 'bold' ? "bg-primary text-primary-foreground" :
+                                                                "bg-white"
+                                                    )}>
+                                                        {/* Preview Badge */}
+                                                        <div className="mb-2">
+                                                            <span className={cn(
+                                                                "text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-sm inline-block",
+                                                                selectedCourseData.card_style === 'bold' ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
+                                                            )}>
+                                                                {selectedCourseData.badge_text || "PREMIUM"}
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Preview Title */}
+                                                        <h3 className={cn(
+                                                            "font-serif text-sm font-bold leading-tight line-clamp-2 mb-1",
+                                                            selectedCourseData.card_style === 'bold' ? "text-white" : "text-gray-900"
+                                                        )}>
+                                                            {selectedCourseData.title || "Título del Curso"}
+                                                        </h3>
+
+                                                        {/* Preview Description */}
+                                                        <p className={cn(
+                                                            "text-[10px] line-clamp-2 mb-2 flex-1 leading-normal",
+                                                            selectedCourseData.card_style === 'bold' ? "text-white/80" : "text-muted-foreground"
+                                                        )}>
+                                                            {selectedCourseData.description || "Descripción corta del curso..."}
+                                                        </p>
+
+                                                        {/* Preview Footer */}
+                                                        <div className="flex items-end justify-between mt-auto pt-2 border-t border-border/10">
+                                                            <div className="flex flex-col">
+                                                                {selectedCourseData.original_price && (
+                                                                    <span className={cn(
+                                                                        "text-[8px] line-through",
+                                                                        selectedCourseData.card_style === 'bold' ? "text-white/60" : "text-muted-foreground/70"
+                                                                    )}>
+                                                                        {selectedCourseData.original_price}
+                                                                    </span>
+                                                                )}
+                                                                <span className={cn(
+                                                                    "text-sm font-bold",
+                                                                    selectedCourseData.card_style === 'bold' ? "text-white" : "text-primary"
+                                                                )}>
+                                                                    {selectedCourseData.price || "Gratis"}
+                                                                </span>
+                                                            </div>
+
+                                                            <div className={cn(
+                                                                "w-6 h-6 rounded-full flex items-center justify-center",
+                                                                selectedCourseData.card_style === 'bold' ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
+                                                            )}>
+                                                                <Edit className="w-3 h-3" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </Card>
