@@ -1116,6 +1116,7 @@ const VideoUploadManager = () => {
                                                             videos={moduleVideos}
                                                             editingVideo={editingVideo}
                                                             setEditingVideo={setEditingVideo}
+                                                            setVideoToPreview={setVideoToPreview}
                                                             handleUpdateVideo={handleUpdateVideo}
                                                             handleDeleteVideo={handleDeleteVideo}
                                                             modules={modules}
@@ -1139,6 +1140,7 @@ const VideoUploadManager = () => {
                                                         videos={videos.filter(v => !v.module_id)}
                                                         editingVideo={editingVideo}
                                                         setEditingVideo={setEditingVideo}
+                                                        setVideoToPreview={setVideoToPreview}
                                                         handleUpdateVideo={handleUpdateVideo}
                                                         handleDeleteVideo={handleDeleteVideo}
                                                         modules={modules}
@@ -1493,6 +1495,7 @@ const VideoTable = ({
     videos,
     editingVideo,
     setEditingVideo,
+    setVideoToPreview,
     handleUpdateVideo,
     handleDeleteVideo,
     modules,
@@ -1501,8 +1504,9 @@ const VideoTable = ({
     videos: CourseVideo[];
     editingVideo: CourseVideo | null;
     setEditingVideo: (v: CourseVideo | null) => void;
+    setVideoToPreview: (v: CourseVideo | null) => void;
     handleUpdateVideo: (v: CourseVideo) => void;
-    handleDeleteVideo: (id: string, path: string) => void;
+    handleDeleteVideo: (id: string) => void;
     modules: Module[];
     onEditAdvanced: (v: CourseVideo) => void;
 }) => (
