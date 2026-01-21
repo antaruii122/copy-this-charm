@@ -117,6 +117,7 @@ const VideoUploadManager = () => {
     // Google Drive integration
     const [uploadMethod, setUploadMethod] = useState<'local' | 'drive'>('local');
     const { selectFromDrive, isLoading: isDriveLoading } = useGoogleDrivePicker();
+    const [lastUploadedVideo, setLastUploadedVideo] = useState<{ name: string, embedUrl: string } | null>(null);
 
     const [newCourseForm, setNewCourseForm] = useState({
         title: "",
@@ -651,6 +652,12 @@ const VideoUploadManager = () => {
 
             console.log('Insert successful:', data);
 
+            // Store for preview
+            setLastUploadedVideo({
+                name: driveFile.name,
+                embedUrl: driveFile.embedUrl
+            });
+
             toast({
                 title: "Video de Google Drive añadido",
                 description: `"${driveFile.name}" se agregó correctamente`,
@@ -1107,6 +1114,51 @@ const VideoUploadManager = () => {
                                                     )}
                                                 </div>
                                             ))}
+                                        </div>
+                                    )}
+
+                                    {/* Video Preview after Drive Upload */}
+                                    {lastUploadedVideo && (
+                                        <div className="mt-6 space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-sm font-semibold text-foreground">Vista Previa del Video</h3>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => setLastUploadedVideo(null)}
+                                                    className="text-muted-foreground hover:text-foreground"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+
+                                            <div className="rounded-xl overflow-hidden border border-border/50 bg-black">
+                                                <iframe
+                                                    src={lastUploadedVideo.embedUrl}
+                                                    className="w-full aspect-video"
+                                                    allow="autoplay; encrypted-media"
+                                                    allowFullScreen
+                                                    title={lastUploadedVideo.name}
+                                                />
+                                            </div>
+
+                                            <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
+                                                <div>
+                                                    <p className="text-sm font-medium text-foreground">{lastUploadedVideo.name}</p>
+                                                    <p className="text-xs text-muted-foreground mt-1">Video añadido correctamente</p>
+                                                </div>
+                                                <Button
+                                                    onClick={() => {
+                                                        setLastUploadedVideo(null);
+                                                        setUploadMethod('drive');
+                                                    }}
+                                                    className="rounded-xl gap-2"
+                                                    variant="outline"
+                                                >
+                                                    <Plus className="w-4 h-4" />
+                                                    Subir Otro Video
+                                                </Button>
+                                            </div>
                                         </div>
                                     )}
                                 </CardContent>
