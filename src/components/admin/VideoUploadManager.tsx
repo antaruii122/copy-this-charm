@@ -595,6 +595,16 @@ const VideoUploadManager = () => {
                     i === index ? { ...p, progress: 100, status: "success" } : p
                 )
             );
+
+            // Set last uploaded video for preview
+            const { data: { publicUrl } } = supabase.storage
+                .from("videodecurso")
+                .getPublicUrl(fileName);
+
+            setLastUploadedVideo({
+                name: videoTitle,
+                embedUrl: publicUrl
+            });
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Error desconocido";
             setUploadProgress((prev) =>
