@@ -49,11 +49,11 @@ const Header = () => {
                 </a>
               )
             ))}
-            <Link to={isSignedIn ? "/aula-virtual" : "/auth"}>
-              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Link to={isSignedIn ? "/aula-virtual" : "/auth"}>
                 {isSignedIn ? "Aula Virtual" : "Iniciar Sesión"}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             {isSignedIn && <UserButton />}
           </nav>
 
@@ -92,11 +92,11 @@ const Header = () => {
                   </a>
                 )
               ))}
-              <Link to={isSignedIn ? "/aula-virtual" : "/auth"} onClick={() => setIsMenuOpen(false)}>
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2">
+              <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2">
+                <Link to={isSignedIn ? "/aula-virtual" : "/auth"} onClick={() => setIsMenuOpen(false)}>
                   {isSignedIn ? "Aula Virtual" : "Iniciar Sesión"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </nav>
         )}
