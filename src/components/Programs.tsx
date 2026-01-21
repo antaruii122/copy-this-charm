@@ -13,6 +13,7 @@ type Program = Tables<"courses"> & {
   card_style?: string;
   badge_text?: string;
   original_price?: string;
+  border_color?: string; // Added border_color
 };
 
 const Programs = () => {
@@ -78,7 +79,12 @@ const Programs = () => {
               <Link
                 key={index}
                 to={`/cursos/${program.slug}`}
-                className={`group relative rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:scale-105 flex flex-col aspect-[9/16] ${staggerClass}`}
+                className={cn(
+                  "group relative rounded-3xl bg-white overflow-hidden flex flex-col aspect-[9/16] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+                  "shadow-sm",
+                  program.border_color ? `border-2 ${program.border_color}` : "border border-border",
+                  staggerClass
+                )}
               >
                 {/* Image Container - Top 45% */}
                 <div className="h-[45%] w-full relative bg-muted/20 border-b overflow-hidden">
@@ -98,50 +104,69 @@ const Programs = () => {
                   )}
                 </div>
 
-                {/* Content Container - Bottom 55% */}
-                <div className={`h-[55%] w-full flex flex-col p-5 transition-colors duration-300 ${program.card_style === 'elegant' ? "bg-[#F4F6F4]" : // Sage Tint
-                  program.card_style === 'bold' ? "bg-primary text-primary-foreground" :
-                    "bg-white" // Standard Minimal
-                  }`}>
+                <div className={cn(
+                  "h-[55%] w-full flex flex-col p-4 text-left",
+                  program.card_style === 'elegant' ? "bg-[#F4F6F4]" :
+                    program.card_style === 'rose' ? "bg-[#FFF0F5]" :
+                      program.card_style === 'bold' || program.card_style === 'dark' ? "bg-primary text-primary-foreground" :
+                        "bg-white"
+                )}>
                   {/* Badge */}
-                  <div className="mb-3">
-                    <span className={`text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-sm ${program.card_style === 'bold' ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
-                      }`}>
-                      {program.badge_text || program.category || "CURSO"}
+                  <div className="mb-2">
+                    <span className={cn(
+                      "text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-sm inline-block",
+                      (program.card_style === 'bold' || program.card_style === 'dark') ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
+                    )}>
+                      {program.badge_text || "PROGRAMA"}
                     </span>
                   </div>
 
                   {/* Title */}
-                  <h3 className={`font-serif text-xl font-bold leading-tight mb-2 line-clamp-2 ${program.card_style === 'bold' ? "text-white" : "text-gray-900"
-                    }`}>
+                  <h3 className={cn(
+                    "font-serif text-lg font-bold leading-tight line-clamp-2 mb-2",
+                    (program.card_style === 'bold' || program.card_style === 'dark') ? "text-white" : "text-gray-900"
+                  )}>
                     {program.title}
                   </h3>
 
                   {/* Description */}
-                  <p className={`text-sm line-clamp-3 mb-4 flex-1 ${program.card_style === 'bold' ? "text-white/80" : "text-muted-foreground"
-                    }`}>
-                    {program.description || "Descubre el poder de transformar tu salud hormonal con este programa especializado."}
+                  <p className={cn(
+                    "text-xs line-clamp-3 mb-4 flex-1 leading-relaxed",
+                    (program.card_style === 'bold' || program.card_style === 'dark') ? "text-white/80" : "text-muted-foreground"
+                  )}>
+                    {program.description}
                   </p>
 
-                  {/* Footer: Price & Action */}
+                  {/* Footer */}
                   <div className="flex items-end justify-between mt-auto pt-4 border-t border-border/10">
                     <div className="flex flex-col">
                       {program.original_price && (
-                        <span className={`text-xs line-through mb-0.5 ${program.card_style === 'bold' ? "text-white/60" : "text-muted-foreground/70"
-                          }`}>
+                        <span className={cn(
+                          "text-[10px] line-through mb-0.5",
+                          (program.card_style === 'bold' || program.card_style === 'dark') ? "text-white/60" : "text-muted-foreground/70"
+                        )}>
                           {program.original_price}
                         </span>
                       )}
-                      <span className={`text-lg font-bold ${program.card_style === 'bold' ? "text-white" : "text-primary"
-                        }`}>
-                        {program.price || "Gratis"}
+                      <span className={cn(
+                        "text-base font-bold",
+                        (program.card_style === 'bold' || program.card_style === 'dark') ? "text-white" : "text-primary"
+                      )}>
+                        {program.price}
                       </span>
                     </div>
 
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${program.card_style === 'bold' ? "bg-white/20 text-white group-hover:bg-white group-hover:text-primary" : "bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"
-                      }`}>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
+                    <Button
+                      size="sm"
+                      className={cn(
+                        "rounded-full px-4 h-8 text-xs font-bold shadow-none",
+                        (program.card_style === 'bold' || program.card_style === 'dark')
+                          ? "bg-white text-primary hover:bg-white/90"
+                          : "bg-primary text-white hover:bg-primary/90"
+                      )}
+                    >
+                      Ver más
+                    </Button>
                   </div>
                 </div>
               </Link>
