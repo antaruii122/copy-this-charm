@@ -215,6 +215,8 @@ const VideoUploadManager = () => {
                     original_price: selectedCourseData.original_price,
                     badge_text: selectedCourseData.badge_text,
                     border_color: selectedCourseData.border_color,
+                    color_theme: selectedCourseData.color_theme,
+                    border_theme: selectedCourseData.border_theme,
                 })
                 .eq("id", selectedCourse);
 
@@ -996,9 +998,13 @@ const VideoUploadManager = () => {
                                         selectedCourse === course.id
                                             ? "border-primary border-2 shadow-[0_0_20px_rgba(191,89,103,0.1)] scale-[1.02]"
                                             : "hover:border-primary/20",
-                                        "aspect-[9/16]", // Enforce 9:16 aspect ratio
-                                        course.border_color ? `border-2 ${course.border_color}` : "border-border"
+                                        "aspect-[9/16]" // Enforce 9:16 aspect ratio
                                     )}
+                                    style={{
+                                        borderColor: course.border_theme || 'transparent',
+                                        borderWidth: course.border_theme ? '2px' : '0px',
+                                        borderStyle: course.border_theme ? 'solid' : 'none'
+                                    }}
                                 >
                                     {/* CLASIC VERTICAL SPLIT DESIGN (Option B) */}
                                     {/* Image Top (45%) */}
