@@ -981,46 +981,55 @@ const VideoUploadManager = () => {
                                         setActiveTab("contenido");
                                     }}
                                     className={cn(
-                                        "group relative p-6 rounded-3xl border bg-white cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1",
+                                        "group relative rounded-3xl border bg-white cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden flex flex-col",
                                         selectedCourse === course.id
-                                            ? "border-primary border-2 shadow-[0_0_20px_rgba(191,89,103,0.1)] bg-muted scale-[1.02]"
+                                            ? "border-primary border-2 shadow-[0_0_20px_rgba(191,89,103,0.1)] scale-[1.02]"
                                             : "border-border hover:border-primary/20"
                                     )}
                                 >
-                                    <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <ChevronRight className="w-5 h-5" />
-                                    </div>
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-6">
-                                        <Video className="w-7 h-7 text-primary" />
-                                    </div>
-                                    <h3 className="font-serif text-xl font-semibold mb-2 line-clamp-1">{course.title}</h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-6">
-                                        {course.description || "Sin descripción proporcionada."}
-                                    </p>
-                                    <div className="flex items-center justify-between pt-4 border-t border-border/30">
-                                        <div className="flex items-center gap-4">
-                                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest text-primary/70">
-                                                {course.price || "Gratis"}
-                                            </span>
-                                            {course.is_featured && (
-                                                <span className="flex items-center gap-1.5 text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full uppercase">
+                                    <div className="relative w-full aspect-[9/16] bg-muted/20 border-b">
+                                        {course.image_url ? (
+                                            <img
+                                                src={course.image_url}
+                                                alt={course.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+                                                <Video className="w-12 h-12 text-primary/20" />
+                                            </div>
+                                        )}
+                                        {course.is_featured && (
+                                            <div className="absolute top-3 right-3">
+                                                <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-white/90 backdrop-blur-sm rounded-full uppercase border border-primary/20 shadow-sm">
                                                     Destacado
                                                 </span>
-                                            )}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="p-5 flex flex-col flex-1 gap-3">
+                                        <h3 className="font-serif text-lg font-bold leading-tight line-clamp-2 min-h-[3rem]">{course.title}</h3>
+                                        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                                            {course.description || "Sin descripción proporcionada."}
+                                        </p>
+
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
+                                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest text-primary/70">{course.price || "Gratis"}</span>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-8 gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg pr-3 pl-2"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedCourse(course.id);
+                                                    setActiveTab("marketing");
+                                                }}
+                                            >
+                                                <Edit className="w-3.5 h-3.5" />
+                                                Editar
+                                            </Button>
                                         </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-8 gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg pr-3 pl-2"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setSelectedCourse(course.id);
-                                                setActiveTab("marketing");
-                                            }}
-                                        >
-                                            <Edit className="w-3.5 h-3.5" />
-                                            Editar
-                                        </Button>
                                     </div>
                                 </div>
                             ))
