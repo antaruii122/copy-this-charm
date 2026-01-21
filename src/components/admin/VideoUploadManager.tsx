@@ -1506,7 +1506,7 @@ const VideoTable = ({
     setEditingVideo: (v: CourseVideo | null) => void;
     setVideoToPreview: (v: CourseVideo | null) => void;
     handleUpdateVideo: (v: CourseVideo) => void;
-    handleDeleteVideo: (id: string) => void;
+    handleDeleteVideo: (id: string, path: string) => void;
     modules: Module[];
     onEditAdvanced: (v: CourseVideo) => void;
 }) => (
