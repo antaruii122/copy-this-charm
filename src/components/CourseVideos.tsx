@@ -28,6 +28,8 @@ interface Video {
   url?: string;
   module_id: string | null;
   sort_order: number;
+  is_drive_video?: boolean;
+  is_youtube_video?: boolean;
 }
 
 interface Module {
@@ -149,17 +151,40 @@ const CourseVideos = ({ courseId }: CourseVideosProps) => {
           // Get signed URLs for each video
           const videosWithUrls = await Promise.all(
             courseVideos.map(async (video) => {
-              const { data: urlData } = await supabase.storage
-                .from("videodecurso")
-                .createSignedUrl(video.video_path, 3600);
+              let finalUrl = "";
+
+              if (video.is_youtube_video) {
+                finalUrl = video.video_path || "";
+              } else if (video.is_drive_video) {
+                finalUrl = video.video_path || ""; // Drive videos might store embed URL in video_path directly
+              } else {
+                // Native storage video
+                const { data: urlData } = await supabase.storage
+                  .from("videodecurso_new") // Ensure we check the new bucket
+                  .createSignedUrl(video.video_path, 3600);
+
+                // If not found in new bucket, try old bucket (fallback)
+                if (!urlData?.signedUrl) {
+                  const { data: oldUrlData } = await supabase.storage
+                    .from("videodecurso")
+                    .createSignedUrl(video.video_path, 3600);
+                  finalUrl = oldUrlData?.signedUrl || "";
+                } else {
+                  finalUrl = urlData.signedUrl;
+                }
+              }
 
               return {
                 id: video.id,
                 name: video.video_path,
                 title: video.title,
-                url: urlData?.signedUrl || "",
+                url: finalUrl,
                 module_id: video.module_id,
-                sort_order: video.sort_order || 0
+                sort_order: video.sort_order || 0,
+                // @ts-ignore
+                is_drive_video: video.is_drive_video,
+                // @ts-ignore
+                is_youtube_video: video.is_youtube_video
               };
             })
           );
@@ -405,64 +430,78 @@ const CourseVideos = ({ courseId }: CourseVideosProps) => {
             <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video group border border-white/5">
               {selectedVideo?.url ? (
                 <>
-                  <video
-                    ref={videoRef}
-                    src={selectedVideo.url}
-                    className="w-full h-full object-contain"
-                    onTimeUpdate={handleTimeUpdate}
-                    onLoadedMetadata={handleLoadedMetadata}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                    onEnded={() => {
-                      setIsPlaying(false);
-                      if (selectedVideo) {
-                        markAsCompleted(selectedVideo.id, true);
-                      }
-                    }}
-                  />
-
-                  {/* Play/Pause Overlay */}
-                  <div
-                    className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/0 hover:bg-black/10 transition-colors"
-                    onClick={togglePlay}
-                  >
-                    {!isPlaying && (
-                      <div className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform backdrop-blur-sm">
-                        <Play className="w-8 h-8 text-primary-foreground ml-1" fill="currentColor" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Controls Bar */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {/* Progress Bar */}
-                    <div
-                      className="h-1.5 bg-white/20 rounded-full mb-4 cursor-pointer group/progress overflow-hidden"
-                      onClick={handleProgressClick}
-                    >
-                      <div
-                        className="h-full bg-primary rounded-full relative transition-all"
-                        style={{ width: `${progress}%` }}
+                  {selectedVideo.is_youtube_video ? (
+                    <div className="w-full h-full">
+                      <iframe
+                        src={selectedVideo.url.replace("watch?v=", "embed/")}
+                        className="w-full h-full"
+                        title={selectedVideo.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  ) : (
+                    <>
+                      <video
+                        ref={videoRef}
+                        src={selectedVideo.url}
+                        className="w-full h-full object-contain"
+                        onTimeUpdate={handleTimeUpdate}
+                        onLoadedMetadata={handleLoadedMetadata}
+                        onPlay={() => setIsPlaying(true)}
+                        onPause={() => setIsPlaying(false)}
+                        onEnded={() => {
+                          setIsPlaying(false);
+                          if (selectedVideo) {
+                            markAsCompleted(selectedVideo.id, true);
+                          }
+                        }}
                       />
-                    </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
-                          {isPlaying ? <Pause className="w-6 h-6" fill="currentColor" /> : <Play className="w-6 h-6" fill="currentColor" />}
-                        </button>
-                        <button onClick={toggleMute} className="text-white hover:text-primary transition-colors">
-                          {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-                        </button>
-                        <span className="text-white text-sm font-medium font-mono">
-                          {currentTime} / {duration}
-                        </span>
+                      {/* Play/Pause Overlay */}
+                      <div
+                        className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/0 hover:bg-black/10 transition-colors"
+                        onClick={togglePlay}
+                      >
+                        {!isPlaying && (
+                          <div className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform backdrop-blur-sm">
+                            <Play className="w-8 h-8 text-primary-foreground ml-1" fill="currentColor" />
+                          </div>
+                        )}
                       </div>
-                      <button onClick={handleFullscreen} className="text-white hover:text-primary transition-colors">
-                        <Maximize className="w-6 h-6" />
-                      </button>
-                    </div>
-                  </div>
+
+                      {/* Controls Bar */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {/* Progress Bar */}
+                        <div
+                          className="h-1.5 bg-white/20 rounded-full mb-4 cursor-pointer group/progress overflow-hidden"
+                          onClick={handleProgressClick}
+                        >
+                          <div
+                            className="h-full bg-primary rounded-full relative transition-all"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
+                              {isPlaying ? <Pause className="w-6 h-6" fill="currentColor" /> : <Play className="w-6 h-6" fill="currentColor" />}
+                            </button>
+                            <button onClick={toggleMute} className="text-white hover:text-primary transition-colors">
+                              {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+                            </button>
+                            <span className="text-white text-sm font-medium font-mono">
+                              {currentTime} / {duration}
+                            </span>
+                          </div>
+                          <button onClick={handleFullscreen} className="text-white hover:text-primary transition-colors">
+                            <Maximize className="w-6 h-6" />
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </>
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-4">
@@ -617,7 +656,7 @@ const CourseVideos = ({ courseId }: CourseVideosProps) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

@@ -36,7 +36,8 @@ import {
     ShieldCheck,
     ChevronRight,
     Cloud,
-    Play
+    Play,
+    Youtube
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -125,11 +126,12 @@ const VideoUploadManager = () => {
     const { toast } = useToast();
     const [activeTab, setActiveTab] = useState("cursos");
 
-    // Google Drive integration
-    const [uploadMethod, setUploadMethod] = useState<'local' | 'drive'>('local');
+    // Google Drive & YouTube integration
+    const [uploadMethod, setUploadMethod] = useState<'local' | 'drive' | 'youtube'>('local');
     const { selectFromDrive, isLoading: isDriveLoading } = useGoogleDrivePicker();
     const [lastUploadedVideo, setLastUploadedVideo] = useState<{ name: string, embedUrl: string } | null>(null);
     const [videoToPreview, setVideoToPreview] = useState<CourseVideo | null>(null);
+    const [youtubeUrl, setYoutubeUrl] = useState("");
 
     const [newCourseForm, setNewCourseForm] = useState({
         title: "",
@@ -780,6 +782,57 @@ const VideoUploadManager = () => {
         }
     };
 
+    const handleYouTubeSave = async () => {
+        if (!selectedCourse) return;
+        if (!youtubeUrl) {
+            toast({ title: "Error", description: "La URL de YouTube es obligatoria", variant: "destructive" });
+            return;
+        }
+
+        try {
+            const insertData = {
+                title: videoMetadata.title || "Video de YouTube",
+                description: videoMetadata.description,
+                video_path: youtubeUrl,
+                course_id: selectedCourse,
+                module_id: videoMetadata.module_id === "none" || !videoMetadata.module_id ? null : videoMetadata.module_id,
+                sort_order: videoMetadata.sort_order || 0,
+                is_youtube_video: true,
+                duration_seconds: videoMetadata.duration_seconds || 0,
+                thumbnail_url: videoMetadata.thumbnail_url
+            };
+
+            const { error } = await supabase
+                .from("course_videos")
+                .insert(insertData);
+
+            if (error) throw error;
+
+            setLastUploadedVideo({
+                name: insertData.title,
+                embedUrl: youtubeUrl
+            });
+
+            toast({ title: "Video de YouTube añadido correctamente" });
+
+            setVideoMetadata({
+                title: "",
+                description: "",
+                course_id: selectedCourse,
+                module_id: "none",
+                sort_order: 0,
+                thumbnail_url: "",
+                duration_seconds: 0
+            });
+            setYoutubeUrl(""); // Reset
+            fetchCourseVideos(selectedCourse);
+
+        } catch (error) {
+            console.error("Error saving YouTube video:", error);
+            toast({ title: "Error", description: "No se pudo guardar el video", variant: "destructive" });
+        }
+    };
+
     const handleDeleteVideo = async (videoId: string, videoPath: string) => {
         if (!confirm("¿Estás seguro de eliminar este video?")) return;
 
@@ -1294,6 +1347,10 @@ const VideoUploadManager = () => {
                                                         <Cloud className="w-4 h-4" />
                                                         Google Drive
                                                     </TabsTrigger>
+                                                    <TabsTrigger value="youtube" className="gap-2">
+                                                        <Youtube className="w-4 h-4" />
+                                                        YouTube
+                                                    </TabsTrigger>
                                                 </TabsList>
 
                                                 <TabsContent value="local" className="mt-0">
@@ -1376,6 +1433,62 @@ const VideoUploadManager = () => {
                                                                     </>
                                                                 )}
                                                             </Button>
+                                                        </div>
+                                                    </div>
+                                                </TabsContent>
+
+                                                <TabsContent value="youtube" className="mt-0">
+                                                    <div className="border-2 border-dashed border-primary/20 rounded-2xl p-10 text-center bg-primary/5">
+                                                        <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
+                                                            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm">
+                                                                <Youtube className="w-8 h-8 text-red-600" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-medium text-foreground mb-1">
+                                                                    Añadir video de YouTube
+                                                                </p>
+                                                                <p className="text-xs text-muted-foreground">
+                                                                    Pega el enlace directo del video.
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="w-full space-y-4 text-left">
+                                                                <div className="space-y-2">
+                                                                    <Label htmlFor="youtube-url" className="text-xs font-semibold uppercase text-muted-foreground">
+                                                                        URL del Video
+                                                                    </Label>
+                                                                    <Input
+                                                                        id="youtube-url"
+                                                                        placeholder="https://www.youtube.com/watch?v=..."
+                                                                        value={youtubeUrl}
+                                                                        onChange={(e) => setYoutubeUrl(e.target.value)}
+                                                                        className="rounded-xl"
+                                                                    />
+                                                                </div>
+
+                                                                <div className="space-y-2">
+                                                                    <Label htmlFor="youtube-duration" className="text-xs font-semibold uppercase text-muted-foreground">
+                                                                        Duración (Segundos)
+                                                                    </Label>
+                                                                    <Input
+                                                                        id="youtube-duration"
+                                                                        type="number"
+                                                                        placeholder="Ej: 300"
+                                                                        value={videoMetadata.duration_seconds || ""}
+                                                                        onChange={(e) => setVideoMetadata({ ...videoMetadata, duration_seconds: parseInt(e.target.value) || 0 })}
+                                                                        className="rounded-xl"
+                                                                    />
+                                                                </div>
+
+                                                                <Button
+                                                                    onClick={handleYouTubeSave}
+                                                                    disabled={!youtubeUrl || !selectedCourse}
+                                                                    className="w-full rounded-xl gap-2"
+                                                                >
+                                                                    <Plus className="w-4 h-4" />
+                                                                    Añadir Video
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </TabsContent>
