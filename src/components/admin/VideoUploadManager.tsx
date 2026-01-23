@@ -177,7 +177,7 @@ const VideoUploadManager = () => {
             if (uploadError) throw uploadError;
 
             const { data: { publicUrl } } = supabase.storage
-                .from('videodecurso')
+                .from('videodecurso_new')
                 .getPublicUrl(fileName);
 
             return publicUrl;
@@ -633,7 +633,7 @@ const VideoUploadManager = () => {
 
             // Upload to Supabase Storage
             const { data: uploadData, error: uploadError } = await supabase.storage
-                .from("videodecurso")
+                .from("videodecurso_new")
                 .upload(fileName, file, {
                     cacheControl: "3600",
                     upsert: false,
@@ -674,7 +674,7 @@ const VideoUploadManager = () => {
 
             // Set last uploaded video for preview
             const { data: { publicUrl } } = supabase.storage
-                .from("videodecurso")
+                .from("videodecurso_new")
                 .getPublicUrl(fileName);
 
             setLastUploadedVideo({
@@ -766,6 +766,7 @@ const VideoUploadManager = () => {
                 module_id: "none",
                 sort_order: 0,
                 thumbnail_url: "",
+                duration_seconds: 0,
             });
 
             fetchCourseVideos(selectedCourse);
@@ -785,7 +786,7 @@ const VideoUploadManager = () => {
         try {
             // Delete from storage
             const { error: storageError } = await supabase.storage
-                .from("videodecurso")
+                .from("videodecurso_new")
                 .remove([videoPath]);
 
             if (storageError) throw storageError;
