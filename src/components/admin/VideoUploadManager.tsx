@@ -682,6 +682,11 @@ const VideoUploadManager = () => {
                 embedUrl: publicUrl
             });
         } catch (error) {
+            console.error("FULL UPLOAD ERROR DETAILS:", JSON.stringify(error, null, 2));
+            if (error instanceof Error) {
+                console.error("Error Message:", error.message);
+                console.error("Error Stack:", error.stack);
+            }
             const errorMessage = error instanceof Error ? error.message : "Error desconocido";
             setUploadProgress((prev) =>
                 prev.map((p, i) =>
