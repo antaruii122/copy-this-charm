@@ -142,22 +142,35 @@ const VideoUploadManager = () => {
         if (videoId) {
             setIsFetchingYoutube(true);
             const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-            const details = await fetchYouTubeDetails(videoId, apiKey);
 
-            if (details) {
+            try {
+                const details = await fetchYouTubeDetails(videoId, apiKey);
+
+                if (details) {
+                    setVideoMetadata(prev => ({
+                        ...prev,
+                        title: details.title,
+                        description: details.description.slice(0, 500),
+                        duration_seconds: details.durationSeconds,
+                        thumbnail_url: details.thumbnailUrl
+                    }));
+                }
+            } catch (error) {
+                console.error(error);
+                toast({
+                    title: "No se pudo obtener datos automáticos",
+                    description: error instanceof Error ? error.message : "Ingresa los datos manualmente.",
+                    variant: "destructive"
+                });
+                // Fallback: Allow partial manual entry if they have the ID
                 setVideoMetadata(prev => ({
                     ...prev,
-                    title: details.title,
-                    description: details.description.slice(0, 500), // Limit description length
-                    duration_seconds: details.durationSeconds,
-                    thumbnail_url: details.thumbnailUrl
+                    title: "Video de YouTube (Manual)",
+                    thumbnail_url: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` // Fallback thumbnail
                 }));
-                toast({
-                    title: "Información de YouTube encontrada",
-                    description: `Duración: ${Math.floor(details.durationSeconds / 60)}:${(details.durationSeconds % 60).toString().padStart(2, '0')}`,
-                });
+            } finally {
+                setIsFetchingYoutube(false);
             }
-            setIsFetchingYoutube(false);
         }
     };
 
