@@ -12,6 +12,7 @@ import CourseLandingPage from "./pages/CourseLandingPage";
 import CoursePlayer from "./pages/CoursePlayer";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ErrorBoundary } from "./components/ui/error-boundary";
 
 const queryClient = new QueryClient();
 
@@ -21,31 +22,33 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/aula-virtual" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/aula-virtual/:courseId" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/cursos/:slug" element={<CourseLandingPage />} />
-            <Route path="/aprender/:slug" element={
-              <ProtectedRoute>
-                <CoursePlayer />
-              </ProtectedRoute>
-            } />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <ErrorBoundary>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/aula-virtual" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/aula-virtual/:courseId" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/cursos/:slug" element={<CourseLandingPage />} />
+              <Route path="/aprender/:slug" element={
+                <ProtectedRoute>
+                  <CoursePlayer />
+                </ProtectedRoute>
+              } />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </ErrorBoundary>
       </TooltipProvider>
     </QueryClientProvider>
   </HelmetProvider>
