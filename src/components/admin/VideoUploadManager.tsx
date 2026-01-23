@@ -153,6 +153,7 @@ const VideoUploadManager = () => {
         module_id: "",
         sort_order: 0,
         thumbnail_url: "",
+        duration_seconds: 0,
     });
 
     const [newModuleForm, setNewModuleForm] = useState({
@@ -600,6 +601,21 @@ const VideoUploadManager = () => {
         toast({ title: "Carga completada", description: "Todos los videos han sido procesados" });
     };
 
+    const getVideoDuration = (file: File): Promise<number> => {
+        return new Promise((resolve) => {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.onloadedmetadata = () => {
+                window.URL.revokeObjectURL(video.src);
+                resolve(Math.round(video.duration));
+            };
+            video.onerror = () => {
+                resolve(0);
+            }
+            video.src = window.URL.createObjectURL(file);
+        });
+    };
+
     const uploadSingleFile = async (file: File, index: number) => {
         // Sanitize file name: remove special characters, spaces, and accents
         const sanitizedName = file.name
@@ -611,6 +627,10 @@ const VideoUploadManager = () => {
         const fileName = `${Date.now()}-${sanitizedName}`;
 
         try {
+            // Get duration BEFORE upload
+            const duration = await getVideoDuration(file);
+            console.log(`Duration calculated for ${file.name}: ${duration}s`);
+
             // Upload to Supabase Storage
             const { data: uploadData, error: uploadError } = await supabase.storage
                 .from("videodecurso")
@@ -640,6 +660,7 @@ const VideoUploadManager = () => {
                     video_path: fileName,
                     sort_order: videoMetadata.sort_order + index,
                     thumbnail_url: videoMetadata.thumbnail_url || null,
+                    duration_seconds: duration, // SAVING CORRECT DURATION
                 });
 
             if (dbError) throw dbError;
@@ -703,6 +724,7 @@ const VideoUploadManager = () => {
                 sort_order: videoMetadata.sort_order || 0,
                 is_drive_video: true,
                 drive_file_id: driveFile.id,
+                duration_seconds: videoMetadata.duration_seconds || 0, // SAVE THE MANUAL DURATION
             };
 
             console.log('Inserting data:', insertData);
@@ -1312,10 +1334,29 @@ const VideoUploadManager = () => {
                                                                     El video debe estar configurado como "Cualquiera con el enlace puede ver"
                                                                 </p>
                                                             </div>
+
+                                                            {/* New Manual Duration Input */}
+                                                            <div className="w-full max-w-xs space-y-2 text-left">
+                                                                <Label htmlFor="drive-duration" className="text-xs font-semibold uppercase text-muted-foreground">
+                                                                    Duración (Segundos)
+                                                                </Label>
+                                                                <Input
+                                                                    id="drive-duration"
+                                                                    type="number"
+                                                                    placeholder="Ej: 300 para 5 min"
+                                                                    value={videoMetadata.duration_seconds || ""}
+                                                                    onChange={(e) => setVideoMetadata({ ...videoMetadata, duration_seconds: parseInt(e.target.value) || 0 })}
+                                                                    className="text-center rounded-xl border-dashed"
+                                                                />
+                                                                <p className="text-[10px] text-muted-foreground text-center">
+                                                                    *Introduce la duración manual ya que Drive no la comparte.
+                                                                </p>
+                                                            </div>
+
                                                             <Button
                                                                 onClick={handleDriveUpload}
                                                                 disabled={isDriveLoading || !selectedCourse}
-                                                                className="rounded-xl gap-2"
+                                                                className="rounded-xl gap-2 w-full max-w-xs"
                                                             >
                                                                 {isDriveLoading ? (
                                                                     <>
