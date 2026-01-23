@@ -433,7 +433,10 @@ const CourseVideos = ({ courseId }: CourseVideosProps) => {
                   {selectedVideo.is_youtube_video ? (
                     <div className="w-full h-full">
                       <iframe
-                        src={selectedVideo.url.replace("watch?v=", "embed/")}
+                        src={(() => {
+                          const id = selectedVideo.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/)?.[2];
+                          return id ? `https://www.youtube.com/embed/${id}` : selectedVideo.url;
+                        })()}
                         className="w-full h-full"
                         title={selectedVideo.title}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

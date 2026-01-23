@@ -38,10 +38,18 @@ export const fetchYouTubeDetails = async (videoId: string, apiKey: string): Prom
             `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoId}&key=${apiKey}`
         );
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("YouTube API Error:", errorData);
+            if (response.status === 403) throw new Error("API Key inválida o cuota excedida.");
+            if (response.status === 400) throw new Error("Petición inválida.");
+            throw new Error(`Error de YouTube (${response.status})`);
+        }
+
         const data = await response.json();
 
         if (!data.items || data.items.length === 0) {
-            return null;
+            throw new Error("Video no encontrado (privado o eliminado).");
         }
 
         const item = data.items[0];
@@ -52,10 +60,9 @@ export const fetchYouTubeDetails = async (videoId: string, apiKey: string): Prom
             title: snippet.title,
             durationSeconds: duration,
             thumbnailUrl: snippet.thumbnails.maxres?.url || snippet.thumbnails.high?.url || snippet.thumbnails.default?.url,
-            description: snippet.description
+            description: snippet.description || ""
         };
     } catch (error) {
-        console.error("Error fetching YouTube details:", error);
-        return null;
+        throw error; // Propagate error to UI
     }
 };
