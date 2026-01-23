@@ -163,10 +163,9 @@ const VideoUploadManager = () => {
                     description: error instanceof Error ? error.message : "Ingresa los datos manualmente.",
                     variant: "destructive"
                 });
-                // Fallback: Allow partial manual entry if they have the ID
                 setVideoMetadata(prev => ({
                     ...prev,
-                    title: "Video de YouTube (Manual)",
+                    title: "", // Let user type title
                     thumbnail_url: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` // Fallback thumbnail
                 }));
             } finally {
