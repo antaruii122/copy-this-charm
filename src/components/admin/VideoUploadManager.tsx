@@ -1483,82 +1483,88 @@ const VideoUploadManager = () => {
                                                     </div>
                                                 </TabsContent>
 
-                                                <TabsContent value="youtube" className="mt-6 animate-in fade-in-50 duration-500">
-                                                    <Card className="border-dashed border-2 shadow-none bg-muted/30">
-                                                        <CardContent className="pt-6">
-                                                            <div className="flex flex-col gap-6">
-                                                                <div className="flex items-start gap-4">
-                                                                    <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
-                                                                        <Youtube className="w-6 h-6 text-red-600" />
+                                                <TabsContent value="youtube" className="mt-6 animate-in zoom-in-95 duration-300">
+                                                    {!videoMetadata.title ? (
+                                                        <div className="border-2 border-dashed border-muted-foreground/20 rounded-3xl p-12 text-center bg-muted/10 hover:bg-muted/20 transition-colors">
+                                                            <div className="flex flex-col items-center gap-6 max-w-lg mx-auto">
+                                                                <div className="w-20 h-20 rounded-2xl bg-white shadow-xl flex items-center justify-center transform -rotate-6 transition-transform hover:rotate-0">
+                                                                    <Youtube className="w-10 h-10 text-red-600" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <h3 className="font-serif text-2xl font-medium">Importar desde YouTube</h3>
+                                                                    <p className="text-muted-foreground">
+                                                                        Copia y pega el enlace de tu video. Nosotros haremos el resto.
+                                                                    </p>
+                                                                </div>
+
+                                                                <div className="w-full relative group">
+                                                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                                                        {isFetchingYoutube ? (
+                                                                            <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                                                                        ) : (
+                                                                            <Youtube className="w-5 h-5 text-muted-foreground" />
+                                                                        )}
                                                                     </div>
-                                                                    <div className="space-y-1">
-                                                                        <h3 className="font-semibold text-lg">Añadir desde YouTube</h3>
-                                                                        <p className="text-sm text-muted-foreground">
-                                                                            Pega el enlace de tu video y obtendremos automáticamente toda la información.
-                                                                        </p>
+                                                                    <Input
+                                                                        placeholder="https://www.youtube.com/watch?v=..."
+                                                                        value={youtubeUrl}
+                                                                        onChange={(e) => handleYouTubeUrlChange(e.target.value)}
+                                                                        className="pl-12 h-14 rounded-2xl text-lg shadow-sm border-muted-foreground/20 focus-visible:ring-primary/20 transition-all font-light"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="bg-card rounded-3xl border shadow-xl overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
+                                                            <div className="grid md:grid-cols-5 gap-0">
+                                                                {/* Left: Thumbnail Preview */}
+                                                                <div className="md:col-span-2 relative group overflow-hidden bg-black">
+                                                                    <img
+                                                                        src={videoMetadata.thumbnail_url}
+                                                                        alt="Thumbnail"
+                                                                        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                                                                    />
+                                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                                                                        <div className="flex items-center gap-2 text-white/90 font-medium bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-xs">
+                                                                            <Play className="w-3 h-3 fill-current" />
+                                                                            {Math.floor(videoMetadata.duration_seconds / 60)}:{(videoMetadata.duration_seconds % 60).toString().padStart(2, '0')} min
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
-                                                                <div className="grid gap-4">
-                                                                    <div className="space-y-2">
-                                                                        <Label htmlFor="youtube-url">URL del Video</Label>
-                                                                        <div className="relative">
-                                                                            <Input
-                                                                                id="youtube-url"
-                                                                                placeholder="https://www.youtube.com/watch?v=..."
-                                                                                value={youtubeUrl}
-                                                                                onChange={(e) => handleYouTubeUrlChange(e.target.value)}
-                                                                                className="pl-10 h-12 text-base transition-all ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                                                                            />
-                                                                            <div className="absolute left-3 top-3 text-muted-foreground">
-                                                                                {isFetchingYoutube ? <Loader2 className="w-6 h-6 animate-spin text-primary" /> : <Youtube className="w-6 h-6" />}
-                                                                            </div>
+                                                                {/* Right: Metadata & Actions */}
+                                                                <div className="md:col-span-3 p-8 flex flex-col justify-between bg-gradient-to-br from-background to-muted/20">
+                                                                    <div className="space-y-4">
+                                                                        <div className="flex items-start justify-between gap-4">
+                                                                            <h3 className="font-serif text-2xl leading-tight text-foreground/90">
+                                                                                {videoMetadata.title}
+                                                                            </h3>
+                                                                            <Button
+                                                                                variant="ghost"
+                                                                                size="icon"
+                                                                                className="rounded-full hover:bg-muted"
+                                                                                onClick={() => {
+                                                                                    setVideoMetadata({ ...videoMetadata, title: "" });
+                                                                                    setYoutubeUrl("");
+                                                                                }}
+                                                                            >
+                                                                                <X className="w-5 h-5 text-muted-foreground" />
+                                                                            </Button>
                                                                         </div>
+                                                                        <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+                                                                            {videoMetadata.description}
+                                                                        </p>
                                                                     </div>
 
-                                                                    {videoMetadata.title && (
-                                                                        <div className="bg-background rounded-xl p-4 border shadow-sm flex gap-4 items-start animate-in slide-in-from-top-2">
-                                                                            {videoMetadata.thumbnail_url && (
-                                                                                <img
-                                                                                    src={videoMetadata.thumbnail_url}
-                                                                                    alt="Thumbnail"
-                                                                                    className="w-32 h-20 object-cover rounded-lg shadow-sm"
-                                                                                />
-                                                                            )}
-                                                                            <div className="flex-1 min-w-0">
-                                                                                <h4 className="font-medium text-sm line-clamp-1">{videoMetadata.title}</h4>
-                                                                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                                                                    {videoMetadata.description || "Sin descripción"}
-                                                                                </p>
-                                                                                <div className="flex items-center gap-2 mt-2">
-                                                                                    <span className="text-xs font-mono bg-muted px-2 py-0.5 rounded">
-                                                                                        {Math.floor(videoMetadata.duration_seconds / 60)}:{(videoMetadata.duration_seconds % 60).toString().padStart(2, '0')}
-                                                                                    </span>
-                                                                                    <span className="text-xs text-green-600 flex items-center gap-1">
-                                                                                        <CheckCircle2 className="w-3 h-3" />
-                                                                                        Listo para añadir
-                                                                                    </span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-
-                                                                    <div className="grid grid-cols-2 gap-4">
+                                                                    <div className="mt-8 space-y-4">
                                                                         <div className="space-y-2">
-                                                                            <Label>Título (Editable)</Label>
-                                                                            <Input
-                                                                                value={videoMetadata.title}
-                                                                                onChange={(e) => setVideoMetadata({ ...videoMetadata, title: e.target.value })}
-                                                                            />
-                                                                        </div>
-                                                                        <div className="space-y-2">
-                                                                            <Label>Módulo</Label>
+                                                                            <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Asignar a Módulo</Label>
                                                                             <Select
                                                                                 value={videoMetadata.module_id}
                                                                                 onValueChange={(value) => setVideoMetadata({ ...videoMetadata, module_id: value })}
                                                                             >
-                                                                                <SelectTrigger>
-                                                                                    <SelectValue placeholder="Selecciona un módulo" />
+                                                                                <SelectTrigger className="h-12 rounded-xl bg-background border-muted-foreground/20">
+                                                                                    <SelectValue placeholder="Selecciona un módulo..." />
                                                                                 </SelectTrigger>
                                                                                 <SelectContent>
                                                                                     <SelectItem value="none">Sin Módulo (General)</SelectItem>
@@ -1570,30 +1576,21 @@ const VideoUploadManager = () => {
                                                                                 </SelectContent>
                                                                             </Select>
                                                                         </div>
-                                                                    </div>
 
-                                                                    <Button
-                                                                        onClick={handleYouTubeSave}
-                                                                        disabled={!youtubeUrl || !selectedCourse || isFetchingYoutube}
-                                                                        className="w-full h-11 text-base shadow-lg hover:shadow-xl transition-all"
-                                                                        size="lg"
-                                                                    >
-                                                                        {isFetchingYoutube ? (
-                                                                            <>
-                                                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                                                Obteniendo datos...
-                                                                            </>
-                                                                        ) : (
-                                                                            <>
-                                                                                <Plus className="w-4 h-4 mr-2" />
-                                                                                Añadir Video al Curso
-                                                                            </>
-                                                                        )}
-                                                                    </Button>
+                                                                        <Button
+                                                                            onClick={handleYouTubeSave}
+                                                                            disabled={!selectedCourse}
+                                                                            className="w-full h-12 rounded-xl gap-2 text-base font-medium shadow-lg hover:shadow-primary/25 transition-all"
+                                                                            size="lg"
+                                                                        >
+                                                                            <CheckCircle2 className="w-5 h-5" />
+                                                                            Confirmar e Importar Video
+                                                                        </Button>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </CardContent>
-                                                    </Card>
+                                                        </div>
+                                                    )}
                                                 </TabsContent>
                                             </Tabs>
 
