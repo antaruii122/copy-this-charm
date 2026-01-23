@@ -670,24 +670,60 @@ const VideoUploadManager = () => {
         const fileName = `${Date.now()}-${sanitizedName}`;
 
         try {
+            // Update progress to show upload started
+            setUploadProgress((prev) =>
+                prev.map((p, i) =>
+                    i === index ? { ...p, progress: 10, status: "uploading" } : p
+                )
+            );
+
             // Get duration BEFORE upload
             const duration = await getVideoDuration(file);
             console.log(`Duration calculated for ${file.name}: ${duration}s`);
 
-            // Upload to Supabase Storage
+            // Update progress after duration calculation
+            setUploadProgress((prev) =>
+                prev.map((p, i) =>
+                    i === index ? { ...p, progress: 25, status: "uploading" } : p
+                )
+            );
+
+            // Check if file already exists and remove it if it does
+            const { data: existingFiles } = await supabase.storage
+                .from("videodecurso_new")
+                .list('', {
+                    search: fileName
+                });
+
+            if (existingFiles && existingFiles.length > 0) {
+                console.log(`Removing existing file: ${fileName}`);
+                await supabase.storage
+                    .from("videodecurso_new")
+                    .remove([fileName]);
+            }
+
+            // Update progress before upload
+            setUploadProgress((prev) =>
+                prev.map((p, i) =>
+                    i === index ? { ...p, progress: 50, status: "uploading" } : p
+                )
+            );
+
+            // Upload to Supabase Storage with proper configuration
             const { data: uploadData, error: uploadError } = await supabase.storage
                 .from("videodecurso_new")
                 .upload(fileName, file, {
                     cacheControl: "3600",
-                    upsert: false,
+                    upsert: true, // Allow overwriting if file exists
+                    contentType: file.type || 'video/mp4',
                 });
 
             if (uploadError) throw uploadError;
 
-            // Update progress
+            // Update progress after successful upload
             setUploadProgress((prev) =>
                 prev.map((p, i) =>
-                    i === index ? { ...p, progress: 50, status: "uploading" } : p
+                    i === index ? { ...p, progress: 75, status: "uploading" } : p
                 )
             );
 
