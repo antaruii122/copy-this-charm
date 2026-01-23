@@ -1284,7 +1284,7 @@ const VideoUploadManager = () => {
                                                 <iframe
                                                     src={lastUploadedVideo.embedUrl}
                                                     className="w-full aspect-video"
-                                                    allow="autoplay; encrypted-media"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                     allowFullScreen
                                                     title={lastUploadedVideo.name}
                                                 />
