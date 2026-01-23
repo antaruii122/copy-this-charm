@@ -150,7 +150,7 @@ const CourseVideos = ({ courseId }: CourseVideosProps) => {
         if (courseVideos && courseVideos.length > 0) {
           // Get signed URLs for each video
           const videosWithUrls = await Promise.all(
-            courseVideos.map(async (video) => {
+            courseVideos.map(async (video: any) => {
               let finalUrl = "";
 
               if (video.is_youtube_video) {

@@ -92,6 +92,7 @@ type Module = Tables<"modules">;
 import RichTextEditor from "@/components/ui/rich-text-editor";
 import LessonResourceManager from "@/components/admin/LessonResourceManager";
 import { Checkbox } from "@/components/ui/checkbox";
+import { extractYouTubeId, fetchYouTubeDetails } from "@/lib/youtube";
 
 
 interface UploadProgress {
