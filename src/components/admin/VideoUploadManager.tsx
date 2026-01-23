@@ -855,7 +855,7 @@ const VideoUploadManager = () => {
 
             setLastUploadedVideo({
                 name: insertData.title,
-                embedUrl: youtubeUrl
+                embedUrl: standardUrl
             });
 
             toast({ title: "Video de YouTube añadido correctamente" });
