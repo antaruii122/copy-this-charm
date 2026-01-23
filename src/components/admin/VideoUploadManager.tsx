@@ -2179,7 +2179,15 @@ const VideoUploadManager = () => {
 
                     {videoToPreview && (
                         <div className="relative w-full aspect-video">
-                            {videoToPreview.is_drive_video ? (
+                            {videoToPreview.is_youtube_video ? (
+                                <iframe
+                                    src={videoToPreview.video_path}
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    title={videoToPreview.title}
+                                />
+                            ) : videoToPreview.is_drive_video ? (
                                 <iframe
                                     src={videoToPreview.video_path}
                                     className="w-full h-full"

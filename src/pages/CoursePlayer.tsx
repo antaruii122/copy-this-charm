@@ -42,6 +42,7 @@ interface Video {
     content_text?: string | null;
     is_preview?: boolean | null;
     is_drive_video?: boolean;
+    is_youtube_video?: boolean;
     duration_seconds?: number | null;
     thumbnail_url?: string | null;
 }
@@ -394,8 +395,21 @@ const CoursePlayer = () => {
                 const { data: videoData } = await supabase.from("course_videos").select("*").eq("course_id", courseData.id).order("sort_order");
 
                 const videosWithUrls = await Promise.all((videoData || []).map(async (v) => {
-                    const { data } = await supabase.storage.from("videodecurso").createSignedUrl(v.video_path, 3600);
-                    return { ...v, url: data?.signedUrl };
+                    let finalUrl = "";
+
+                    if (v.is_youtube_video) {
+                        // YouTube videos: use video_path directly (contains embed URL)
+                        finalUrl = v.video_path || "";
+                    } else if (v.is_drive_video) {
+                        // Drive videos: use video_path directly (contains embed URL)
+                        finalUrl = v.video_path || "";
+                    } else {
+                        // Supabase storage videos: create signed URL
+                        const { data } = await supabase.storage.from("videodecurso").createSignedUrl(v.video_path, 3600);
+                        finalUrl = data?.signedUrl || "";
+                    }
+
+                    return { ...v, url: finalUrl };
                 }));
 
                 setVideos(videosWithUrls);
@@ -559,7 +573,15 @@ const CoursePlayer = () => {
                     <div className="w-full bg-black flex justify-center">
                         <div className="w-full max-w-4xl aspect-video relative flex items-center justify-center group">
                             {selectedVideo?.url ? (
-                                selectedVideo.is_drive_video ? (
+                                selectedVideo.is_youtube_video ? (
+                                    <iframe
+                                        src={selectedVideo.url}
+                                        className="w-full h-full"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title={selectedVideo.title}
+                                    />
+                                ) : selectedVideo.is_drive_video ? (
                                     <iframe
                                         src={selectedVideo.video_path}
                                         className="w-full h-full"
