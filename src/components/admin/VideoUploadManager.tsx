@@ -1382,24 +1382,26 @@ const VideoUploadManager = () => {
                                         </div>
                                     ) : (
                                         <>
-                                            <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'local' | 'drive')} className="w-full">
-                                                <TabsList className="grid w-full grid-cols-2 mb-4">
-                                                    <TabsTrigger value="local" className="gap-2">
-                                                        <Upload className="w-4 h-4" />
-                                                        Subir desde Computadora
+                                            <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'local' | 'youtube')} className="w-full">
+                                                <TabsList className="grid w-full grid-cols-2 h-14 p-1 bg-muted/20 rounded-2xl mb-8">
+                                                    <TabsTrigger
+                                                        value="local"
+                                                        className="rounded-xl h-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all text-base font-medium"
+                                                    >
+                                                        <Upload className="w-4 h-4 mr-2" />
+                                                        Subir Archivo
                                                     </TabsTrigger>
-                                                    <TabsTrigger value="drive" className="gap-2">
-                                                        <Cloud className="w-4 h-4" />
-                                                        Google Drive
-                                                    </TabsTrigger>
-                                                    <TabsTrigger value="youtube" className="gap-2">
-                                                        <Youtube className="w-4 h-4" />
+                                                    <TabsTrigger
+                                                        value="youtube"
+                                                        className="rounded-xl h-full data-[state=active]:bg-red-50 data-[state=active]:text-red-600 data-[state=active]:shadow-sm transition-all text-base font-medium"
+                                                    >
+                                                        <Youtube className="w-4 h-4 mr-2" />
                                                         YouTube
                                                     </TabsTrigger>
                                                 </TabsList>
 
-                                                <TabsContent value="local" className="mt-0">
-                                                    <div className="group relative border-2 border-dashed border-primary/20 hover:border-primary/40 rounded-2xl p-10 text-center transition-all bg-primary/5">
+                                                <TabsContent value="local" className="mt-0 animate-in fade-in-50 duration-300">
+                                                    <div className="group relative border-2 border-dashed border-primary/20 hover:border-primary/40 rounded-3xl p-12 text-center transition-all bg-primary/5 hover:bg-primary/10 cursor-pointer">
                                                         <Input
                                                             type="file"
                                                             accept="video/*"
@@ -1411,74 +1413,23 @@ const VideoUploadManager = () => {
                                                         />
                                                         <Label
                                                             htmlFor="video-upload"
-                                                            className="cursor-pointer flex flex-col items-center gap-3"
+                                                            className="cursor-pointer flex flex-col items-center gap-6 w-full h-full"
                                                         >
-                                                            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                                                                <Upload className="w-8 h-8 text-primary" />
+                                                            <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                                                <Upload className="w-10 h-10 text-primary" />
                                                             </div>
-                                                            <div className="space-y-1">
-                                                                <span className="text-base font-semibold block">
-                                                                    {isUploading ? "Subiendo contenido..." : "Sube tus videos educativos"}
+                                                            <div className="space-y-2">
+                                                                <span className="text-xl font-serif font-medium block text-foreground">
+                                                                    {isUploading ? "Subiendo contenido..." : "Arrastra tus videos aquí"}
                                                                 </span>
-                                                                <span className="text-xs text-muted-foreground block">
-                                                                    Selecciona uno o varios archivos (MP4, MOV, etc.)
+                                                                <span className="text-sm text-muted-foreground block max-w-xs mx-auto">
+                                                                    Soporta MP4, MOV. Máximo 2GB por archivo.
                                                                 </span>
                                                             </div>
-                                                        </Label>
-                                                    </div>
-                                                </TabsContent>
-
-                                                <TabsContent value="drive" className="mt-0">
-                                                    <div className="border-2 border-dashed border-primary/20 rounded-2xl p-10 text-center bg-primary/5">
-                                                        <div className="flex flex-col items-center gap-4">
-                                                            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-sm">
-                                                                <Cloud className="w-8 h-8 text-primary" />
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-sm font-medium text-foreground mb-1">
-                                                                    Selecciona un video de tu Google Drive
-                                                                </p>
-                                                                <p className="text-xs text-muted-foreground">
-                                                                    El video debe estar configurado como "Cualquiera con el enlace puede ver"
-                                                                </p>
-                                                            </div>
-
-                                                            {/* New Manual Duration Input */}
-                                                            <div className="w-full max-w-xs space-y-2 text-left">
-                                                                <Label htmlFor="drive-duration" className="text-xs font-semibold uppercase text-muted-foreground">
-                                                                    Duración (Segundos)
-                                                                </Label>
-                                                                <Input
-                                                                    id="drive-duration"
-                                                                    type="number"
-                                                                    placeholder="Ej: 300 para 5 min"
-                                                                    value={videoMetadata.duration_seconds || ""}
-                                                                    onChange={(e) => setVideoMetadata({ ...videoMetadata, duration_seconds: parseInt(e.target.value) || 0 })}
-                                                                    className="text-center rounded-xl border-dashed"
-                                                                />
-                                                                <p className="text-[10px] text-muted-foreground text-center">
-                                                                    *Introduce la duración manual ya que Drive no la comparte.
-                                                                </p>
-                                                            </div>
-
-                                                            <Button
-                                                                onClick={handleDriveUpload}
-                                                                disabled={isDriveLoading || !selectedCourse}
-                                                                className="rounded-xl gap-2 w-full max-w-xs"
-                                                            >
-                                                                {isDriveLoading ? (
-                                                                    <>
-                                                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                                                        Abriendo Drive...
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <Cloud className="w-4 h-4" />
-                                                                        Seleccionar de Google Drive
-                                                                    </>
-                                                                )}
+                                                            <Button variant="outline" className="mt-4 rounded-xl">
+                                                                O selecciona desde tu ordenador
                                                             </Button>
-                                                        </div>
+                                                        </Label>
                                                     </div>
                                                 </TabsContent>
 
