@@ -2356,7 +2356,21 @@ const VideoTable = ({
                             className="w-32 h-20 bg-sage rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-border group/preview relative cursor-pointer hover:ring-2 ring-primary/50 transition-all"
                             onClick={() => setVideoToPreview(video)}
                         >
-                            {video.is_drive_video ? (
+                            {video.is_youtube_video ? (
+                                <div className="w-full h-full relative bg-black">
+                                    {video.thumbnail_url ? (
+                                        <img
+                                            src={video.thumbnail_url}
+                                            alt={video.title}
+                                            className="w-full h-full object-cover opacity-80 group-hover/preview:opacity-100 transition-opacity"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                            <Youtube className="w-6 h-6 text-red-500 opacity-50" />
+                                        </div>
+                                    )}
+                                </div>
+                            ) : video.is_drive_video ? (
                                 <div className="w-full h-full bg-black/10 flex items-center justify-center">
                                     <Cloud className="w-6 h-6 text-muted-foreground opacity-50" />
                                 </div>
