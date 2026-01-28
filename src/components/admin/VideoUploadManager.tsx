@@ -651,6 +651,12 @@ const VideoUploadManager = () => {
                         idx === i ? { ...p, progress: 100, status: "success" } : p
                     )
                 );
+
+                // Show success toast for this video
+                toast({
+                    title: "✅ Video subido exitosamente",
+                    description: `${file.name} se ha subido a Bunny.net y está procesando`
+                });
             } catch (error) {
                 console.error(`Error uploading ${file.name}:`, error);
                 const errorMessage = error instanceof Error ? error.message : "Error desconocido";
@@ -1028,7 +1034,8 @@ const VideoUploadManager = () => {
             // Step 4: Save to Supabase
             console.log('💾 Step 4: Saving to Supabase database...');
             const embedUrl = `https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}`;
-            const thumbnailUrl = videoMetadata.thumbnail_url || `https://vz-${libraryId.substring(0, 8)}.b-cdn.net/${videoId}/thumbnail.jpg`;
+            // Bunny.net thumbnail URL - will be available after processing completes
+            const thumbnailUrl = `https://vz-${libraryId}.b-cdn.net/${videoId}/thumbnail.jpg`;
 
             const insertData = {
                 title: videoMetadata.title || file.name.replace(/\.[^/.]+$/, ""),
