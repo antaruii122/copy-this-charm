@@ -941,12 +941,12 @@ const VideoUploadManager = () => {
         try {
             console.log('🚀 Starting Bunny.net upload for:', file.name);
             console.log('📊 Video metadata:', videoMetadata);
+            console.log('📦 File size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
 
             const libraryId = import.meta.env.VITE_BUNNY_STREAM_LIBRARY_ID || "587800";
             const apiKey = import.meta.env.VITE_BUNNY_STREAM_API_KEY || "53cf6384-f625-41d5-bf9645c35e86-1b2f-4ee6";
 
             console.log('🔑 Library ID:', libraryId);
-            console.log('🔑 API Key (first 10 chars):', apiKey.substring(0, 10) + '...');
 
             // Step 1: Create video in Bunny.net Stream
             console.log('📤 Step 1: Creating video in Bunny.net...');
@@ -976,28 +976,49 @@ const VideoUploadManager = () => {
             const videoId = videoData.guid;
             console.log('✅ Video created with ID:', videoId);
 
-            // Step 2: Upload video file
+            // Step 2: Upload video file with progress tracking
             console.log('📤 Step 2: Uploading video file...');
-            const uploadResponse = await fetch(
-                `https://video.bunnycdn.com/library/${libraryId}/videos/${videoId}`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        'AccessKey': apiKey,
-                    },
-                    body: file
-                }
-            );
+            console.log('⚡ Using optimized upload...');
 
-            console.log('📥 Upload response status:', uploadResponse.status);
+            // Use XMLHttpRequest for upload progress tracking
+            await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
 
-            if (!uploadResponse.ok) {
-                const errorText = await uploadResponse.text();
-                console.error('❌ Bunny.net upload failed:', errorText);
-                throw new Error(`Failed to upload video: ${uploadResponse.statusText} - ${errorText}`);
-            }
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        console.log(`📊 Upload progress: ${percentComplete.toFixed(1)}%`);
 
-            console.log('✅ Video file uploaded successfully');
+                        // Update progress in UI
+                        setUploadProgress((prev) =>
+                            prev.map((p) =>
+                                p.fileName === file.name
+                                    ? { ...p, progress: Math.round(percentComplete), status: "uploading" }
+                                    : p
+                            )
+                        );
+                    }
+                });
+
+                xhr.addEventListener('load', () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        console.log('✅ Video file uploaded successfully');
+                        resolve(xhr.response);
+                    } else {
+                        console.error('❌ Upload failed with status:', xhr.status);
+                        reject(new Error(`Upload failed: ${xhr.statusText}`));
+                    }
+                });
+
+                xhr.addEventListener('error', () => {
+                    console.error('❌ Network error during upload');
+                    reject(new Error('Network error during upload'));
+                });
+
+                xhr.open('PUT', `https://video.bunnycdn.com/library/${libraryId}/videos/${videoId}`);
+                xhr.setRequestHeader('AccessKey', apiKey);
+                xhr.send(file);
+            });
 
             // Step 3: Get video duration from file
             console.log('⏱️ Step 3: Calculating video duration...');
