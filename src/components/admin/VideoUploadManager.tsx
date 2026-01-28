@@ -131,7 +131,14 @@ const VideoUploadManager = () => {
     const [activeTab, setActiveTab] = useState("cursos");
 
     // Google Drive, YouTube & Bunny.net integration
-    const [uploadMethod, setUploadMethod] = useState<'local' | 'drive' | 'youtube' | 'bunny'>('bunny'); // Default to Bunny.net
+    const [uploadMethod, setUploadMethod] = useState<'local' | 'drive' | 'youtube' | 'bunny'>('local'); // Default to Local
+
+    // Automatically fetch Bunny library when tab is active
+    useEffect(() => {
+        if (uploadMethod === 'bunny' && bunnyVideos.length === 0 && !loadingLibrary) {
+            fetchBunnyLibrary();
+        }
+    }, [uploadMethod]);
     const { selectFromDrive, isLoading: isDriveLoading } = useGoogleDrivePicker();
     const [lastUploadedVideo, setLastUploadedVideo] = useState<{ name: string, embedUrl: string } | null>(null);
     const [videoToPreview, setVideoToPreview] = useState<CourseVideo | null>(null);
