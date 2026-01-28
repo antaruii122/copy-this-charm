@@ -93,6 +93,7 @@ import RichTextEditor from "@/components/ui/rich-text-editor";
 import LessonResourceManager from "@/components/admin/LessonResourceManager";
 import { Checkbox } from "@/components/ui/checkbox";
 import { extractYouTubeId, fetchYouTubeDetails } from "@/lib/youtube";
+import { Switch } from "@/components/ui/switch";
 
 
 interface UploadProgress {
@@ -128,8 +129,8 @@ const VideoUploadManager = () => {
     const { toast } = useToast();
     const [activeTab, setActiveTab] = useState("cursos");
 
-    // Google Drive & YouTube integration
-    const [uploadMethod, setUploadMethod] = useState<'local' | 'drive' | 'youtube'>('local');
+    // Google Drive, YouTube & Bunny.net integration
+    const [uploadMethod, setUploadMethod] = useState<'local' | 'drive' | 'youtube' | 'bunny'>('bunny'); // Default to Bunny.net
     const { selectFromDrive, isLoading: isDriveLoading } = useGoogleDrivePicker();
     const [lastUploadedVideo, setLastUploadedVideo] = useState<{ name: string, embedUrl: string } | null>(null);
     const [videoToPreview, setVideoToPreview] = useState<CourseVideo | null>(null);
@@ -265,6 +266,7 @@ const VideoUploadManager = () => {
                     border_color: selectedCourseData.border_color,
                     color_theme: selectedCourseData.color_theme,
                     border_theme: selectedCourseData.border_theme,
+                    published: selectedCourseData.published,
                 })
                 .eq("id", selectedCourse);
 
@@ -633,15 +635,36 @@ const VideoUploadManager = () => {
         for (let i = 0; i < fileArray.length; i++) {
             const file = fileArray[i];
             try {
-                await uploadSingleFile(file, i);
+                // Update progress to show upload started
+                setUploadProgress((prev) =>
+                    prev.map((p, idx) =>
+                        idx === i ? { ...p, progress: 10, status: "uploading" } : p
+                    )
+                );
+
+                // Upload to Bunny.net
+                await handleBunnyUpload(file);
+
+                // Update progress to complete
+                setUploadProgress((prev) =>
+                    prev.map((p, idx) =>
+                        idx === i ? { ...p, progress: 100, status: "success" } : p
+                    )
+                );
             } catch (error) {
                 console.error(`Error uploading ${file.name}:`, error);
+                const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+                setUploadProgress((prev) =>
+                    prev.map((p, idx) =>
+                        idx === i ? { ...p, status: "error", error: errorMessage } : p
+                    )
+                );
             }
         }
 
         setIsUploading(false);
         fetchCourseVideos(videoMetadata.course_id);
-        toast({ title: "Carga completada", description: "Todos los videos han sido procesados" });
+        toast({ title: "Carga completada", description: "Todos los videos han sido subidos a Bunny.net" });
     };
 
     const getVideoDuration = (file: File): Promise<number> => {
@@ -911,6 +934,123 @@ const VideoUploadManager = () => {
         } catch (error) {
             console.error("Error saving YouTube video:", error);
             toast({ title: "Error", description: "No se pudo guardar el video", variant: "destructive" });
+        }
+    };
+
+    const handleBunnyUpload = async (file: File) => {
+        try {
+            console.log('🚀 Starting Bunny.net upload for:', file.name);
+            console.log('📊 Video metadata:', videoMetadata);
+
+            const libraryId = import.meta.env.VITE_BUNNY_STREAM_LIBRARY_ID || "587800";
+            const apiKey = import.meta.env.VITE_BUNNY_STREAM_API_KEY || "53cf6384-f625-41d5-bf9645c35e86-1b2f-4ee6";
+
+            console.log('🔑 Library ID:', libraryId);
+            console.log('🔑 API Key (first 10 chars):', apiKey.substring(0, 10) + '...');
+
+            // Step 1: Create video in Bunny.net Stream
+            console.log('📤 Step 1: Creating video in Bunny.net...');
+            const createResponse = await fetch(
+                `https://video.bunnycdn.com/library/${libraryId}/videos`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'AccessKey': apiKey,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: videoMetadata.title || file.name.replace(/\.[^/.]+$/, "")
+                    })
+                }
+            );
+
+            console.log('📥 Create response status:', createResponse.status);
+
+            if (!createResponse.ok) {
+                const errorText = await createResponse.text();
+                console.error('❌ Bunny.net create failed:', errorText);
+                throw new Error(`Failed to create video: ${createResponse.statusText} - ${errorText}`);
+            }
+
+            const videoData = await createResponse.json();
+            const videoId = videoData.guid;
+            console.log('✅ Video created with ID:', videoId);
+
+            // Step 2: Upload video file
+            console.log('📤 Step 2: Uploading video file...');
+            const uploadResponse = await fetch(
+                `https://video.bunnycdn.com/library/${libraryId}/videos/${videoId}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'AccessKey': apiKey,
+                    },
+                    body: file
+                }
+            );
+
+            console.log('📥 Upload response status:', uploadResponse.status);
+
+            if (!uploadResponse.ok) {
+                const errorText = await uploadResponse.text();
+                console.error('❌ Bunny.net upload failed:', errorText);
+                throw new Error(`Failed to upload video: ${uploadResponse.statusText} - ${errorText}`);
+            }
+
+            console.log('✅ Video file uploaded successfully');
+
+            // Step 3: Get video duration from file
+            console.log('⏱️ Step 3: Calculating video duration...');
+            const duration = await getVideoDuration(file);
+            console.log('✅ Duration:', duration, 'seconds');
+
+            // Step 4: Save to Supabase
+            console.log('💾 Step 4: Saving to Supabase database...');
+            const embedUrl = `https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}`;
+            const thumbnailUrl = videoMetadata.thumbnail_url || `https://vz-${libraryId.substring(0, 8)}.b-cdn.net/${videoId}/thumbnail.jpg`;
+
+            const insertData = {
+                title: videoMetadata.title || file.name.replace(/\.[^/.]+$/, ""),
+                description: videoMetadata.description || null,
+                video_path: embedUrl,
+                course_id: videoMetadata.course_id,
+                module_id: videoMetadata.module_id === "none" || !videoMetadata.module_id ? null : videoMetadata.module_id,
+                sort_order: videoMetadata.sort_order || 0,
+                is_bunny_video: true,
+                bunny_video_id: videoId,
+                duration_seconds: duration,
+                thumbnail_url: thumbnailUrl
+            };
+
+            console.log('📝 Insert data:', insertData);
+
+            const { error, data } = await supabase
+                .from("course_videos")
+                .insert(insertData)
+                .select();
+
+            if (error) {
+                console.error('❌ Supabase insert error:', error);
+                throw error;
+            }
+
+            console.log('✅ Video saved to database:', data);
+
+            setLastUploadedVideo({
+                name: videoMetadata.title || file.name,
+                embedUrl: embedUrl
+            });
+
+            console.log('🎉 Upload complete!');
+            return { success: true, videoId, embedUrl };
+
+        } catch (error) {
+            console.error("❌ Error uploading to Bunny.net:", error);
+            if (error instanceof Error) {
+                console.error("Error message:", error.message);
+                console.error("Error stack:", error.stack);
+            }
+            throw error;
         }
     };
 
@@ -1211,6 +1351,14 @@ const VideoUploadManager = () => {
                                                 course.card_style === 'bold' ? "bg-white/20 text-white" : "bg-primary/5 text-primary"
                                             )}>
                                                 {course.badge_text || (course.price ? "Premium" : "Gratis")}
+                                            </span>
+                                            <span className={cn(
+                                                "text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-sm ml-2",
+                                                course.published
+                                                    ? "bg-green-500/10 text-green-600 border border-green-500/20"
+                                                    : "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20"
+                                            )}>
+                                                {course.published ? "Publicado" : "Borrador"}
                                             </span>
                                         </div>
 
@@ -1756,6 +1904,23 @@ const VideoUploadManager = () => {
 
                                         {/* 1. Basic Info */}
                                         <div className="space-y-5">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/50">
+                                                    <div className="space-y-0.5">
+                                                        <Label className="text-base font-semibold">Estado del Curso</Label>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            {selectedCourseData.published
+                                                                ? "El curso es visible públicamente."
+                                                                : "El curso está oculto (Borrador)."}
+                                                        </p>
+                                                    </div>
+                                                    <Switch
+                                                        checked={selectedCourseData.published || false}
+                                                        onCheckedChange={(checked) => updateCourseMarketing({ published: checked })}
+                                                    />
+                                                </div>
+                                            </div>
+
                                             <div className="space-y-2">
                                                 <Label className="text-base font-semibold">1. Información del Curso</Label>
                                                 <Input

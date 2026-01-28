@@ -6,7 +6,12 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.4"
+  }
   public: {
     Tables: {
       admin_emails: {
@@ -27,174 +32,143 @@ export interface Database {
         }
         Relationships: []
       }
-      blog_posts: {
+      blog_structure: {
         Row: {
-          id: string
-          slug: string
-          title: string
-          content: string | null
-          excerpt: string | null
-          cover_image: string | null
-          author_name: string | null
-          published: boolean
-          created_at: string
-          updated_at: string
+          citations: string
+          id: number
+          structure: string
+          type: string
+          word_count: string
         }
         Insert: {
-          id?: string
-          slug: string
-          title: string
-          content?: string | null
-          excerpt?: string | null
-          cover_image?: string | null
-          author_name?: string | null
-          published?: boolean
-          created_at?: string
-          updated_at?: string
+          citations: string
+          id: number
+          structure: string
+          type: string
+          word_count: string
         }
         Update: {
-          id?: string
-          slug?: string
-          title?: string
-          content?: string | null
-          excerpt?: string | null
-          cover_image?: string | null
-          author_name?: string | null
-          published?: boolean
-          created_at?: string
-          updated_at?: string
+          citations?: string
+          id?: number
+          structure?: string
+          type?: string
+          word_count?: string
         }
         Relationships: []
       }
-      courses: {
+      blog_views: {
         Row: {
-          created_at: string
-          description: string | null
-          id: string
-          image_url: string | null
-          is_featured: boolean | null
-          price: string | null
-          slug: string
-          title: string
-          updated_at: string
-          video_url: string | null
-          long_description: string | null
-          learning_outcomes: string[] | null
-          target_audience: string | null
-          curriculum_summary: string | null
-          rating: number | null
-          author_name: string | null
-          author_image_url: string | null
-          author_role: string | null
-          status: string | null
-          sales_video_url: string | null
-          price_compare: number | null
-          certificate_enabled: boolean | null
+          blog_slug: string
+          created_at: string | null
+          id: number
+          updated_at: string | null
+          view_count: number
         }
         Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_featured?: boolean | null
-          price?: string | null
-          slug: string
-          title: string
-          updated_at?: string
-          video_url?: string | null
-          long_description?: string | null
-          learning_outcomes?: string[] | null
-          target_audience?: string | null
-          curriculum_summary?: string | null
-          rating?: number | null
-          author_name?: string | null
-          author_image_url?: string | null
-          author_role?: string | null
-          status?: string | null
-          sales_video_url?: string | null
-          price_compare?: number | null
-          certificate_enabled?: boolean | null
+          blog_slug: string
+          created_at?: string | null
+          id?: number
+          updated_at?: string | null
+          view_count?: number
         }
         Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_featured?: boolean | null
-          price?: string | null
-          slug?: string
-          title?: string
-          updated_at?: string
-          video_url?: string | null
-          long_description?: string | null
-          learning_outcomes?: string[] | null
-          target_audience?: string | null
-          curriculum_summary?: string | null
-          rating?: number | null
-          author_name?: string | null
-          author_image_url?: string | null
-          author_role?: string | null
-          status?: string | null
-          sales_video_url?: string | null
-          price_compare?: number | null
-          certificate_enabled?: boolean | null
+          blog_slug?: string
+          created_at?: string | null
+          id?: number
+          updated_at?: string | null
+          view_count?: number
         }
         Relationships: []
+      }
+      certificates: {
+        Row: {
+          certificate_number: string | null
+          course_id: string | null
+          id: string
+          issued_date: string | null
+          pdf_url: string | null
+          user_id: string
+        }
+        Insert: {
+          certificate_number?: string | null
+          course_id?: string | null
+          id?: string
+          issued_date?: string | null
+          pdf_url?: string | null
+          user_id: string
+        }
+        Update: {
+          certificate_number?: string | null
+          course_id?: string | null
+          id?: string
+          issued_date?: string | null
+          pdf_url?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       course_videos: {
         Row: {
+          content_text: string | null
           course_id: string | null
           created_at: string
           description: string | null
+          drive_file_id: string | null
           duration_seconds: number | null
           id: string
+          is_drive_video: boolean | null
+          is_preview: boolean | null
+          is_youtube_video: boolean | null
           module_id: string | null
           sort_order: number | null
+          thumbnail_url: string | null
           title: string
           updated_at: string
           video_path: string
-          content_text: string | null
-          is_preview: boolean | null
-          is_youtube_video: boolean | null
-          is_drive_video: boolean | null
-          drive_file_id: string | null
-          thumbnail_url: string | null
         }
         Insert: {
+          content_text?: string | null
           course_id?: string | null
           created_at?: string
           description?: string | null
+          drive_file_id?: string | null
           duration_seconds?: number | null
           id?: string
+          is_drive_video?: boolean | null
+          is_preview?: boolean | null
+          is_youtube_video?: boolean | null
           module_id?: string | null
           sort_order?: number | null
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
           video_path: string
-          content_text?: string | null
-          is_preview?: boolean | null
-          is_youtube_video?: boolean | null
-          is_drive_video?: boolean | null
-          drive_file_id?: string | null
-          thumbnail_url?: string | null
         }
         Update: {
+          content_text?: string | null
           course_id?: string | null
           created_at?: string
           description?: string | null
+          drive_file_id?: string | null
           duration_seconds?: number | null
           id?: string
+          is_drive_video?: boolean | null
+          is_preview?: boolean | null
+          is_youtube_video?: boolean | null
           module_id?: string | null
           sort_order?: number | null
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string
           video_path?: string
-          content_text?: string | null
-          is_preview?: boolean | null
-          is_youtube_video?: boolean | null
-          is_drive_video?: boolean | null
-          drive_file_id?: string | null
-          thumbnail_url?: string | null
         }
         Relationships: [
           {
@@ -210,36 +184,244 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "modules"
             referencedColumns: ["id"]
-          }
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          author_image_url: string | null
+          author_name: string | null
+          author_role: string | null
+          badge_text: string | null
+          border_color: string | null
+          border_theme: string | null
+          card_style: string | null
+          certificate_enabled: boolean | null
+          color_theme: string | null
+          created_at: string
+          curriculum_summary: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          learning_outcomes: string[] | null
+          long_description: string | null
+          original_price: string | null
+          price: string | null
+          price_compare: number | null
+          published: boolean | null
+          rating: number | null
+          sales_video_url: string | null
+          slug: string
+          status: string | null
+          target_audience: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          author_image_url?: string | null
+          author_name?: string | null
+          author_role?: string | null
+          badge_text?: string | null
+          border_color?: string | null
+          border_theme?: string | null
+          card_style?: string | null
+          certificate_enabled?: boolean | null
+          color_theme?: string | null
+          created_at?: string
+          curriculum_summary?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          learning_outcomes?: string[] | null
+          long_description?: string | null
+          original_price?: string | null
+          price?: string | null
+          price_compare?: number | null
+          published?: boolean | null
+          rating?: number | null
+          sales_video_url?: string | null
+          slug: string
+          status?: string | null
+          target_audience?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          author_image_url?: string | null
+          author_name?: string | null
+          author_role?: string | null
+          badge_text?: string | null
+          border_color?: string | null
+          border_theme?: string | null
+          card_style?: string | null
+          certificate_enabled?: boolean | null
+          color_theme?: string | null
+          created_at?: string
+          curriculum_summary?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          learning_outcomes?: string[] | null
+          long_description?: string | null
+          original_price?: string | null
+          price?: string | null
+          price_compare?: number | null
+          published?: boolean | null
+          rating?: number | null
+          sales_video_url?: string | null
+          slug?: string
+          status?: string | null
+          target_audience?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      enrollments: {
+        Row: {
+          completed_at: string | null
+          course_id: string | null
+          enrolled_at: string
+          id: string
+          progress: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          course_id?: string | null
+          enrolled_at?: string
+          id?: string
+          progress?: number | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          course_id?: string | null
+          enrolled_at?: string
+          id?: string
+          progress?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_records: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          date: string
+          description: string
+          id: string
+          quarter: string
+          record_type: string
+          status: string | null
+          year: number
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          date: string
+          description: string
+          id?: string
+          quarter?: string
+          record_type?: string
+          status?: string | null
+          year?: number
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          quarter?: string
+          record_type?: string
+          status?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
+      lesson_resources: {
+        Row: {
+          created_at: string
+          file_url: string
+          id: string
+          resource_type: string | null
+          title: string
+          video_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_url: string
+          id?: string
+          resource_type?: string | null
+          title: string
+          video_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_url?: string
+          id?: string
+          resource_type?: string | null
+          title?: string
+          video_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_resources_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "course_videos"
+            referencedColumns: ["id"]
+          },
         ]
       }
       modules: {
         Row: {
           course_id: string | null
           created_at: string
+          description: string | null
           id: string
           sort_order: number | null
           title: string
           updated_at: string
-          description: string | null
         }
         Insert: {
           course_id?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           sort_order?: number | null
           title: string
           updated_at?: string
-          description?: string | null
         }
         Update: {
           course_id?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           sort_order?: number | null
           title?: string
           updated_at?: string
-          description?: string | null
         }
         Relationships: [
           {
@@ -248,8 +430,56 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "courses"
             referencedColumns: ["id"]
-          }
+          },
         ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string | null
+        }
+        Relationships: []
       }
       video_progress: {
         Row: {
@@ -286,115 +516,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "course_videos"
             referencedColumns: ["id"]
-          }
-        ]
-      }
-      enrollments: {
-        Row: {
-          id: string
-          user_id: string
-          course_id: string | null
-          enrolled_at: string
-          status: string
-          progress: number | null
-          completed_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          course_id?: string | null
-          enrolled_at?: string
-          status?: string
-          progress?: number | null
-          completed_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          course_id?: string | null
-          enrolled_at?: string
-          status?: string
-          progress?: number | null
-          completed_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "enrollments_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      lesson_resources: {
-        Row: {
-          id: string
-          video_id: string | null
-          title: string
-          file_url: string
-          resource_type: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          video_id?: string | null
-          title: string
-          file_url: string
-          resource_type?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          video_id?: string | null
-          title?: string
-          file_url?: string
-          resource_type?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lesson_resources_video_id_fkey"
-            columns: ["video_id"]
-            isOneToOne: false
-            referencedRelation: "course_videos"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      certificates: {
-        Row: {
-          id: string
-          user_id: string
-          course_id: string | null
-          certificate_number: string | null
-          pdf_url: string | null
-          issued_date: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          course_id?: string | null
-          certificate_number?: string | null
-          pdf_url?: string | null
-          issued_date?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          course_id?: string | null
-          certificate_number?: string | null
-          pdf_url?: string | null
-          issued_date?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "certificates_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          }
+          },
         ]
       }
     }
@@ -402,10 +524,20 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: {
+          user_email: string
+        }
+        Returns: boolean
+      }
+      update_updated_at_column: {
+        Args: Record<PropertyKey, never>
+        Returns: unknown
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      user_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -413,14 +545,16 @@ export interface Database {
   }
 }
 
+type PublicSchema = Database[Extract<keyof Database, "public">]
+
 export type Tables<
   PublicTableNameOrOptions extends
-  | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
+  | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
   | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
   ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
     Database[PublicTableNameOrOptions["schema"]]["Views"])
-  : never = never
+  : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
     Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -428,10 +562,10 @@ export type Tables<
     }
   ? R
   : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
-    Database["public"]["Views"])
-  ? (Database["public"]["Tables"] &
-    Database["public"]["Views"])[PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+    PublicSchema["Views"])
+  ? (PublicSchema["Tables"] &
+    PublicSchema["Views"])[PublicTableNameOrOptions] extends {
       Row: infer R
     }
   ? R
@@ -440,19 +574,19 @@ export type Tables<
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-  | keyof Database["public"]["Tables"]
+  | keyof PublicSchema["Tables"]
   | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
   ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-  : never = never
+  : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
     Insert: infer I
   }
   ? I
   : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
     Insert: infer I
   }
   ? I
@@ -461,19 +595,19 @@ export type TablesInsert<
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-  | keyof Database["public"]["Tables"]
+  | keyof PublicSchema["Tables"]
   | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
   ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-  : never = never
+  : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
     Update: infer U
   }
   ? U
   : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
     Update: infer U
   }
   ? U
@@ -482,13 +616,28 @@ export type TablesUpdate<
 
 export type Enums<
   PublicEnumNameOrOptions extends
-  | keyof Database["public"]["Enums"]
+  | keyof PublicSchema["Enums"]
   | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
   ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-  : never = never
+  : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+  ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+  : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+  | keyof PublicSchema["CompositeTypes"]
+  | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+  ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+  : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+  ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
   : never
