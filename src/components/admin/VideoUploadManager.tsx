@@ -1624,7 +1624,13 @@ const VideoUploadManager = () => {
                                         </div>
                                     ) : (
                                         <>
-                                            <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'local' | 'youtube' | 'bunny')} className="w-full">
+                                            <Tabs value={uploadMethod} onValueChange={(v) => {
+                                                setUploadMethod(v as 'local' | 'youtube' | 'bunny');
+                                                // Load Bunny library when switching to that tab
+                                                if (v === 'bunny' && bunnyVideos.length === 0) {
+                                                    fetchBunnyLibrary();
+                                                }
+                                            }} className="w-full">
                                                 <TabsList className="grid w-full grid-cols-3 h-14 p-1 bg-muted/20 rounded-2xl mb-8">
                                                     <TabsTrigger
                                                         value="local"
@@ -1636,9 +1642,6 @@ const VideoUploadManager = () => {
                                                     <TabsTrigger
                                                         value="bunny"
                                                         className="rounded-xl h-full data-[state=active]:bg-orange-50 data-[state=active]:text-orange-600 data-[state=active]:shadow-sm transition-all text-base font-medium"
-                                                        onClick={() => {
-                                                            fetchBunnyLibrary();
-                                                        }}
                                                     >
                                                         <Library className="w-4 h-4 mr-2" />
                                                         Biblioteca
@@ -1719,7 +1722,7 @@ const VideoUploadManager = () => {
                                                                                 }}
                                                                                 className="group relative border-2 border-border rounded-xl overflow-hidden cursor-pointer hover:border-orange-500 hover:shadow-lg transition-all bg-white"
                                                                             >
-                                                                                <div className="aspect-video bg-muted relative">
+                                                                                <div className="aspect-video bg-gradient-to-br from-orange-100 to-orange-50 relative">
                                                                                     <img
                                                                                         src={video.thumbnailFileName
                                                                                             ? `https://vz-587800.b-cdn.net/${video.guid}/${video.thumbnailFileName}`
@@ -1732,7 +1735,15 @@ const VideoUploadManager = () => {
                                                                                             if (currentSrc.includes('thumbnail.jpg') || currentSrc.includes('thumbnailFileName')) {
                                                                                                 e.currentTarget.src = `https://vz-587800.b-cdn.net/${video.guid}/preview.webp`;
                                                                                             } else if (currentSrc.includes('preview.webp')) {
-                                                                                                e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo preview%3C/text%3E%3C/svg%3E';
+                                                                                                // Show a nice video icon instead of "No preview" text
+                                                                                                e.currentTarget.style.display = 'none';
+                                                                                                const parent = e.currentTarget.parentElement;
+                                                                                                if (parent && !parent.querySelector('.fallback-icon')) {
+                                                                                                    const icon = document.createElement('div');
+                                                                                                    icon.className = 'fallback-icon absolute inset-0 flex items-center justify-center';
+                                                                                                    icon.innerHTML = '<svg class="w-12 h-12 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                                                                                                    parent.appendChild(icon);
+                                                                                                }
                                                                                             }
                                                                                         }}
                                                                                     />
@@ -2749,7 +2760,7 @@ const VideoUploadManager = () => {
                             {/* Thumbnail Preview */}
                             <div className="space-y-3">
                                 <Label className="text-sm font-medium">Miniatura Actual</Label>
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-start gap-4">
                                     <img
                                         src={previewVideo.thumbnailFileName
                                             ? `https://vz-587800.b-cdn.net/${previewVideo.guid}/${previewVideo.thumbnailFileName}`
@@ -2758,12 +2769,71 @@ const VideoUploadManager = () => {
                                         alt="Thumbnail"
                                         className="w-40 h-auto rounded-lg border-2 border-border"
                                         onError={(e) => {
-                                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo preview%3C/text%3E%3C/svg%3E';
+                                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="160" height="90"%3E%3Crect fill="%23f3f4f6" width="160" height="90"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em" font-size="12"%3EProcessing...%3C/text%3E%3C/svg%3E';
                                         }}
                                     />
-                                    <div className="text-sm text-muted-foreground">
-                                        <p>La miniatura se genera automáticamente desde Bunny.net</p>
-                                        <p className="text-xs mt-1">Puedes cambiarla directamente en el panel de Bunny.net</p>
+                                    <div className="flex-1 space-y-3">
+                                        <div className="text-sm text-muted-foreground">
+                                            <p>La miniatura se genera automáticamente desde Bunny.net</p>
+                                            <p className="text-xs mt-1">Puedes cambiarla subiéndola aquí o desde el panel de Bunny.net</p>
+                                        </div>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="rounded-xl gap-2"
+                                            onClick={() => {
+                                                const input = document.createElement('input');
+                                                input.type = 'file';
+                                                input.accept = 'image/*';
+                                                input.onchange = async (e) => {
+                                                    const file = (e.target as HTMLInputElement).files?.[0];
+                                                    if (!file) return;
+
+                                                    try {
+                                                        const libraryId = import.meta.env.VITE_BUNNY_STREAM_LIBRARY_ID || "587800";
+                                                        const apiKey = import.meta.env.VITE_BUNNY_STREAM_API_KEY || "53cf6384-f625-41d5-bf9645c35e86-1b2f-4ee6";
+
+                                                        // Upload thumbnail to Bunny.net
+                                                        const formData = new FormData();
+                                                        formData.append('file', file);
+
+                                                        const response = await fetch(
+                                                            `https://video.bunnycdn.com/library/${libraryId}/videos/${previewVideo.guid}/thumbnail`,
+                                                            {
+                                                                method: 'POST',
+                                                                headers: {
+                                                                    'AccessKey': apiKey,
+                                                                },
+                                                                body: file
+                                                            }
+                                                        );
+
+                                                        if (!response.ok) {
+                                                            throw new Error('Failed to upload thumbnail');
+                                                        }
+
+                                                        toast({
+                                                            title: "✅ Miniatura actualizada",
+                                                            description: "La nueva miniatura se ha subido correctamente"
+                                                        });
+
+                                                        // Refresh the library to show new thumbnail
+                                                        fetchBunnyLibrary();
+                                                    } catch (error) {
+                                                        console.error('Error uploading thumbnail:', error);
+                                                        toast({
+                                                            title: "Error",
+                                                            description: "No se pudo subir la miniatura",
+                                                            variant: "destructive"
+                                                        });
+                                                    }
+                                                };
+                                                input.click();
+                                            }}
+                                        >
+                                            <ImagePlus className="w-4 h-4" />
+                                            Cambiar Miniatura
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
