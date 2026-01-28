@@ -87,7 +87,7 @@ type Course = Tables<"courses"> & {
     color_theme?: string;
     border_theme?: string;
 };
-type CourseVideo = Tables<"course_videos"> & { is_drive_video?: boolean };
+type CourseVideo = Tables<"course_videos"> & { is_drive_video?: boolean; is_bunny_video?: boolean };
 type Module = Tables<"modules">;
 
 import RichTextEditor from "@/components/ui/rich-text-editor";
@@ -2609,6 +2609,14 @@ const VideoUploadManager = () => {
                                     allowFullScreen
                                     title={videoToPreview.title}
                                 />
+                            ) : videoToPreview.is_bunny_video ? (
+                                <iframe
+                                    src={videoToPreview.video_path}
+                                    className="w-full h-full"
+                                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                                    allowFullScreen
+                                    title={videoToPreview.title}
+                                />
                             ) : (
                                 <video
                                     src={`https://baijfzqjgvgbfzuauroi.supabase.co/storage/v1/object/public/videodecurso/${videoToPreview.video_path}`}
@@ -2756,6 +2764,53 @@ const VideoUploadManager = () => {
                                     <div className="text-sm text-muted-foreground">
                                         <p>La miniatura se genera automáticamente desde Bunny.net</p>
                                         <p className="text-xs mt-1">Puedes cambiarla directamente en el panel de Bunny.net</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Module Selection */}
+                            <div className="space-y-3 pt-2 border-t">
+                                <Label className="text-sm font-medium">Organización del Video</Label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="preview-module" className="text-xs text-muted-foreground">Módulo</Label>
+                                        <Select
+                                            value={videoMetadata.module_id || "none"}
+                                            onValueChange={(value) =>
+                                                setVideoMetadata({ ...videoMetadata, module_id: value })
+                                            }
+                                        >
+                                            <SelectTrigger id="preview-module" className="rounded-xl">
+                                                <SelectValue placeholder="Sin módulo" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="none">Sin módulo</SelectItem>
+                                                {modules
+                                                    .filter((m) => m.course_id === selectedCourse)
+                                                    .sort((a, b) => a.sort_order - b.sort_order)
+                                                    .map((module) => (
+                                                        <SelectItem key={module.id} value={module.id}>
+                                                            {module.title}
+                                                        </SelectItem>
+                                                    ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="preview-order" className="text-xs text-muted-foreground">Orden</Label>
+                                        <Input
+                                            id="preview-order"
+                                            type="number"
+                                            value={videoMetadata.sort_order}
+                                            onChange={(e) =>
+                                                setVideoMetadata({
+                                                    ...videoMetadata,
+                                                    sort_order: parseInt(e.target.value) || 0,
+                                                })
+                                            }
+                                            className="rounded-xl"
+                                            min="0"
+                                        />
                                     </div>
                                 </div>
                             </div>
