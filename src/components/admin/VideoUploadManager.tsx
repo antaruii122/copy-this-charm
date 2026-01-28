@@ -37,7 +37,8 @@ import {
     ChevronRight,
     Cloud,
     Play,
-    Youtube
+    Youtube,
+    Library
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -199,6 +200,12 @@ const VideoUploadManager = () => {
         thumbnail_url: "",
         duration_seconds: 0,
     });
+
+    // Bunny.net library browser state
+    const [showBunnyLibrary, setShowBunnyLibrary] = useState(false);
+    const [bunnyVideos, setBunnyVideos] = useState<any[]>([]);
+    const [loadingLibrary, setLoadingLibrary] = useState(false);
+    const [librarySearchTerm, setLibrarySearchTerm] = useState("");
 
     const [newModuleForm, setNewModuleForm] = useState({
         title: "",
@@ -671,6 +678,97 @@ const VideoUploadManager = () => {
         setIsUploading(false);
         fetchCourseVideos(videoMetadata.course_id);
         toast({ title: "Carga completada", description: "Todos los videos han sido subidos a Bunny.net" });
+    };
+
+    const fetchBunnyLibrary = async () => {
+        try {
+            setLoadingLibrary(true);
+            const libraryId = import.meta.env.VITE_BUNNY_STREAM_LIBRARY_ID || "587800";
+            const apiKey = import.meta.env.VITE_BUNNY_STREAM_API_KEY || "53cf6384-f625-41d5-bf9645c35e86-1b2f-4ee6";
+
+            console.log('📚 Fetching Bunny.net library...');
+
+            const response = await fetch(
+                `https://video.bunnycdn.com/library/${libraryId}/videos?page=1&itemsPerPage=100&orderBy=date`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'AccessKey': apiKey,
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch library: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('✅ Library fetched:', data.totalItems, 'videos');
+
+            // Filter to only show ready videos (status 4 = ready)
+            const readyVideos = data.items.filter((video: any) => video.status === 4);
+            setBunnyVideos(readyVideos);
+
+        } catch (error) {
+            console.error('❌ Error fetching Bunny.net library:', error);
+            toast({
+                title: "Error",
+                description: "No se pudo cargar la biblioteca de Bunny.net",
+                variant: "destructive"
+            });
+        } finally {
+            setLoadingLibrary(false);
+        }
+    };
+
+    const handleSelectBunnyVideo = async (video: any) => {
+        if (!selectedCourse) {
+            toast({
+                title: "Error",
+                description: "Por favor selecciona un curso primero",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        try {
+            const libraryId = import.meta.env.VITE_BUNNY_STREAM_LIBRARY_ID || "587800";
+            const embedUrl = `https://iframe.mediadelivery.net/embed/${libraryId}/${video.guid}`;
+            const thumbnailUrl = `https://vz-${libraryId}.b-cdn.net/${video.guid}/thumbnail.jpg`;
+
+            const { error } = await supabase
+                .from("course_videos")
+                .insert({
+                    title: video.title,
+                    description: null,
+                    video_path: embedUrl,
+                    course_id: selectedCourse,
+                    module_id: videoMetadata.module_id === "none" || !videoMetadata.module_id ? null : videoMetadata.module_id,
+                    sort_order: videoMetadata.sort_order || 0,
+                    is_bunny_video: true,
+                    bunny_video_id: video.guid,
+                    duration_seconds: video.length,
+                    thumbnail_url: thumbnailUrl
+                });
+
+            if (error) throw error;
+
+            toast({
+                title: "✅ Video añadido",
+                description: `${video.title} se ha añadido al curso`
+            });
+
+            setShowBunnyLibrary(false);
+            fetchCourseVideos(selectedCourse);
+
+        } catch (error) {
+            console.error('Error adding video:', error);
+            toast({
+                title: "Error",
+                description: "No se pudo añadir el video",
+                variant: "destructive"
+            });
+        }
     };
 
     const getVideoDuration = (file: File): Promise<number> => {
@@ -1523,14 +1621,24 @@ const VideoUploadManager = () => {
                                         </div>
                                     ) : (
                                         <>
-                                            <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'local' | 'youtube')} className="w-full">
-                                                <TabsList className="grid w-full grid-cols-2 h-14 p-1 bg-muted/20 rounded-2xl mb-8">
+                                            <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'local' | 'youtube' | 'bunny')} className="w-full">
+                                                <TabsList className="grid w-full grid-cols-3 h-14 p-1 bg-muted/20 rounded-2xl mb-8">
                                                     <TabsTrigger
                                                         value="local"
                                                         className="rounded-xl h-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all text-base font-medium"
                                                     >
                                                         <Upload className="w-4 h-4 mr-2" />
                                                         Subir Archivo
+                                                    </TabsTrigger>
+                                                    <TabsTrigger
+                                                        value="bunny"
+                                                        className="rounded-xl h-full data-[state=active]:bg-orange-50 data-[state=active]:text-orange-600 data-[state=active]:shadow-sm transition-all text-base font-medium"
+                                                        onClick={() => {
+                                                            fetchBunnyLibrary();
+                                                        }}
+                                                    >
+                                                        <Library className="w-4 h-4 mr-2" />
+                                                        Biblioteca
                                                     </TabsTrigger>
                                                     <TabsTrigger
                                                         value="youtube"
@@ -1571,6 +1679,69 @@ const VideoUploadManager = () => {
                                                                 O selecciona desde tu ordenador
                                                             </Button>
                                                         </Label>
+                                                    </div>
+                                                </TabsContent>
+
+                                                <TabsContent value="bunny" className="mt-6 animate-in zoom-in-95 duration-300">
+                                                    <div className="border-2 border-dashed border-orange-200 rounded-3xl p-12 bg-orange-50/30">
+                                                        <div className="flex flex-col items-center gap-6 max-w-4xl mx-auto">
+                                                            <div className="w-20 h-20 rounded-2xl bg-white shadow-xl flex items-center justify-center">
+                                                                <Library className="w-10 h-10 text-orange-600" />
+                                                            </div>
+                                                            <div className="space-y-2 text-center">
+                                                                <h3 className="font-serif text-2xl font-medium">Biblioteca Bunny.net</h3>
+                                                                <p className="text-muted-foreground">
+                                                                    Selecciona videos que ya has subido a Bunny.net
+                                                                </p>
+                                                            </div>
+
+                                                            {loadingLibrary ? (
+                                                                <div className="flex items-center gap-3 py-8">
+                                                                    <Loader2 className="w-6 h-6 animate-spin text-orange-600" />
+                                                                    <span className="text-muted-foreground">Cargando biblioteca...</span>
+                                                                </div>
+                                                            ) : bunnyVideos.length === 0 ? (
+                                                                <div className="text-center py-8 text-muted-foreground">
+                                                                    No hay videos disponibles en tu biblioteca
+                                                                </div>
+                                                            ) : (
+                                                                <div className="w-full">
+                                                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[500px] overflow-y-auto p-2">
+                                                                        {bunnyVideos.map((video) => (
+                                                                            <div
+                                                                                key={video.guid}
+                                                                                onClick={() => handleSelectBunnyVideo(video)}
+                                                                                className="group relative border-2 border-border rounded-xl overflow-hidden cursor-pointer hover:border-orange-500 hover:shadow-lg transition-all bg-white"
+                                                                            >
+                                                                                <div className="aspect-video bg-muted relative">
+                                                                                    <img
+                                                                                        src={`https://vz-587800.b-cdn.net/${video.guid}/thumbnail.jpg`}
+                                                                                        alt={video.title}
+                                                                                        className="w-full h-full object-cover"
+                                                                                        onError={(e) => {
+                                                                                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo preview%3C/text%3E%3C/svg%3E';
+                                                                                        }}
+                                                                                    />
+                                                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                                                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                                            <div className="bg-white rounded-full p-3 shadow-lg">
+                                                                                                <Plus className="w-6 h-6 text-orange-600" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="p-3">
+                                                                                    <p className="text-sm font-medium truncate">{video.title}</p>
+                                                                                    <p className="text-xs text-muted-foreground">
+                                                                                        {Math.floor(video.length / 60)}:{String(video.length % 60).padStart(2, '0')}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </TabsContent>
 
