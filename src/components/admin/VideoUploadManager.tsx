@@ -206,6 +206,8 @@ const VideoUploadManager = () => {
     const [bunnyVideos, setBunnyVideos] = useState<any[]>([]);
     const [loadingLibrary, setLoadingLibrary] = useState(false);
     const [librarySearchTerm, setLibrarySearchTerm] = useState("");
+    const [previewVideo, setPreviewVideo] = useState<any | null>(null);
+    const [showPreviewModal, setShowPreviewModal] = useState(false);
 
     const [newModuleForm, setNewModuleForm] = useState({
         title: "",
@@ -704,6 +706,7 @@ const VideoUploadManager = () => {
 
             const data = await response.json();
             console.log('✅ Library fetched:', data.totalItems, 'videos');
+            console.log('📹 Sample video object:', data.items[0]); // Debug: see video structure
 
             // Filter to only show ready videos (status 4 = ready)
             const readyVideos = data.items.filter((video: any) => video.status === 4);
@@ -1710,16 +1713,27 @@ const VideoUploadManager = () => {
                                                                         {bunnyVideos.map((video) => (
                                                                             <div
                                                                                 key={video.guid}
-                                                                                onClick={() => handleSelectBunnyVideo(video)}
+                                                                                onClick={() => {
+                                                                                    setPreviewVideo(video);
+                                                                                    setShowPreviewModal(true);
+                                                                                }}
                                                                                 className="group relative border-2 border-border rounded-xl overflow-hidden cursor-pointer hover:border-orange-500 hover:shadow-lg transition-all bg-white"
                                                                             >
                                                                                 <div className="aspect-video bg-muted relative">
                                                                                     <img
-                                                                                        src={`https://vz-587800.b-cdn.net/${video.guid}/thumbnail.jpg`}
+                                                                                        src={video.thumbnailFileName
+                                                                                            ? `https://vz-587800.b-cdn.net/${video.guid}/${video.thumbnailFileName}`
+                                                                                            : `https://vz-587800.b-cdn.net/${video.guid}/thumbnail.jpg`
+                                                                                        }
                                                                                         alt={video.title}
                                                                                         className="w-full h-full object-cover"
                                                                                         onError={(e) => {
-                                                                                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo preview%3C/text%3E%3C/svg%3E';
+                                                                                            const currentSrc = e.currentTarget.src;
+                                                                                            if (currentSrc.includes('thumbnail.jpg') || currentSrc.includes('thumbnailFileName')) {
+                                                                                                e.currentTarget.src = `https://vz-587800.b-cdn.net/${video.guid}/preview.webp`;
+                                                                                            } else if (currentSrc.includes('preview.webp')) {
+                                                                                                e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo preview%3C/text%3E%3C/svg%3E';
+                                                                                            }
                                                                                         }}
                                                                                     />
                                                                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
@@ -2697,8 +2711,80 @@ const VideoUploadManager = () => {
                         </div>
                     )}
                 </DialogContent>
-            </Dialog >
-        </div >
+            </Dialog>
+
+            {/* Video Preview Modal */}
+            <Dialog open={showPreviewModal} onOpenChange={setShowPreviewModal}>
+                <DialogContent className="max-w-4xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-serif">
+                            {previewVideo?.title || "Vista Previa"}
+                        </DialogTitle>
+                        <DialogDescription>
+                            Duración: {previewVideo ? `${Math.floor(previewVideo.length / 60)}:${String(previewVideo.length % 60).padStart(2, '0')}` : "--:--"}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {previewVideo && (
+                        <div className="space-y-6">
+                            {/* Video Player */}
+                            <div className="aspect-video bg-black rounded-xl overflow-hidden">
+                                <iframe
+                                    src={`https://iframe.mediadelivery.net/embed/587800/${previewVideo.guid}?autoplay=false&preload=true`}
+                                    loading="lazy"
+                                    style={{ border: 'none', width: '100%', height: '100%' }}
+                                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                                    allowFullScreen
+                                />
+                            </div>
+
+                            {/* Thumbnail Preview */}
+                            <div className="space-y-3">
+                                <Label className="text-sm font-medium">Miniatura Actual</Label>
+                                <div className="flex items-center gap-4">
+                                    <img
+                                        src={previewVideo.thumbnailFileName
+                                            ? `https://vz-587800.b-cdn.net/${previewVideo.guid}/${previewVideo.thumbnailFileName}`
+                                            : `https://vz-587800.b-cdn.net/${previewVideo.guid}/thumbnail.jpg`
+                                        }
+                                        alt="Thumbnail"
+                                        className="w-40 h-auto rounded-lg border-2 border-border"
+                                        onError={(e) => {
+                                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo preview%3C/text%3E%3C/svg%3E';
+                                        }}
+                                    />
+                                    <div className="text-sm text-muted-foreground">
+                                        <p>La miniatura se genera automáticamente desde Bunny.net</p>
+                                        <p className="text-xs mt-1">Puedes cambiarla directamente en el panel de Bunny.net</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-3 pt-4">
+                                <Button
+                                    onClick={() => {
+                                        handleSelectBunnyVideo(previewVideo);
+                                        setShowPreviewModal(false);
+                                    }}
+                                    className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-700"
+                                >
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    Añadir al Curso
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setShowPreviewModal(false)}
+                                    className="rounded-xl"
+                                >
+                                    Cancelar
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 };
 
